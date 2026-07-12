@@ -28,6 +28,36 @@ function renderTimeline() {
   }).join("");
 }
 
+// ---------- Carruseles del círculo de apps (index) ----------
+function initFeatureCarousels() {
+  if (typeof FEATURE_SLIDES === "undefined") return;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  document.querySelectorAll(".feature__art[data-app]").forEach((art) => {
+    const cfg = FEATURE_SLIDES[art.dataset.app];
+    if (!cfg || !cfg.images.length) return;
+
+    // Solo las capturas del proyecto (sin avatar)
+    art.innerHTML = cfg.images
+      .map(
+        (src, i) =>
+          `<img class="slide${i === 0 ? " is-active" : ""}" src="${src}" alt="" loading="lazy" />`
+      )
+      .join("");
+
+    // Respeta "reduce motion": deja fija la primera imagen sin rotar
+    if (reduce || cfg.images.length < 2) return;
+
+    const nodes = art.querySelectorAll(".slide");
+    let idx = 0;
+    setInterval(() => {
+      nodes[idx].classList.remove("is-active");
+      idx = (idx + 1) % nodes.length;
+      nodes[idx].classList.add("is-active");
+    }, 2625);
+  });
+}
+
 // ---------- Projects page ----------
 function renderCategory(catKey) {
   const container = document.getElementById("catContent");
@@ -97,5 +127,6 @@ function initTabs() {
 document.addEventListener("DOMContentLoaded", () => {
   setYear();
   renderTimeline();
+  initFeatureCarousels();
   initTabs();
 });

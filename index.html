@@ -40,6 +40,7 @@
           <img src="assets/img/perfil_smv.png" alt="Sebastián Méndez Villegas"
                onerror="this.remove()" />
           <span class="hero__photo-fallback" aria-hidden="true">SMV</span>
+          <span class="hero__photo-overlay">Sebastián Méndez Villegas</span>
         </div>
       </div>
     </section>
@@ -59,86 +60,49 @@
       </div>
     </section>
 
-    <!-- ===== Feature: GearLab ===== -->
-    <section class="feature" id="gearlab">
-      <span class="ribbon" title="Built with AI">
-        <span class="ribbon__ia">IA</span>
-        <span class="ribbon__txt">powered</span>
-      </span>
-      <div class="container feature__inner">
-        <div class="feature__art">
-          <img src="assets/svg/avatar-gear.svg" alt="GearLab mascot" />
-        </div>
-        <div class="feature__body">
-          <span class="brandmark">MECATR
-            <svg class="brandmark__gear" viewBox="0 0 24 24" aria-hidden="true">
-              <g fill="#e4003a">
-                <circle cx="12" cy="12" r="6.5" />
-                <g>
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(45 12 12)" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(90 12 12)" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(135 12 12)" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(180 12 12)" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(225 12 12)" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(270 12 12)" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(315 12 12)" />
-                </g>
-              </g>
-              <circle cx="12" cy="12" r="2.4" fill="#ffffff" />
-            </svg>NICA</span>
+    <!-- ===== Apps destacadas (tarjetas) ===== -->
+    <section class="apps section">
+      <div class="container apps__grid">
+
+        <!-- GearLab -->
+        <article class="app-card" id="gearlab">
+          <span class="ribbon" title="Built with AI">
+            <span class="ribbon__ia">IA</span>
+            <span class="ribbon__txt">powered</span>
+          </span>
+          <div class="feature__art" data-app="gearlab" data-alt="GearLab mascot"></div>
+          <span class="brandmark">MECATR<span class="gear-o" aria-hidden="true"></span>NICA</span>
           <p class="feature__desc">
             GearLab is a web-app to design and download STL, STEP or OBJ gears.
             Based on a parametric design, creativity is the limit.
           </p>
           <div class="feature__actions">
             <!-- Sin links por ahora (proyecto de código cerrado en desarrollo) -->
-            <button class="btn btn--black is-link" type="button" disabled>GearLab web</button>
+            <button class="btn btn--black" type="button" disabled>GearLab web</button>
             <button class="btn btn--red-outline" type="button" disabled>Community projects</button>
           </div>
-        </div>
-      </div>
-    </section>
+        </article>
 
-    <!-- ===== Feature: Capa8 ===== -->
-    <section class="feature" id="capa8">
-      <span class="ribbon" title="Built with AI">
-        <span class="ribbon__ia">IA</span>
-        <span class="ribbon__txt">powered</span>
-      </span>
-      <div class="container feature__inner">
-        <div class="feature__art">
-          <img src="assets/svg/avatar-capa8.svg" alt="Capa8 mascot" />
-        </div>
-        <div class="feature__body">
-          <span class="brandmark">MECATR
-            <svg class="brandmark__gear" viewBox="0 0 24 24" aria-hidden="true">
-              <g fill="#ffffff">
-                <circle cx="12" cy="12" r="6.5" />
-                <g>
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(45 12 12)" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(90 12 12)" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(135 12 12)" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(180 12 12)" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(225 12 12)" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(270 12 12)" />
-                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(315 12 12)" />
-                </g>
-              </g>
-              <circle cx="12" cy="12" r="2.4" fill="#0d0d0d" />
-            </svg>NICA</span>
+        <!-- Capa8 -->
+        <article class="app-card" id="capa8">
+          <span class="ribbon" title="Built with AI">
+            <span class="ribbon__ia">IA</span>
+            <span class="ribbon__txt">powered</span>
+          </span>
+          <div class="feature__art" data-app="capa8" data-alt="Capa8 mascot"></div>
+          <span class="brandmark">MECATR<span class="gear-o gear-o--light" aria-hidden="true"></span>NICA</span>
           <p class="feature__desc">
             Capa8 is a web-app to generate network topology diagrams.
             Based on the most common nodes of each OSI layer.
           </p>
           <div class="feature__actions">
-            <button class="btn btn--black is-link" type="button" disabled>Capa 8 web</button>
+            <button class="btn btn--black" type="button" disabled>Capa 8 web</button>
             <a class="btn btn--red-outline"
                href="https://github.com/sebas30073007/IA_mecatronica_Capa8"
                target="_blank" rel="noopener">Repo</a>
           </div>
-        </div>
+        </article>
+
       </div>
     </section>
   </main>

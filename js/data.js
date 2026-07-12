@@ -2,6 +2,32 @@
    Datos del portafolio (edita solo este archivo para actualizar contenido)
    =================================================================== */
 
+/* --- Carrusel del círculo de las apps destacadas (index) ---
+   Empieza en el avatar y va rotando las capturas cada ~1.75s. */
+const FEATURE_SLIDES = {
+  gearlab: {
+    avatar: "assets/svg/avatar-gear.svg",
+    images: [
+      "projects/gear-lab/simple-gear.png",
+      "projects/gear-lab/planetary-gear.png",
+      "projects/gear-lab/bevel-gear.png",
+      "projects/gear-lab/worm-gear.png",
+      "projects/gear-lab/rack-pinion-gear.png",
+      "projects/gear-lab/internal-gear.png",
+    ],
+  },
+  capa8: {
+    avatar: "assets/svg/avatar-capa8.svg",
+    images: [
+      "projects/capa-8/simple_net.png",
+      "projects/capa-8/home_net.png",
+      "projects/capa-8/university_net.png",
+      "projects/capa-8/industrial_net.png",
+      "projects/capa-8/nodes.png",
+    ],
+  },
+};
+
 /* --- Línea de tiempo del index (About me) ---
    Cada nodo es un punto en el tiempo. "month" es opcional. */
 const TIMELINE = [
