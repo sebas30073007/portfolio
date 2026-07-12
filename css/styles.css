@@ -6,12 +6,12 @@
 
 :root {
   /* ---- Colores ---- */
-  --red: #e4003a;
-  --red-dark: #c1002f;
+  --red: #e00034;
+  --red-dark: #bd002c;
   --ink: #0d0d0d;
   --ink-soft: #1a1a1a;
-  --paper: #f2f1ef;
-  --white: #ffffff;
+  --paper: #f3f3f4;
+  --white: #f3f3f4;
   --muted: #6b7280;
   --card: #0a0a0a;
 
@@ -146,7 +146,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 68px;
+  height: 56px;
 }
 
 .nav__logo {
@@ -193,12 +193,17 @@ img {
 }
 
 .hero__photo {
-  width: 148px;
-  height: 148px;
+  /* Tamaño 1.7x respecto al original (148px). Los márgenes negativos
+     mantienen la altura de layout en ~148px, así la banda roja NO engrosa. */
+  width: 252px;
+  height: 252px;
+  margin-block: -52px;
+  position: relative;
+  z-index: 2;
   border-radius: 50%;
   overflow: hidden;
-  background: linear-gradient(135deg, #2a2a2a, #4a4a4a);
-  border: 4px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  border: none;
   flex-shrink: 0;
   display: grid;
   place-items: center;
@@ -321,9 +326,31 @@ img {
   justify-self: center;
 }
 
-.feature__art svg {
-  width: 78%;
-  height: 78%;
+.feature__art svg,
+.feature__art img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+/* Botones outline sobre fondo rojo: siempre visibles (contorno claro) */
+.feature .btn--red-outline {
+  border-color: var(--white);
+  color: var(--white);
+  background: transparent;
+}
+
+.feature .btn--red-outline:hover {
+  background: var(--white);
+  color: var(--red);
+}
+
+.feature .btn[disabled] {
+  cursor: default;
+}
+
+.feature .btn[disabled]:hover {
+  transform: none;
 }
 
 .feature__body {
@@ -609,6 +636,12 @@ img {
     grid-template-columns: 1fr;
     text-align: center;
     justify-items: center;
+  }
+
+  .hero__photo {
+    margin-block: 0;
+    width: 210px;
+    height: 210px;
   }
 
   .hero__cta {
