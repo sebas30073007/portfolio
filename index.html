@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Portfolio of Sebastián Méndez Villegas — Mechatronics and Cyber-Physical Systems Engineer." />
+  <title>SMV — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- ===== Header ===== -->
+  <header class="site-header">
+    <nav class="nav container">
+      <a href="index.html" class="nav__logo">SMV</a>
+      <div class="nav__actions">
+        <a href="projects.html" class="btn btn--red">Projects</a>
+        <a href="contact.html" class="btn btn--ghost-light">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <div class="container hero__inner">
+        <div class="hero__text">
+          <p class="hero__lead">
+            Mechatronics and Cyber-Physical Systems Engineer focused on robotics,
+            embedded systems, automation, and the development of integrated
+            prototypes that connect hardware, software, sensors, and cloud technologies.
+          </p>
+          <div class="hero__cta">
+            <a href="projects.html" class="btn btn--white">See Projects</a>
+          </div>
+        </div>
+        <div class="hero__photo">
+          <img src="assets/img/perfil_smv.png" alt="Sebastián Méndez Villegas"
+               onerror="this.remove()" />
+          <span class="hero__photo-fallback" aria-hidden="true">SMV</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== About me / timeline ===== -->
+    <section class="section" id="about" style="background: var(--paper);">
+      <div class="container">
+        <header class="section-head">
+          <h2 class="section-head__title">About me</h2>
+          <p class="section-head__sub">timeline</p>
+        </header>
+
+        <!-- Línea de tiempo horizontal. Los nodos se generan en js/main.js -->
+        <div class="timeline">
+          <div class="timeline__track" id="timelineTrack"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Feature: GearLab ===== -->
+    <section class="feature" id="gearlab">
+      <span class="ribbon" title="Built with AI">
+        <span class="ribbon__ia">IA</span>
+        <span class="ribbon__txt">powered</span>
+      </span>
+      <div class="container feature__inner">
+        <div class="feature__art">
+          <!-- Mascota: engrane con casco -->
+          <svg viewBox="0 0 200 200" role="img" aria-label="GearLab mascot">
+            <g fill="#e4003a">
+              <circle cx="100" cy="108" r="58" />
+              <g>
+                <rect x="91" y="34" width="18" height="30" rx="4" />
+                <rect x="91" y="34" width="18" height="30" rx="4" transform="rotate(45 100 108)" />
+                <rect x="91" y="34" width="18" height="30" rx="4" transform="rotate(90 100 108)" />
+                <rect x="91" y="34" width="18" height="30" rx="4" transform="rotate(135 100 108)" />
+                <rect x="91" y="34" width="18" height="30" rx="4" transform="rotate(180 100 108)" />
+                <rect x="91" y="34" width="18" height="30" rx="4" transform="rotate(225 100 108)" />
+                <rect x="91" y="34" width="18" height="30" rx="4" transform="rotate(270 100 108)" />
+                <rect x="91" y="34" width="18" height="30" rx="4" transform="rotate(315 100 108)" />
+              </g>
+            </g>
+            <!-- ojos y sonrisa -->
+            <rect x="78" y="98" width="13" height="26" rx="6.5" fill="#0d0d0d" />
+            <rect x="109" y="98" width="13" height="26" rx="6.5" fill="#0d0d0d" />
+            <path d="M82 138 Q100 156 118 138" stroke="#0d0d0d" stroke-width="7"
+                  stroke-linecap="round" fill="none" />
+            <!-- casco -->
+            <g fill="#f5b301">
+              <rect x="47" y="66" width="106" height="15" rx="7.5" />
+              <path d="M64 70 Q64 36 100 36 Q136 36 136 70 Z" />
+            </g>
+            <rect x="94" y="36" width="12" height="34" rx="6" fill="#e0a400" />
+          </svg>
+        </div>
+        <div class="feature__body">
+          <span class="brandmark">MECATR
+            <svg class="brandmark__gear" viewBox="0 0 24 24" aria-hidden="true">
+              <g fill="#e4003a">
+                <circle cx="12" cy="12" r="6.5" />
+                <g>
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(45 12 12)" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(90 12 12)" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(135 12 12)" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(180 12 12)" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(225 12 12)" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(270 12 12)" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(315 12 12)" />
+                </g>
+              </g>
+              <circle cx="12" cy="12" r="2.4" fill="#ffffff" />
+            </svg>NICA</span>
+          <p class="feature__desc">
+            GearLab is a web-app to design and download STL, STEP or OBJ gears.
+            Based on a parametric design, creativity is the limit.
+          </p>
+          <div class="feature__actions">
+            <!-- Sin links por ahora (proyecto de código cerrado en desarrollo) -->
+            <button class="btn btn--black is-link" type="button" disabled>GearLab web</button>
+            <button class="btn btn--red-outline" type="button" disabled>Community projects</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Feature: Capa8 ===== -->
+    <section class="feature" id="capa8">
+      <span class="ribbon" title="Built with AI">
+        <span class="ribbon__ia">IA</span>
+        <span class="ribbon__txt">powered</span>
+      </span>
+      <div class="container feature__inner">
+        <div class="feature__art">
+          <!-- Mascota: nube -->
+          <svg viewBox="0 0 200 200" role="img" aria-label="Capa8 mascot">
+            <g fill="#1b46c4">
+              <circle cx="66" cy="118" r="32" />
+              <circle cx="104" cy="96" r="40" />
+              <circle cx="142" cy="118" r="30" />
+              <rect x="52" y="114" width="104" height="38" rx="19" />
+            </g>
+            <rect x="86" y="102" width="13" height="26" rx="6.5" fill="#0d0d0d" />
+            <rect x="118" y="102" width="13" height="26" rx="6.5" fill="#0d0d0d" />
+            <path d="M90 140 Q108 158 126 140" stroke="#0d0d0d" stroke-width="7"
+                  stroke-linecap="round" fill="none" />
+          </svg>
+        </div>
+        <div class="feature__body">
+          <span class="brandmark">MECATR
+            <svg class="brandmark__gear" viewBox="0 0 24 24" aria-hidden="true">
+              <g fill="#ffffff">
+                <circle cx="12" cy="12" r="6.5" />
+                <g>
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(45 12 12)" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(90 12 12)" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(135 12 12)" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(180 12 12)" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(225 12 12)" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(270 12 12)" />
+                  <rect x="10.5" y="1" width="3" height="4.5" rx="1" transform="rotate(315 12 12)" />
+                </g>
+              </g>
+              <circle cx="12" cy="12" r="2.4" fill="#0d0d0d" />
+            </svg>NICA</span>
+          <p class="feature__desc">
+            Capa8 is a web-app to generate network topology diagrams.
+            Based on the most common nodes of each OSI layer.
+          </p>
+          <div class="feature__actions">
+            <button class="btn btn--black is-link" type="button" disabled>Capa 8 web</button>
+            <a class="btn btn--red-outline"
+               href="https://github.com/sebas30073007/IA_mecatronica_Capa8"
+               target="_blank" rel="noopener">Repo</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Sebastián Méndez Villegas ·
+        <a href="https://github.com/sebas30073007" target="_blank" rel="noopener">GitHub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

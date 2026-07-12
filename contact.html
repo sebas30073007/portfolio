@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Contact Sebastián Méndez Villegas." />
+  <title>SMV — Contact</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- ===== Header ===== -->
+  <header class="site-header">
+    <nav class="nav container">
+      <a href="index.html" class="nav__logo">SMV</a>
+      <div class="nav__actions">
+        <a href="projects.html" class="btn btn--red">Projects</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <div class="container hero__inner">
+        <div class="hero__text">
+          <p class="hero__lead">
+            Let's build something together. Reach out for collaborations,
+            research or just to talk about robotics.
+          </p>
+        </div>
+        <div class="hero__photo">
+          <img src="assets/img/perfil_smv.png" alt="Sebastián Méndez Villegas"
+               onerror="this.remove()" />
+          <span class="hero__photo-fallback" aria-hidden="true">SMV</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Contact ===== -->
+    <section class="section">
+      <div class="container contact-hero">
+        <header class="section-head" style="text-align:center;">
+          <h2 class="section-head__title">Contact</h2>
+        </header>
+
+        <!-- Placeholder para la futura tarjeta de presentación tipo PCB
+             transparente 3D (viewer interactivo). Se implementará después. -->
+        <div class="pcb-placeholder">
+          <div>
+            <strong>Transparent PCB business card</strong><br />
+            3D interactive viewer — coming soon
+          </div>
+        </div>
+
+        <div class="contact-links">
+          <a href="mailto:sebastian.mendez14yyy@gmail.com" class="btn btn--red">Email</a>
+          <a href="https://github.com/sebas30073007" target="_blank" rel="noopener"
+             class="btn btn--red-outline">GitHub</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Sebastián Méndez Villegas ·
+        <a href="https://github.com/sebas30073007" target="_blank" rel="noopener">GitHub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

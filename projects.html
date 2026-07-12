@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Projects, papers, competitions and PCBs by Sebastián Méndez Villegas." />
+  <title>SMV — Projects</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- ===== Header ===== -->
+  <header class="site-header">
+    <nav class="nav container">
+      <a href="index.html" class="nav__logo">SMV</a>
+      <div class="nav__actions">
+        <a href="contact.html" class="btn btn--ghost-light">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <div class="container hero__inner">
+        <div class="hero__text">
+          <p class="hero__lead">
+            All these projects are open-source. All CAD, scripts and architectures
+            are on each documentation.
+          </p>
+          <a href="https://github.com/sebas30073007" target="_blank" rel="noopener"
+             class="hero__github">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.6 18 4.9 18 4.9c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/>
+            </svg>
+            <span>sebas30073007</span>
+          </a>
+        </div>
+        <div class="hero__photo">
+          <img src="assets/img/perfil_smv.png" alt="Sebastián Méndez Villegas"
+               onerror="this.remove()" />
+          <span class="hero__photo-fallback" aria-hidden="true">SMV</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Tabs / categorías ===== -->
+    <div class="tabs">
+      <div class="tabs__group" id="tabsGroup" role="tablist">
+        <button class="tab is-active" data-cat="projects" role="tab">Projects</button>
+        <button class="tab" data-cat="papers" role="tab">Papers</button>
+        <button class="tab" data-cat="competitions" role="tab">Competitions</button>
+        <button class="tab" data-cat="pcbs" role="tab">PCB's</button>
+      </div>
+    </div>
+
+    <!-- ===== Contenido (timeline por año) ===== -->
+    <section class="section" style="padding-top: 2rem;">
+      <div class="container" id="catContent">
+        <!-- Generado en js/main.js según la categoría activa -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Sebastián Méndez Villegas ·
+        <a href="https://github.com/sebas30073007" target="_blank" rel="noopener">GitHub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
