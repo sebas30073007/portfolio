@@ -23,14 +23,15 @@
   </header>
 
   <main>
-    <!-- ===== Hero ===== -->
+    <!-- ===== Hero (giro) ===== -->
     <section class="hero">
       <div class="container hero__inner">
         <div class="hero__text">
+          <p class="hero__eyebrow">Sebastián Méndez Villegas</p>
+          <h1 class="hero__title">Mechatronics &amp; Cyber-Physical Systems Engineer</h1>
           <p class="hero__lead">
-            Mechatronics and Cyber-Physical Systems Engineer focused on robotics,
-            embedded systems, automation, and the development of integrated
-            prototypes that connect hardware, software, sensors, and cloud technologies.
+            Focused on robotics, embedded systems, automation, and the development of
+            integrated prototypes that connect hardware, software, sensors, and cloud technologies.
           </p>
           <div class="hero__cta">
             <a href="projects.html" class="btn btn--white">See Projects</a>
@@ -45,68 +46,95 @@
       </div>
     </section>
 
-    <!-- ===== About me / timeline ===== -->
-    <section class="section" id="about" style="background: var(--paper);">
+    <!-- ===== Proyectos destacados ===== -->
+    <section class="apps section" id="featured">
       <div class="container">
-        <header class="section-head">
-          <h2 class="section-head__title">About me</h2>
-          <p class="section-head__sub">timeline</p>
+        <header class="section-head section-head--center">
+          <h2 class="section-head__title">Featured projects</h2>
         </header>
 
-        <!-- Línea de tiempo horizontal. Los nodos se generan en js/main.js -->
-        <div class="timeline">
-          <div class="timeline__track" id="timelineTrack"></div>
+        <div class="apps__grid">
+
+          <!-- GearLab -->
+          <article class="app-card" id="gearlab">
+            <span class="ribbon" title="Built with AI">
+              <span class="ribbon__ia">IA</span>
+              <span class="ribbon__txt">powered</span>
+            </span>
+            <div class="feature__art" data-app="gearlab" data-alt="GearLab mascot"></div>
+            <span class="brandmark">MECATR<span class="gear-o" aria-hidden="true"></span>NICA</span>
+            <p class="feature__desc">
+              GearLab is a web-app to design and download STL, STEP or OBJ gears.
+              Based on a parametric design, creativity is the limit.
+            </p>
+            <div class="feature__actions">
+              <a class="btn btn--black" href="https://gear-designer.sebastianmendezv.com/"
+                 target="_blank" rel="noopener">GearLab web</a>
+              <a class="btn btn--red-outline" href="https://gear-designer.sebastianmendezv.com/community"
+                 target="_blank" rel="noopener">Community projects</a>
+            </div>
+          </article>
+
+          <!-- Remote Hands (sin etiqueta IA) -->
+          <article class="app-card" id="remote-hands">
+            <div class="feature__art" data-app="remotehands" data-alt="Remote Hands"></div>
+            <span class="brandmark brandmark--text">Remote Hands</span>
+            <p class="feature__desc">
+              Teleoperated mobile-manipulator for inclusive logistics: mixed-reality
+              control, a ZMQ link and an ESP32-driven robot.
+            </p>
+            <div class="feature__actions">
+              <a class="btn btn--black"
+                 href="https://github.com/sebas30073007/teleop-mobile-manipulator"
+                 target="_blank" rel="noopener">Repository</a>
+              <button class="btn btn--red-outline" type="button" disabled>Docs</button>
+            </div>
+          </article>
+
+          <!-- Capa8 -->
+          <article class="app-card" id="capa8">
+            <span class="ribbon" title="Built with AI">
+              <span class="ribbon__ia">IA</span>
+              <span class="ribbon__txt">powered</span>
+            </span>
+            <div class="feature__art" data-app="capa8" data-alt="Capa8 mascot"></div>
+            <span class="brandmark brandmark--logo">
+              <img class="brandmark__img" src="assets/img/capa8_logo.png" alt="Topologías — Capa8" />
+            </span>
+            <p class="feature__desc">
+              Capa8 is a web-app to generate network topology diagrams.
+              Based on the most common nodes of each OSI layer.
+            </p>
+            <div class="feature__actions">
+              <a class="btn btn--black" href="https://capa8.sebastianmendezv.com/"
+                 target="_blank" rel="noopener">Capa 8 web</a>
+              <a class="btn btn--red-outline"
+                 href="https://github.com/sebas30073007/IA_mecatronica_Capa8"
+                 target="_blank" rel="noopener">Repo</a>
+            </div>
+          </article>
+
         </div>
       </div>
     </section>
 
-    <!-- ===== Apps destacadas (tarjetas) ===== -->
-    <section class="apps section">
-      <div class="container apps__grid">
-
-        <!-- GearLab -->
-        <article class="app-card" id="gearlab">
-          <span class="ribbon" title="Built with AI">
-            <span class="ribbon__ia">IA</span>
-            <span class="ribbon__txt">powered</span>
-          </span>
-          <div class="feature__art" data-app="gearlab" data-alt="GearLab mascot"></div>
-          <span class="brandmark">MECATR<span class="gear-o" aria-hidden="true"></span>NICA</span>
-          <p class="feature__desc">
-            GearLab is a web-app to design and download STL, STEP or OBJ gears.
-            Based on a parametric design, creativity is the limit.
+    <!-- ===== About me ===== -->
+    <section class="section about" id="about">
+      <div class="container about__inner">
+        <div class="about__media" data-about aria-label="Sebastián presentando proyectos"></div>
+        <div class="about__body">
+          <h2 class="section-head__title">About me</h2>
+          <p>
+            I’m a Mechatronics and Cyber-Physical Systems Engineer interested in turning
+            complex technical ideas into working systems. My projects usually combine
+            mechanical design, electronics, control, software, and user-centered interfaces.
           </p>
-          <div class="feature__actions">
-            <a class="btn btn--black" href="https://gear-designer.sebastianmendezv.com/"
-               target="_blank" rel="noopener">GearLab web</a>
-            <a class="btn btn--red-outline" href="https://gear-designer.sebastianmendezv.com/community"
-               target="_blank" rel="noopener">Community projects</a>
-          </div>
-        </article>
-
-        <!-- Capa8 -->
-        <article class="app-card" id="capa8">
-          <span class="ribbon" title="Built with AI">
-            <span class="ribbon__ia">IA</span>
-            <span class="ribbon__txt">powered</span>
-          </span>
-          <div class="feature__art" data-app="capa8" data-alt="Capa8 mascot"></div>
-          <span class="brandmark brandmark--logo">
-            <img class="brandmark__img" src="assets/img/capa8_logo.png" alt="Topologías — Capa8" />
-          </span>
-          <p class="feature__desc">
-            Capa8 is a web-app to generate network topology diagrams.
-            Based on the most common nodes of each OSI layer.
+          <p>
+            I especially enjoy building robots and prototypes that solve practical problems,
+            and I’m drawn to emerging technologies — mixed reality, edge AI and connected
+            devices — exploring how they can make engineering more capable and more human.
           </p>
-          <div class="feature__actions">
-            <a class="btn btn--black" href="https://capa8.sebastianmendezv.com/"
-               target="_blank" rel="noopener">Capa 8 web</a>
-            <a class="btn btn--red-outline"
-               href="https://github.com/sebas30073007/IA_mecatronica_Capa8"
-               target="_blank" rel="noopener">Repo</a>
-          </div>
-        </article>
-
+        </div>
       </div>
     </section>
   </main>

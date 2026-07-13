@@ -3,10 +3,9 @@
    =================================================================== */
 
 /* --- Carrusel del círculo de las apps destacadas (index) ---
-   Empieza en el avatar y va rotando las capturas cada ~1.75s. */
+   Las imágenes rotan con crossfade cada ~2.6s. */
 const FEATURE_SLIDES = {
   gearlab: {
-    avatar: "assets/svg/avatar-gear.svg",
     images: [
       "projects/gear-lab/simple-gear.png",
       "projects/gear-lab/planetary-gear.png",
@@ -16,8 +15,16 @@ const FEATURE_SLIDES = {
       "projects/gear-lab/internal-gear.png",
     ],
   },
+  remotehands: {
+    images: [
+      "projects/remote-hands/Full-body.jpg",
+      "projects/remote-hands/Gripper.jpg",
+      "projects/remote-hands/depth-cam.jpg",
+      "projects/remote-hands/lidar.jpg",
+      "projects/remote-hands/PCB.jpg",
+    ],
+  },
   capa8: {
-    avatar: "assets/svg/avatar-capa8.svg",
     images: [
       "projects/capa-8/simple_net.png",
       "projects/capa-8/home_net.png",
@@ -28,11 +35,12 @@ const FEATURE_SLIDES = {
   },
 };
 
-/* --- Línea de tiempo del index (About me) ---
-   Cada nodo es un punto en el tiempo. "month" es opcional. */
-const TIMELINE = [
-  { year: "2021", month: "" },
-  { year: "2022", month: "Jan" },
+/* --- Fotos casuales de la sección About me (rotan con crossfade) ---
+   Los espacios del nombre van como %20 en la ruta. */
+const ABOUT_PHOTOS = [
+  "assets/img/About%20me%201.png",
+  "assets/img/About%20me%202.png",
+  "assets/img/About%20me%203.png",
 ];
 
 /* --- Catálogo de la página de proyectos ---
@@ -53,7 +61,9 @@ const CATALOG = {
           title: "Teleop Mobile-Manipulator",
           tag: "Robotics · XR",
           desc: "Teleoperated mobile-manipulator for inclusive logistics, with mixed-reality (Meta Quest) interface and ZMQ communication.",
+          tools: "ROS 2 · ZMQ · MicroPython",
           repo: "https://github.com/sebas30073007/teleop-mobile-manipulator",
+          cover: "projects/remote-hands/main.png",
           gallery: [
             { src: "projects/remote-hands/%231.png", caption: "System overview" },
             { src: "projects/remote-hands/%232.png", caption: "XR teleoperation interface" },
@@ -61,12 +71,15 @@ const CATALOG = {
             { src: "projects/remote-hands/%234.png", caption: "Control architecture" },
             { src: "projects/remote-hands/%235.png", caption: "Field test" },
           ],
+          renders: [],
         },
         {
           title: "Mecatronica Gear Designer",
           tag: "Web tool · CAD",
           desc: "Parametric web tool to design, visualize and export gear systems (STL/STEP/OBJ) for laser cutting and 3D printing.",
+          tools: "TypeScript · Three.js",
           repo: "https://github.com/sebas30073007/mecatronica-gear-designer",
+          cover: "projects/gear-lab/main.png",
           gallery: [
             { src: "projects/gear-lab/%231.png", caption: "Parametric gear design" },
             { src: "projects/gear-lab/%232.png", caption: "3D preview" },
@@ -74,20 +87,33 @@ const CATALOG = {
             { src: "projects/gear-lab/%234.png", caption: "Export options" },
             { src: "projects/gear-lab/%235.png", caption: "CAD panel" },
           ],
+          renders: [],
         },
         {
           title: "Structural Mapping in Mixed Reality",
           tag: "Mixed Reality",
           desc: "Structural mapping supported by mixed reality for inspection and environment registration.",
+          tools: "Unity · AR Foundation",
           repo: "https://github.com/sebas30073007/mapeo-estructural-en-realidad-mixta",
+          cover: "",
           gallery: [],
+          renders: [],
         },
         {
           title: "Capa 8 — Network AI",
           tag: "Artificial Intelligence",
           desc: "AI applied to computer networks — the 'layer 8', the human factor — generating OSI topology diagrams.",
+          tools: "PyTorch · Scapy",
           repo: "https://github.com/sebas30073007/IA_mecatronica_Capa8",
-          gallery: [],
+          cover: "projects/capa-8/main.png",
+          gallery: [
+            { src: "projects/capa-8/%231.png", caption: "Topology overview" },
+            { src: "projects/capa-8/%232.png", caption: "Home network" },
+            { src: "projects/capa-8/%233.png", caption: "University network" },
+            { src: "projects/capa-8/%234.png", caption: "Industrial network" },
+            { src: "projects/capa-8/%235.png", caption: "Node library" },
+          ],
+          renders: [],
         },
       ],
       2025: [
@@ -95,8 +121,11 @@ const CATALOG = {
           title: "Waste Sorting Robot",
           tag: "Cyber-Physical Systems",
           desc: "Mobile robot that collects and classifies waste (glass, cans, Tetra Pak) using computer vision and a monitoring UI.",
+          tools: "OpenCV · Python",
           repo: "https://github.com/sebas30073007/Sistemas_Ciberfisicos_Proyecto",
+          cover: "",
           gallery: [],
+          renders: [],
         },
       ],
     },

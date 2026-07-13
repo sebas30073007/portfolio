@@ -197,13 +197,31 @@ img {
   max-width: none;
 }
 
+.hero__eyebrow {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 0.5rem;
+}
+
+.hero__title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2rem, 4.6vw, 3.2rem);
+  line-height: 1.05;
+  max-width: 16ch;
+  margin-bottom: 1rem;
+}
+
 .hero__lead {
-  /* Tope de ancho para que quede en ~2 líneas en monitor, aunque la
-     página ya no tenga límite horizontal. */
-  max-width: 60rem;
-  font-size: 0.95rem;
+  /* Texto de apoyo (el rol ya va destacado en el h1) */
+  max-width: 46rem;
+  font-size: 0.98rem;
   line-height: 1.6;
   margin-bottom: 1.5rem;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .hero__cta {
@@ -269,9 +287,13 @@ img {
   font-size: 2.5rem;
 }
 
-/* ===== Section head (About me) ===== */
+/* ===== Section head ===== */
 .section-head {
   margin-bottom: 2.5rem;
+}
+
+.section-head--center {
+  text-align: center;
 }
 
 .section-head__title {
@@ -346,11 +368,11 @@ img {
   padding-bottom: 6px;
 }
 
-/* ===== Apps destacadas (tarjetas GearLab / Capa8) ===== */
+/* ===== Proyectos destacados (tarjetas) ===== */
 .apps__grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 1.75rem;
   align-items: stretch;
 }
 
@@ -423,6 +445,9 @@ img {
 }
 
 .brandmark {
+  /* Altura fija: las 3 placas (MECATRONICA / REMOTE HANDS / TOPOLOGÍAS)
+     miden exactamente lo mismo; el contenido se centra vertical. */
+  height: 3.4rem;
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -432,14 +457,14 @@ img {
   font-weight: 900;
   font-size: 1.9rem;
   letter-spacing: 0.06em;
-  padding: 0.4rem 1.2rem;
+  padding: 0 1.2rem;
   border-radius: 10px;
   margin-bottom: 1.25rem;
 }
 
 /* Variante con imagen de logo (Capa8 = "Topologías", fondo negro) */
 .brandmark--logo {
-  padding: 0.45rem 0.9rem;
+  padding: 0 0.9rem;
   background: #000; /* igual al fondo del PNG, sin borde visible */
 }
 
@@ -447,6 +472,12 @@ img {
   display: block;
   height: 2.5rem;
   width: auto;
+}
+
+/* Variante solo texto (Remote Hands, sin logo propio) */
+.brandmark--text {
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
 }
 
 /* "O" de MECATRONICA = engrane 100% CSS.
@@ -600,26 +631,31 @@ img {
   color: var(--white);
 }
 
-/* Timeline vertical con años en cinta */
+/* Encabezado de año: número en negro + línea delimitadora */
 .year-block {
   padding-block: 1.5rem 0.5rem;
 }
 
-.year-ribbon {
-  display: inline-flex;
-  flex-direction: column;
+.year-head {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 1.15rem;
-  line-height: 0.95;
-  color: var(--white);
-  background: var(--ink);
-  width: 62px;
-  padding: 0.5rem 0;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 88% 82%, 0 82%);
-  margin-bottom: 1.25rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.year-label {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.year-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(13, 13, 13, 0.15);
 }
 
 .cards {
@@ -630,26 +666,32 @@ img {
   gap: 1.5rem;
 }
 
+/* Tarjeta = imagen de portada + panel inferior que se expande en hover */
 .pcard {
-  display: flex;
-  flex-direction: column;
-  min-height: 210px;
-  background: var(--card);
-  color: var(--white);
+  position: relative;
+  aspect-ratio: 3 / 2;
   border-radius: var(--radius);
-  padding: 1.4rem;
-  border: 1px solid #1e1e1e;
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-
-.pcard.is-clickable {
+  overflow: hidden;
   cursor: pointer;
+  color: var(--white);
+  background: #0a0a0a center / cover no-repeat;
 }
 
-.pcard:hover {
-  transform: translateY(-4px);
-  /* Sombra roja (más visible) en lugar del contorno */
-  box-shadow: 0 12px 30px rgba(224, 0, 52, 0.4);
+.pcard--noimg {
+  background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+}
+
+/* Atenúa la imagen y oscurece la base para el texto */
+.pcard__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.92) 0%,
+    rgba(0, 0, 0, 0.55) 32%,
+    rgba(0, 0, 0, 0.28) 60%,
+    rgba(0, 0, 0, 0.28) 100%
+  );
 }
 
 .pcard:focus-visible {
@@ -657,34 +699,114 @@ img {
   outline-offset: 3px;
 }
 
-.pcard__tag {
-  align-self: flex-start;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--red);
-  border: 1px solid var(--red);
-  padding: 0.15rem 0.55rem;
+/* Indicador de keywords (arriba-izquierda) */
+.pcard__kw {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  background: var(--red);
+  padding: 0.22rem 0.6rem;
   border-radius: var(--radius-pill);
-  margin-bottom: 0.9rem;
+}
+
+/* Icono GitHub (arriba-derecha) */
+.pcard__gh {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--white);
+  display: grid;
+  place-items: center;
+}
+
+.pcard__gh svg {
+  width: 21px;
+  height: 21px;
+  color: #111;
+}
+
+/* Panel inferior */
+.pcard__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 1rem 1.15rem 1.15rem;
 }
 
 .pcard__title {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Detalle: colapsado por defecto, se despliega en hover/focus */
+.pcard__detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.35s ease, opacity 0.3s ease;
+}
+
+.pcard__detail-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.pcard:hover .pcard__detail,
+.pcard:focus-visible .pcard__detail,
+.pcard:focus-within .pcard__detail {
+  grid-template-rows: 1fr;
+  opacity: 1;
 }
 
 .pcard__desc {
   font-size: 0.9rem;
-  color: #9aa0a6;
-  flex-grow: 1;
+  color: #d5d7da;
+  margin: 0.6rem 0 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pcard__tools {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.7rem;
+  font-size: 0.8rem;
+  color: #b6bbc0;
+}
+
+.pcard__tools svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
 }
 
 .pcard__more {
-  margin-top: 1rem;
+  display: inline-block;
+  margin-top: 0.9rem;
   font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--red);
+  font-weight: 700;
+  color: var(--white);
+  background: var(--red);
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-btn);
 }
 
 /* Estado vacío (Papers, Competitions, PCB's) */
@@ -759,8 +881,15 @@ img {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.5rem;
-  margin-bottom: 1.1rem;
+  margin-bottom: 0.5rem;
   padding-right: 2rem;
+}
+
+.modal__desc {
+  color: #c7cbd0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin-bottom: 1.1rem;
 }
 
 .modal__stage {
@@ -818,6 +947,29 @@ img {
 .modal__thumb.is-active {
   opacity: 1;
   border-color: var(--red);
+}
+
+.modal__renders {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal__renders[hidden] {
+  display: none;
+}
+
+.modal__subtitle {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.modal__render {
+  width: 100%;
+  border-radius: 10px;
 }
 
 .modal__cta {
@@ -891,9 +1043,50 @@ img {
   color: var(--white);
 }
 
+/* ===== About me ===== */
+.about__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) 1.15fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.about__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #111;
+}
+
+.about__media .slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.about__media .slide.is-active {
+  opacity: 1;
+}
+
+.about__body .section-head__title {
+  margin-bottom: 1rem;
+}
+
+.about__body p {
+  color: #3f4145;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  max-width: 62ch;
+}
+
 /* ===== Responsive ===== */
-@media (max-width: 860px) {
-  .apps__grid {
+@media (max-width: 760px) {
+  .about__inner {
     grid-template-columns: 1fr;
   }
 }
@@ -909,6 +1102,11 @@ img {
     margin-block: 0;
     width: 200px;
     height: 200px;
+  }
+
+  .hero__title,
+  .hero__lead {
+    margin-inline: auto;
   }
 
   .hero__cta {

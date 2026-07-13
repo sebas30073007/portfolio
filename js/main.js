@@ -28,39 +28,54 @@ function renderTimeline() {
   }).join("");
 }
 
-// ---------- Carruseles del círculo de apps (index) ----------
+// ---------- Carrusel genérico (crossfade lento) ----------
+function mountCarousel(el, images, interval = 2625) {
+  if (!el || !images || !images.length) return;
+  el.innerHTML = images
+    .map(
+      (src, i) =>
+        `<img class="slide${i === 0 ? " is-active" : ""}" src="${src}" alt=""${
+          i ? ' loading="lazy"' : ""
+        } />`
+    )
+    .join("");
+
+  // Respeta "reduce motion": deja fija la primera imagen sin rotar
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce || images.length < 2) return;
+
+  const nodes = el.querySelectorAll(".slide");
+  let idx = 0;
+  setInterval(() => {
+    nodes[idx].classList.remove("is-active");
+    idx = (idx + 1) % nodes.length;
+    nodes[idx].classList.add("is-active");
+  }, interval);
+}
+
+// Círculos de las apps destacadas (index)
 function initFeatureCarousels() {
   if (typeof FEATURE_SLIDES === "undefined") return;
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
   document.querySelectorAll(".feature__art[data-app]").forEach((art) => {
     const cfg = FEATURE_SLIDES[art.dataset.app];
-    if (!cfg || !cfg.images.length) return;
-
-    // Solo las capturas del proyecto (sin avatar)
-    art.innerHTML = cfg.images
-      .map(
-        (src, i) =>
-          `<img class="slide${i === 0 ? " is-active" : ""}" src="${src}" alt="" loading="lazy" />`
-      )
-      .join("");
-
-    // Respeta "reduce motion": deja fija la primera imagen sin rotar
-    if (reduce || cfg.images.length < 2) return;
-
-    const nodes = art.querySelectorAll(".slide");
-    let idx = 0;
-    setInterval(() => {
-      nodes[idx].classList.remove("is-active");
-      idx = (idx + 1) % nodes.length;
-      nodes[idx].classList.add("is-active");
-    }, 2625);
+    if (cfg) mountCarousel(art, cfg.images);
   });
+}
+
+// Fotos casuales de la sección About me
+function initAboutCarousel() {
+  if (typeof ABOUT_PHOTOS === "undefined") return;
+  // Más lento que las apps (para About me)
+  document.querySelectorAll("[data-about]").forEach((el) => mountCarousel(el, ABOUT_PHOTOS, 7875));
 }
 
 // ---------- Projects page ----------
 // Poner en true cuando quieras que el botón CTA del modal enlace al repo.
 const ENABLE_REPO_LINKS = false;
+
+const GH_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.6 18 4.9 18 4.9c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>`;
+
+const TOOL_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L4 16.8V20h3.2l5.3-5.3a4 4 0 0 0 5.2-5.4l-2.5 2.5-2.3-.6-.6-2.3 2.4-2.4z"/></svg>`;
 
 // Índice pid -> proyecto (lo llena renderCategory para que el modal lo lea)
 let PROJECT_INDEX = {};
@@ -100,24 +115,40 @@ function renderCategory(catKey) {
         .map((item, i) => {
           const pid = `${catKey}-${slugify(item.title)}-${i}`;
           PROJECT_INDEX[pid] = item;
-          const count = item.gallery ? item.gallery.length : 0;
-          const hint = count
-            ? `${count} ${count === 1 ? "imagen" : "imágenes"} · ver galería →`
-            : "Ver detalle →";
+
+          const cover =
+            item.cover || (item.gallery && item.gallery[0] ? item.gallery[0].src : "");
+          const bgStyle = cover ? ` style="background-image:url('${cover}')"` : "";
+          const tools = item.tools
+            ? `<div class="pcard__tools">${TOOL_ICON}<span>${item.tools}</span></div>`
+            : "";
+
           return `
-            <article class="pcard is-clickable" data-pid="${pid}" role="button" tabindex="0"
-                     aria-label="Abrir ${item.title}">
-              <span class="pcard__tag">${item.tag}</span>
-              <h3 class="pcard__title">${item.title}</h3>
-              <p class="pcard__desc">${item.desc}</p>
-              <span class="pcard__more">${hint}</span>
+            <article class="pcard${cover ? "" : " pcard--noimg"}" data-pid="${pid}"
+                     role="button" tabindex="0" aria-label="Abrir ${item.title}"${bgStyle}>
+              <div class="pcard__scrim"></div>
+              <span class="pcard__kw">${item.tag}</span>
+              <span class="pcard__gh" aria-hidden="true">${GH_ICON}</span>
+              <div class="pcard__panel">
+                <h3 class="pcard__title">${item.title}</h3>
+                <div class="pcard__detail">
+                  <div class="pcard__detail-inner">
+                    <p class="pcard__desc">${item.desc}</p>
+                    ${tools}
+                    <span class="pcard__more">Ver más →</span>
+                  </div>
+                </div>
+              </div>
             </article>`;
         })
         .join("");
 
       return `
         <div class="year-block">
-          <span class="year-ribbon">${year}</span>
+          <div class="year-head">
+            <span class="year-label">${year}</span>
+            <span class="year-line"></span>
+          </div>
           <div class="cards">${cards}</div>
         </div>`;
     })
@@ -156,6 +187,24 @@ function openProjectModal(project) {
   const cta = document.getElementById("modalCta");
 
   document.getElementById("modalTitle").textContent = project.title;
+  document.getElementById("modalDesc").textContent = project.desc || "";
+
+  // Renders opcionales (3D, etc.)
+  const renders = document.getElementById("modalRenders");
+  const rlist = project.renders || [];
+  if (renders) {
+    if (rlist.length) {
+      renders.innerHTML =
+        `<h4 class="modal__subtitle">Renders</h4>` +
+        rlist
+          .map((src) => `<img class="modal__render" src="${src}" alt="" loading="lazy" />`)
+          .join("");
+      renders.hidden = false;
+    } else {
+      renders.innerHTML = "";
+      renders.hidden = true;
+    }
+  }
 
   const gallery = project.gallery || [];
   modalSlides = gallery;
@@ -267,6 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setYear();
   renderTimeline();
   initFeatureCarousels();
+  initAboutCarousel();
   initTabs();
   initProjectModal();
 });
