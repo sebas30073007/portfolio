@@ -437,6 +437,18 @@ img {
   margin-bottom: 1.25rem;
 }
 
+/* Variante con imagen de logo (Capa8 = "Topologías", fondo negro) */
+.brandmark--logo {
+  padding: 0.45rem 0.9rem;
+  background: #000; /* igual al fondo del PNG, sin borde visible */
+}
+
+.brandmark__img {
+  display: block;
+  height: 2.5rem;
+  width: auto;
+}
+
 /* "O" de MECATRONICA = engrane 100% CSS.
    Dos capas sobre un span vacío:
    ::before = disco dentado (12 dientes vía clip-path) que gira.
@@ -627,12 +639,22 @@ img {
   border-radius: var(--radius);
   padding: 1.4rem;
   border: 1px solid #1e1e1e;
-  transition: transform var(--transition), border-color var(--transition);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.pcard.is-clickable {
+  cursor: pointer;
 }
 
 .pcard:hover {
   transform: translateY(-4px);
-  border-color: var(--red);
+  /* Sombra roja (más visible) en lugar del contorno */
+  box-shadow: 0 12px 30px rgba(224, 0, 52, 0.4);
+}
+
+.pcard:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
 }
 
 .pcard__tag {
@@ -658,20 +680,11 @@ img {
   flex-grow: 1;
 }
 
-.pcard__links {
-  display: flex;
-  gap: 1rem;
+.pcard__more {
   margin-top: 1rem;
-}
-
-.pcard__link {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--red);
-}
-
-.pcard__link:hover {
-  text-decoration: underline;
 }
 
 /* Estado vacío (Papers, Competitions, PCB's) */
@@ -686,6 +699,150 @@ img {
   font-size: 1.5rem;
   color: var(--ink);
   margin-bottom: 0.5rem;
+}
+
+/* ===== Modal de proyecto (galería) ===== */
+.modal[hidden] {
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  animation: fade-in 0.2s ease;
+}
+
+.modal__window {
+  position: relative;
+  z-index: 1;
+  width: min(920px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #141414;
+  color: var(--white);
+  border-radius: 18px;
+  padding: 1.75rem;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+  animation: pop-in 0.22s ease;
+}
+
+.modal__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity var(--transition);
+}
+
+.modal__close:hover {
+  opacity: 1;
+}
+
+.modal__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 1.1rem;
+  padding-right: 2rem;
+}
+
+.modal__stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.modal__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.modal__empty {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.modal__caption {
+  text-align: center;
+  color: #9aa0a6;
+  font-size: 0.9rem;
+  min-height: 1.2em;
+  margin: 0.85rem 0 1rem;
+}
+
+.modal__thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal__thumb {
+  width: 84px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 7px;
+  cursor: pointer;
+  opacity: 0.5;
+  border: 2px solid transparent;
+  transition: opacity var(--transition), border-color var(--transition);
+}
+
+.modal__thumb:hover {
+  opacity: 0.85;
+}
+
+.modal__thumb.is-active {
+  opacity: 1;
+  border-color: var(--red);
+}
+
+.modal__cta {
+  width: 100%;
+  justify-content: center;
+  font-size: 1rem;
+  padding: 0.75rem 1.2rem;
+}
+
+.modal__cta.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
 }
 
 /* ===== Contact page ===== */

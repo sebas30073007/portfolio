@@ -65,6 +65,27 @@
     </section>
   </main>
 
+  <!-- ===== Modal de proyecto (galería) ===== -->
+  <div class="modal" id="projectModal" hidden>
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__window" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal__close" type="button" data-close aria-label="Cerrar">&times;</button>
+      <h3 class="modal__title" id="modalTitle"></h3>
+
+      <div class="modal__stage">
+        <img class="modal__img" id="modalImg" alt="" />
+        <p class="modal__empty" id="modalEmpty" hidden>Imágenes próximamente</p>
+      </div>
+      <p class="modal__caption" id="modalCaption"></p>
+
+      <div class="modal__thumbs" id="modalThumbs"></div>
+
+      <a class="btn btn--red modal__cta" id="modalCta" target="_blank" rel="noopener">
+        Ver repositorio →
+      </a>
+    </div>
+  </div>
+
   <!-- ===== Footer ===== -->
   <footer class="site-footer">
     <div class="container">

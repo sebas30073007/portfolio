@@ -59,12 +59,29 @@ function initFeatureCarousels() {
 }
 
 // ---------- Projects page ----------
+// Poner en true cuando quieras que el botón CTA del modal enlace al repo.
+const ENABLE_REPO_LINKS = false;
+
+// Índice pid -> proyecto (lo llena renderCategory para que el modal lo lea)
+let PROJECT_INDEX = {};
+
+function slugify(s) {
+  return s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 function renderCategory(catKey) {
   const container = document.getElementById("catContent");
   if (!container || typeof CATALOG === "undefined") return;
 
   const cat = CATALOG[catKey];
   const years = cat && cat.years ? Object.keys(cat.years).sort((a, b) => b - a) : [];
+
+  PROJECT_INDEX = {};
 
   // Estado vacío / deshabilitado
   if (years.length === 0) {
@@ -80,19 +97,20 @@ function renderCategory(catKey) {
   container.innerHTML = years
     .map((year) => {
       const cards = cat.years[year]
-        .map((item) => {
-          const demo = item.demo
-            ? `<a class="pcard__link" href="${item.demo}" target="_blank" rel="noopener">Demo ↗</a>`
-            : "";
-          const repo = item.repo
-            ? `<a class="pcard__link" href="${item.repo}" target="_blank" rel="noopener">Repo ↗</a>`
-            : "";
+        .map((item, i) => {
+          const pid = `${catKey}-${slugify(item.title)}-${i}`;
+          PROJECT_INDEX[pid] = item;
+          const count = item.gallery ? item.gallery.length : 0;
+          const hint = count
+            ? `${count} ${count === 1 ? "imagen" : "imágenes"} · ver galería →`
+            : "Ver detalle →";
           return `
-            <article class="pcard">
+            <article class="pcard is-clickable" data-pid="${pid}" role="button" tabindex="0"
+                     aria-label="Abrir ${item.title}">
               <span class="pcard__tag">${item.tag}</span>
               <h3 class="pcard__title">${item.title}</h3>
               <p class="pcard__desc">${item.desc}</p>
-              <div class="pcard__links">${repo}${demo}</div>
+              <span class="pcard__more">${hint}</span>
             </article>`;
         })
         .join("");
@@ -104,6 +122,127 @@ function renderCategory(catKey) {
         </div>`;
     })
     .join("");
+}
+
+// ---------- Modal de proyecto (galería) ----------
+let modalTimer = null;
+let modalSlides = [];
+let modalIdx = 0;
+
+function stopModalAutoplay() {
+  if (modalTimer) {
+    clearInterval(modalTimer);
+    modalTimer = null;
+  }
+}
+
+function showModalSlide(i) {
+  if (!modalSlides.length) return;
+  modalIdx = (i + modalSlides.length) % modalSlides.length;
+  const slide = modalSlides[modalIdx];
+  document.getElementById("modalImg").src = slide.src;
+  document.getElementById("modalCaption").textContent = slide.caption || "";
+  document.querySelectorAll("#modalThumbs .modal__thumb").forEach((t, k) => {
+    t.classList.toggle("is-active", k === modalIdx);
+  });
+}
+
+function openProjectModal(project) {
+  const modal = document.getElementById("projectModal");
+  const img = document.getElementById("modalImg");
+  const empty = document.getElementById("modalEmpty");
+  const thumbs = document.getElementById("modalThumbs");
+  const cap = document.getElementById("modalCaption");
+  const cta = document.getElementById("modalCta");
+
+  document.getElementById("modalTitle").textContent = project.title;
+
+  const gallery = project.gallery || [];
+  modalSlides = gallery;
+  modalIdx = 0;
+  stopModalAutoplay();
+
+  if (gallery.length) {
+    img.hidden = false;
+    empty.hidden = true;
+    thumbs.innerHTML = gallery
+      .map(
+        (s, k) =>
+          `<img class="modal__thumb" src="${s.src}" alt="${s.caption || ""}" data-i="${k}" />`
+      )
+      .join("");
+    showModalSlide(0);
+    // Autoplay lento (mismo ritmo que el home). Se rompe al elegir miniatura.
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (gallery.length > 1 && !reduce) {
+      modalTimer = setInterval(() => showModalSlide(modalIdx + 1), 2625);
+    }
+  } else {
+    img.hidden = true;
+    img.removeAttribute("src");
+    empty.hidden = false;
+    thumbs.innerHTML = "";
+    cap.textContent = "";
+  }
+
+  // CTA al repositorio (deshabilitado hasta activar ENABLE_REPO_LINKS)
+  if (ENABLE_REPO_LINKS && project.repo) {
+    cta.href = project.repo;
+    cta.classList.remove("is-disabled");
+    cta.removeAttribute("aria-disabled");
+  } else {
+    cta.removeAttribute("href");
+    cta.classList.add("is-disabled");
+    cta.setAttribute("aria-disabled", "true");
+  }
+
+  modal.hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function closeProjectModal() {
+  const modal = document.getElementById("projectModal");
+  if (!modal || modal.hidden) return;
+  stopModalAutoplay();
+  modal.hidden = true;
+  document.body.style.overflow = "";
+}
+
+function initProjectModal() {
+  const container = document.getElementById("catContent");
+  const modal = document.getElementById("projectModal");
+  if (!container || !modal) return;
+
+  const openFromEvent = (e) => {
+    const card = e.target.closest(".pcard[data-pid]");
+    if (!card) return;
+    const project = PROJECT_INDEX[card.dataset.pid];
+    if (project) openProjectModal(project);
+  };
+
+  container.addEventListener("click", openFromEvent);
+  container.addEventListener("keydown", (e) => {
+    if ((e.key === "Enter" || e.key === " ") && e.target.closest(".pcard[data-pid]")) {
+      e.preventDefault();
+      openFromEvent(e);
+    }
+  });
+
+  // Miniatura seleccionada -> rompe el autoplay y fija esa imagen
+  document.getElementById("modalThumbs").addEventListener("click", (e) => {
+    const thumb = e.target.closest(".modal__thumb");
+    if (!thumb) return;
+    stopModalAutoplay();
+    showModalSlide(Number(thumb.dataset.i));
+  });
+
+  // Cerrar: backdrop, botón X o Escape
+  modal.querySelectorAll("[data-close]").forEach((el) =>
+    el.addEventListener("click", closeProjectModal)
+  );
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeProjectModal();
+  });
 }
 
 function initTabs() {
@@ -129,4 +268,5 @@ document.addEventListener("DOMContentLoaded", () => {
   renderTimeline();
   initFeatureCarousels();
   initTabs();
+  initProjectModal();
 });
