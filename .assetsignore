@@ -1,0 +1,10 @@
+# Cloudflare Workers assets upload treats the whole "directory": "." as the
+# site — exclude non-deployable folders so build tooling (git history, local
+# editor/agent config) never gets scanned as a static asset.
+.git
+.gitignore
+.assetsignore
+.wrangler
+wrangler.jsonc
+wrangler.toml
+node_modules
