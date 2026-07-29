@@ -271,15 +271,12 @@ img {
   margin-bottom: 0.35rem;
 }
 
-/* El rol: subtítulo destacado (antes iba enterrado en un eyebrow diminuto). */
-.hero__role {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.05rem, 1.8vw, 1.3rem);
-  line-height: 1.2;
-  color: #ffffff;
-  max-width: 34ch;
-  margin-bottom: 0.6rem;
+/* Variante del título para index: el rol reemplaza al nombre como h1
+   (mismo peso tipográfico que "Projects", ajustado a un texto más largo). */
+.hero__title--role {
+  font-size: clamp(1.8rem, 3.6vw, 2.75rem);
+  max-width: 22ch;
+  margin-bottom: 0.5rem;
 }
 
 .hero__lead {
@@ -309,9 +306,6 @@ img {
 
   .hero__title {
     animation-delay: 0.05s;
-  }
-  .hero__role {
-    animation-delay: 0.14s;
   }
   .hero__lead {
     animation-delay: 0.23s;
@@ -391,53 +385,6 @@ img {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 2.5rem;
-}
-
-/* Indicador de scroll: ocupa el centro vacío bajo el texto y la foto,
-   e invita a bajar a los proyectos destacados. */
-.hero__scroll {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
-  width: fit-content;
-  margin: 0 auto;
-  padding-bottom: 1.1rem;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  transition: color var(--transition);
-}
-
-.hero__scroll:hover {
-  color: #ffffff;
-}
-
-.hero__scroll-arrow {
-  width: 14px;
-  height: 14px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  transform: rotate(45deg);
-  animation: hero-scroll-bounce 1.8s ease-in-out infinite;
-}
-
-@keyframes hero-scroll-bounce {
-  0%,
-  100% {
-    transform: rotate(45deg) translate(0, 0);
-  }
-  50% {
-    transform: rotate(45deg) translate(4px, 4px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero__scroll-arrow {
-    animation: none;
-  }
 }
 
 /* ===== Section head ===== */
@@ -1963,17 +1910,6 @@ img {
     margin-block: 0;
     width: 210px;
     height: 210px;
-  }
-
-  .hero__scroll {
-    gap: 0.5rem;
-    padding-bottom: 1.75rem;
-    font-size: 0.78rem;
-  }
-
-  .hero__scroll-arrow {
-    width: 18px;
-    height: 18px;
   }
 
   .hero__title,

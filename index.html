@@ -28,8 +28,7 @@
     <section class="hero">
       <div class="container hero__inner">
         <div class="hero__text">
-          <h1 class="hero__title">Sebastián Méndez Villegas</h1>
-          <p class="hero__role">Mechatronics &amp; Cyber-Physical Systems Engineer</p>
+          <h1 class="hero__title hero__title--role">Mechatronics &amp; Cyber-Physical Systems Engineer</h1>
           <p class="hero__lead">
             Robotics, embedded systems, and automation — integrated prototypes that
             connect hardware, software, and the cloud.
@@ -41,13 +40,10 @@
         <div class="hero__photo">
           <img src="assets/img/perfil_smv.png" alt="Sebastián Méndez Villegas"
                onerror="this.remove()" />
+          <span class="hero__photo-overlay">Sebastián Méndez Villegas</span>
           <span class="hero__photo-fallback" aria-hidden="true">SMV</span>
         </div>
       </div>
-      <a href="#featured" class="hero__scroll">
-        <span class="hero__scroll-label">See featured projects</span>
-        <span class="hero__scroll-arrow" aria-hidden="true"></span>
-      </a>
     </section>
 
     <!-- ===== Proyectos destacados ===== -->
@@ -94,25 +90,14 @@
           </article>
 
           <!-- SUPPORT: Capa8 — app en vivo -->
-          <article class="app-card app-card--support" id="capa8">
-            <span class="ribbon" title="Built with AI">
-              <span class="ribbon__ia">AI</span>
-              <span class="ribbon__txt">powered</span>
-            </span>
-            <div class="feature__art" data-app="capa8" data-alt="Capa8 mascot"></div>
+          <article class="app-card app-card--support app-card--media" id="capa8">
+            <div class="feature__video feature__video--square">
+              <video src="assets/vid/Hero_capa8.mp4" autoplay loop muted playsinline></video>
+            </div>
             <div class="app-card__body">
-              <span class="brandmark brandmark--logo">
-                <img class="brandmark__img" src="assets/img/capa8_logo.png" alt="Topologías — Capa8" />
-              </span>
-              <p class="feature__desc">
-                Capa8 is a web-app to generate network topology diagrams.
-                Based on the most common nodes of each OSI layer.
-              </p>
               <div class="feature__actions">
-                <a class="btn btn--live" href="https://capa8.sebastianmendezv.com/"
-                   target="_blank" rel="noopener">
-                  <span class="btn__dot" aria-hidden="true"></span>Open Capa8 live
-                </a>
+                <a class="btn btn--white" href="https://capa8.sebastianmendezv.com/"
+                   target="_blank" rel="noopener">Open Capa8 live</a>
                 <a class="btn btn--red-outline"
                    href="https://github.com/sebas30073007/IA_mecatronica_Capa8"
                    target="_blank" rel="noopener">Repo</a>
