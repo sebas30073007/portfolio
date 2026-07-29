@@ -1,0 +1,13 @@
+{
+  "name": "portfolio-pcb-tools",
+  "private": true,
+  "type": "module",
+  "description": "Pipeline de assets 3D para las tarjetas de PCBs (compresión + turntable).",
+  "scripts": {
+    "pcb": "node generate-pcb-assets.mjs"
+  },
+  "devDependencies": {
+    "@gltf-transform/cli": "^4.0.0",
+    "puppeteer-core": "^23.11.1"
+  }
+}

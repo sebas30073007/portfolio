@@ -1,0 +1,21 @@
+# Dependencias del pipeline de assets de PCBs
+scripts/node_modules/
+
+# KiCad: backups, cachés y archivos de bloqueo (regenerables)
+*-backups/
+fp-info-cache
+*.lck
+*.kicad_prl
+
+# Archivos temporales del capturador de turntables
+_cap.html
+_pcb_cap.html
+_verify*.glb
+_verify*.html
+_foldertest.html
+_pcbtest.html
+_modaltest.html
+
+# Configuración local de herramientas (no es contenido del sitio)
+.claude/
+.impeccable/

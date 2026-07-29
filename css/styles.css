@@ -11,13 +11,17 @@
   --ink: #0d0d0d;
   --ink-soft: #1a1a1a;
   --paper: #f3f3f4;
-  --white: #f3f3f4;
+  /* Blanco puro para texto/relleno: sobre el rojo da 4.98:1 (AA); el off-white
+     #f3f3f4 se quedaba en 4.49 y no pasaba. El fondo del body sigue en --paper. */
+  --white: #ffffff;
   --muted: #6b7280;
-  --card: #0a0a0a;
+  --card: #000000;
 
-  /* ---- Tipografía ---- */
-  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* ---- Tipografía ----
+     Display: Zilla Slab — losa mecánica, carácter de ingeniería (no "serif de moda").
+     Cuerpo:  Hanken Grotesk — grotesca humanista, muy legible (AA) y cálida. */
+  --font-display: "Zilla Slab", Rockwell, Georgia, serif;
+  --font-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   /* ---- Layout ---- */
   --max: 1180px;
@@ -113,8 +117,10 @@ img {
 }
 
 .btn--red-outline {
-  border-color: var(--red);
-  color: var(--red);
+  /* Rojo oscuro en reposo: sobre fondo claro da 5.92:1 (AA); el rojo vivo
+     se quedaba en 4.49. Al hover se rellena con el rojo de marca. */
+  border-color: var(--red-dark);
+  color: var(--red-dark);
   background: transparent;
 }
 
@@ -131,6 +137,46 @@ img {
 .btn--black {
   background: var(--ink);
   color: var(--white);
+}
+
+/* CTA "en vivo": botón blanco sólido + punto que late = máxima prioridad.
+   Blanco/rojo-oscuro da ~7:1 (mejor contraste que blanco/rojo). */
+.btn--live {
+  background: var(--white);
+  color: var(--red-dark);
+  font-weight: 700;
+}
+
+.btn__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1c9e5a;
+  box-shadow: 0 0 0 0 rgba(28, 158, 90, 0.55);
+  animation: live-pulse 2.2s ease-out infinite;
+}
+
+.btn__logo {
+  height: 1.05em;
+  width: auto;
+}
+
+@keyframes live-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(28, 158, 90, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(28, 158, 90, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(28, 158, 90, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn__dot {
+    animation: none;
+  }
 }
 
 .btn--black.is-link {
@@ -166,15 +212,30 @@ img {
 
 .nav__logo {
   font-family: var(--font-display);
-  font-weight: 900;
+  font-weight: 700;
   font-size: 1.7rem;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   color: var(--white);
 }
 
 .nav__actions {
   display: flex;
+  align-items: center;
   gap: 0.75rem;
+}
+
+/* Ancla dentro de la página (About): enlace de texto, no pill, para
+   diferenciar el salto en la página de la navegación entre páginas. */
+.nav__link {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.34rem 0.35rem;
+  transition: color var(--transition);
+}
+
+.nav__link:hover {
+  color: #ffffff;
 }
 
 /* ===== Hero (banda roja) ===== */
@@ -188,7 +249,7 @@ img {
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 2rem;
-  padding-block: 2.5rem;
+  padding-block: 2rem;
 }
 
 .hero__text {
@@ -197,31 +258,38 @@ img {
   max-width: none;
 }
 
-.hero__eyebrow {
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.85);
-  margin-bottom: 0.5rem;
-}
-
+/* El h1 es el nombre: manda en la primera pantalla, por encima de cualquier
+   título de sección. La losa Zilla le da el carácter de ingeniería. */
 .hero__title {
   font-family: var(--font-display);
-  font-weight: 900;
-  font-size: clamp(2rem, 4.6vw, 3.2rem);
-  line-height: 1.05;
+  font-weight: 700;
+  font-size: clamp(2.3rem, 5vw, 3.6rem);
+  line-height: 1.03;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
   max-width: 16ch;
-  margin-bottom: 1rem;
+  margin-bottom: 0.35rem;
+}
+
+/* El rol: subtítulo destacado (antes iba enterrado en un eyebrow diminuto). */
+.hero__role {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+  line-height: 1.2;
+  color: #ffffff;
+  max-width: 34ch;
+  margin-bottom: 0.6rem;
 }
 
 .hero__lead {
-  /* Texto de apoyo (el rol ya va destacado en el h1) */
-  max-width: 46rem;
-  font-size: 0.98rem;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-  color: rgba(255, 255, 255, 0.92);
+  /* Texto de apoyo bajo el nombre + rol. Blanco sólido = 4.98:1 sobre el rojo
+     (la translucidez lo dejaba al borde de fallar AA). */
+  max-width: 40ch;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  color: #ffffff;
 }
 
 .hero__cta {
@@ -230,12 +298,50 @@ img {
   flex-wrap: wrap;
 }
 
+/* Entrada orquestada del hero: un solo momento al cargar (no el reflejo de
+   animar cada sección). El contenido es visible por defecto; el reveal solo
+   corre si el usuario no pidió menos movimiento. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__text > *,
+  .hero__photo {
+    animation: hero-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  .hero__title {
+    animation-delay: 0.05s;
+  }
+  .hero__role {
+    animation-delay: 0.14s;
+  }
+  .hero__lead {
+    animation-delay: 0.23s;
+  }
+  .hero__cta {
+    animation-delay: 0.32s;
+  }
+  .hero__photo {
+    animation-duration: 0.8s;
+    animation-delay: 0.12s;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .hero__photo {
   /* Contenida dentro de la banda roja, con espaciado del padding del hero. */
   position: relative;
   z-index: 2;
-  width: 190px;
-  height: 190px;
+  width: 240px;
+  height: 240px;
   flex-shrink: 0;
   border-radius: 50%;
   overflow: hidden;
@@ -287,6 +393,53 @@ img {
   font-size: 2.5rem;
 }
 
+/* Indicador de scroll: ocupa el centro vacío bajo el texto y la foto,
+   e invita a bajar a los proyectos destacados. */
+.hero__scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  width: fit-content;
+  margin: 0 auto;
+  padding-bottom: 1.1rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: color var(--transition);
+}
+
+.hero__scroll:hover {
+  color: #ffffff;
+}
+
+.hero__scroll-arrow {
+  width: 14px;
+  height: 14px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  animation: hero-scroll-bounce 1.8s ease-in-out infinite;
+}
+
+@keyframes hero-scroll-bounce {
+  0%,
+  100% {
+    transform: rotate(45deg) translate(0, 0);
+  }
+  50% {
+    transform: rotate(45deg) translate(4px, 4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__scroll-arrow {
+    animation: none;
+  }
+}
+
 /* ===== Section head ===== */
 .section-head {
   margin-bottom: 2.5rem;
@@ -298,9 +451,11 @@ img {
 
 .section-head__title {
   font-family: var(--font-display);
-  font-weight: 900;
-  font-size: clamp(2rem, 5vw, 2.8rem);
-  line-height: 1;
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
 .section-head__sub {
@@ -308,6 +463,19 @@ img {
   font-weight: 700;
   font-size: 1rem;
   margin-left: 0.15rem;
+}
+
+.section-head__lead {
+  margin-top: 0.85rem;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: #3f4145;
+  max-width: 52ch;
+  text-wrap: pretty;
+}
+
+.section-head--center .section-head__lead {
+  margin-inline: auto;
 }
 
 /* ===== Timeline horizontal (index) ===== */
@@ -368,12 +536,11 @@ img {
   padding-bottom: 6px;
 }
 
-/* ===== Proyectos destacados (tarjetas) ===== */
+/* ===== Proyectos destacados (composición lead + support) ===== */
 .apps__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-  gap: 1.75rem;
-  align-items: stretch;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
 }
 
 .app-card {
@@ -382,25 +549,123 @@ img {
   background: var(--red);
   color: var(--white);
   border-radius: 20px;
-  padding: 3rem 2rem 2.5rem;
   display: flex;
+}
+
+/* Lead (GearLab): ancho completo, video 3:1 arriba y contenido debajo
+   (nada de texto superpuesto sobre el video). */
+.app-card--lead {
+  grid-column: 1 / -1;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  text-align: left;
+  background: var(--card);
+}
+
+.feature__video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 1;
+  overflow: hidden;
+  background: #0a0a0a;
+  flex-shrink: 0;
+}
+
+.feature__video video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.app-card--lead .app-card__body {
+  position: relative;
+  padding: clamp(1.1rem, 2.5vw, 1.55rem) clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 2.5vw, 1.55rem);
+}
+
+/* Support (Remote Hands, Capa8): vertical y centrado, más compacto */
+.app-card--support {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  padding: 2.75rem 2rem 2.25rem;
 }
 
-.app-card .feature__art {
-  margin-bottom: 1.5rem;
+/* Variante con video de portada (Remote Hands): mismo tratamiento que el
+   lead — video a sangre, tarjeta negra, franja de acciones delgada.
+   La tarjeta entera es cuadrada; el video ocupa el espacio restante tras
+   la franja de acciones y se recorta por abajo (object-position: top). */
+.app-card--support.app-card--media {
+  padding: 0;
+  background: var(--card);
+  align-items: stretch;
+  aspect-ratio: 1 / 1;
+}
+
+.app-card--media .feature__video {
+  flex: 1;
+  min-height: 0;
+}
+
+.app-card--media .feature__video video {
+  object-position: top;
+}
+
+.app-card--media .app-card__body {
+  width: 100%;
+  flex: none;
+  padding: clamp(1.1rem, 3vw, 1.55rem) 1.5rem clamp(1.25rem, 3vw, 1.55rem);
+}
+
+/* Cuerpo interior: marca + descripción + acciones */
+.app-card__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-card--support .app-card__body {
+  align-items: center;
+  width: 100%;
+}
+
+.app-card--lead .app-card__body {
+  flex: 1;
+  align-items: stretch;
 }
 
 .feature__art {
   position: relative;
-  width: 230px;
-  height: 230px;
   border-radius: 50%;
   background: var(--paper);
   overflow: hidden;
-  justify-self: center;
+  flex-shrink: 0;
+}
+
+/* El arte del lead es mayor que el de los support → jerarquía por tamaño */
+.app-card--lead .feature__art {
+  width: clamp(200px, 24vw, 280px);
+  height: clamp(200px, 24vw, 280px);
+}
+
+.app-card--support .feature__art {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 1.5rem;
+}
+
+/* GearLab: comercial 3D en el círculo (fondo oscuro estudio) */
+.feature__art--reel {
+  background: #0a0a0a;
+}
+.feature__reel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* Carrusel: avatar + capturas de proyecto que rotan con crossfade */
@@ -454,9 +719,9 @@ img {
   background: var(--ink);
   color: var(--white);
   font-family: var(--font-display);
-  font-weight: 900;
+  font-weight: 700;
   font-size: 1.9rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   padding: 0 1.2rem;
   border-radius: 10px;
   margin-bottom: 1.25rem;
@@ -536,16 +801,77 @@ img {
 }
 
 .feature__desc {
-  max-width: 560px;
-  margin: 0 auto 1.75rem;
+  max-width: 60ch;
+  margin-bottom: 1.75rem;
   line-height: 1.7;
+}
+
+.app-card--support .feature__desc {
+  margin-inline: auto;
 }
 
 .feature__actions {
   display: flex;
   gap: 0.75rem;
-  justify-content: center;
   flex-wrap: wrap;
+}
+
+.app-card--support .feature__actions {
+  justify-content: center;
+}
+
+.app-card--lead .feature__actions {
+  align-items: center;
+  justify-content: center;
+  gap: 0.47rem;
+}
+
+/* Botón = solo el logo de Torke, sin texto dentro. */
+.btn--logo-only {
+  padding: 0.35rem 1rem;
+}
+
+.app-card--lead .btn__logo {
+  height: 1.7rem;
+}
+
+/* Indicación "WEB APP →" fuera del botón, a su izquierda: invita a hacer
+   clic con un ligero vaivén horizontal hacia el botón. */
+.feature__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.56rem;
+}
+
+.feature__cta-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  animation: cta-nudge 1.6s ease-in-out infinite;
+}
+
+.feature__cta-arrow {
+  font-size: 1rem;
+}
+
+@keyframes cta-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature__cta-hint {
+    animation: none;
+  }
 }
 
 /* Cinta "IA powered" */
@@ -563,7 +889,7 @@ img {
 
 .ribbon__ia {
   font-family: var(--font-display);
-  font-weight: 900;
+  font-weight: 700;
   font-size: 1.1rem;
   display: block;
 }
@@ -645,7 +971,7 @@ img {
 
 .year-label {
   font-family: var(--font-sans);
-  font-weight: 800;
+  font-weight: 700;
   font-size: 2rem;
   line-height: 1;
   color: var(--ink);
@@ -662,14 +988,14 @@ img {
   /* Se agregan columnas conforme crece el ancho (las tarjetas mantienen
      su tamaño en vez de estirarse en monitores grandes). */
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
 }
 
 /* Tarjeta = imagen de portada + panel inferior que se expande en hover */
 .pcard {
   position: relative;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 4 / 3;
   border-radius: var(--radius);
   overflow: hidden;
   cursor: pointer;
@@ -679,6 +1005,18 @@ img {
 
 .pcard--noimg {
   background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+}
+
+/* Preview 3D en la tarjeta (gira solo, no interactivo → clic abre el modal) */
+.pcard__model {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle at 50% 38%, #24242a, #0a0a0a 82%);
+  --poster-color: transparent;
 }
 
 /* Atenúa la imagen y oscurece la base para el texto */
@@ -694,7 +1032,8 @@ img {
   );
 }
 
-.pcard:focus-visible {
+/* El contorno de foco lo dispara el <button> del título (focus-within) */
+.pcard:focus-within {
   outline: 2px solid var(--red);
   outline-offset: 3px;
 }
@@ -704,7 +1043,7 @@ img {
   position: absolute;
   top: 12px;
   left: 12px;
-  z-index: 2;
+  z-index: 4;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -749,6 +1088,26 @@ img {
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
+}
+
+/* Título clicable: botón real (accesible por teclado) sin estilos de botón.
+   El anillo de foco lo pinta .pcard:focus-within. */
+.pcard__open {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pcard__open:focus-visible {
+  outline: none;
 }
 
 /* Detalle: colapsado por defecto, se despliega en hover/focus */
@@ -809,11 +1168,193 @@ img {
   border-radius: var(--radius-btn);
 }
 
+/* Folder cards: Papers, Competitions and PCB's.
+   Tres capas de carpeta:
+     1) fondo rojo oscuro sombreado (el cuerpo de la carpeta),
+     2) la imagen incrustada,
+     3) una tira frontal roja con la silueta de la pestaña.
+   La proporción de la imagen cambia por categoría (papers ≈ A4 vertical) y
+   el título reserva 2 líneas para que todas las tarjetas queden a la par. */
+.folder-card {
+  position: relative;
+  /* Cancela el aspect-ratio 4/3 que .pcard impone al <article>: aquí manda
+     la proporción de la imagen (A4 en papers), no un marco fijo. */
+  aspect-ratio: auto;
+  padding: 12px 12px 0; /* marco rojo arriba y a los lados; abajo va la tira */
+  background: var(--red-dark); /* capa 1: rojo sombreado */
+  border-radius: 16px;
+  overflow: hidden; /* recorta todas las esquinas → nada puntiagudo */
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  box-shadow: 0 12px 26px -16px rgba(13, 13, 13, 0.55);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+/* Capa 2: imagen incrustada */
+.folder-card .folder-card__media {
+  position: relative;
+  border-radius: 9px 9px 0 0;
+  overflow: hidden;
+  background: #ececec center / cover no-repeat;
+  box-shadow: 0 3px 12px -6px rgba(0, 0, 0, 0.55);
+  aspect-ratio: 4 / 3; /* por defecto; se sobrescribe por categoría */
+  transition: transform var(--transition);
+}
+
+/* Proporciones por categoría */
+.folder-card--papers .folder-card__media { aspect-ratio: 210 / 297; } /* A4 vertical */
+.folder-card--competitions .folder-card__media { aspect-ratio: 16 / 9; }
+
+/* Competitions: tarjetas más anchas para que el 16:9 luzca estirado en
+   horizontal, no solo más bajo. */
+.cards:has(.folder-card--competitions) {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+.folder-card--pcbs .folder-card__media { aspect-ratio: 4 / 3; }
+
+/* Fallback cuando un item no trae portada */
+.folder-card.pcard--noimg .folder-card__media {
+  background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+}
+
+.folder-card .pcard__model { z-index: 1; }
+
+/* Turntable pre-renderizado (video) que llena la imagen. Sin captura de clic
+   → el click abre el modal. */
+.folder-card .pcard__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  display: block;
+  pointer-events: none;
+}
+
+/* Icono GitHub sobre la imagen (arriba-derecha), por encima del modelo 3D */
+.folder-card__gh {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--white);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  transition: transform var(--transition);
+}
+
+.folder-card__gh svg {
+  width: 19px;
+  height: 19px;
+  color: #111;
+}
+
+.folder-card__gh:hover {
+  transform: scale(1.08);
+}
+
+/* Capa 3: tira frontal roja (a sangre completa hasta los bordes) */
+.folder-card__panel {
+  position: relative;
+  z-index: 2;
+  margin: 0 -12px; /* sangra hasta los lados de la tarjeta */
+  padding: 0.85rem 1.25rem 1rem;
+  background: var(--red);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+/* Silueta de la pestaña: nace de la tira y sube sobre la imagen */
+.folder-card__panel::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: calc(100% - 1px);
+  width: 46%;
+  height: 20px;
+  background: var(--red);
+  border-radius: 7px 7px 0 0;
+  clip-path: polygon(0 0, 78% 0, 100% 100%, 0 100%);
+}
+
+.folder-card__tag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+}
+
+.folder-card__title {
+  margin: 0;
+  color: var(--white);
+  font-size: clamp(1.02rem, 1.4vw, 1.2rem);
+  font-weight: 700;
+  line-height: 1.25;
+  /* Recorta a 2 líneas y reserva su alto → tarjetas a la par (el min-height
+     iguala 2 líneas: 2 × line-height). El texto vive en el botón hijo, que
+     va en línea para que el box-clamp del h3 lo tome. */
+  min-height: 2.5em;
+}
+
+/* El botón ocupa el ancho para que el span envuelva y recorte bien */
+.folder-card__title .folder-card__open {
+  display: block;
+  width: 100%;
+}
+
+/* El texto vive en un span (los <button> no se dejan recortar por
+   -webkit-line-clamp): aquí sí corta limpio a 2 líneas. */
+.folder-card__titletext {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* Hover / focus: la carpeta se eleva y el documento asoma */
+.folder-card:hover,
+.folder-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 34px -18px rgba(13, 13, 13, 0.7);
+}
+
+.folder-card:hover .folder-card__media,
+.folder-card:focus-within .folder-card__media {
+  transform: translateY(-3px);
+}
+
+/* Anillo de foco visible sobre el rojo (el rojo del pcard no se vería) */
+.folder-card:focus-within {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .folder-card,
+  .folder-card .folder-card__media { transition: none; }
+  .folder-card:hover,
+  .folder-card:focus-within,
+  .folder-card:hover .folder-card__media,
+  .folder-card:focus-within .folder-card__media { transform: none; }
+}
+
 /* Estado vacío (Papers, Competitions, PCB's) */
 .empty-state {
   text-align: center;
   padding: 4rem 1rem;
-  color: var(--muted);
+  /* Gris más oscuro que --muted: 4.6:1 sobre --paper (AA); el --muted fallaba */
+  color: #565c67;
 }
 
 .empty-state h3 {
@@ -821,6 +1362,16 @@ img {
   font-size: 1.5rem;
   color: var(--ink);
   margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  max-width: 52ch;
+  margin-inline: auto;
+  line-height: 1.6;
+}
+
+.empty-state__cta {
+  margin-top: 1.5rem;
 }
 
 /* ===== Modal de proyecto (galería) ===== */
@@ -848,13 +1399,13 @@ img {
 .modal__window {
   position: relative;
   z-index: 1;
-  width: min(920px, 100%);
-  max-height: 90vh;
+  width: min(760px, 100%);
+  max-height: 92vh;
   overflow-y: auto;
   background: #141414;
   color: var(--white);
   border-radius: 18px;
-  padding: 1.75rem;
+  padding: 1.4rem;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
   animation: pop-in 0.22s ease;
 }
@@ -880,16 +1431,45 @@ img {
 .modal__title {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   margin-bottom: 0.5rem;
   padding-right: 2rem;
 }
 
+/* Cabecera del modal: descripción a la izquierda y CTA visible a la derecha */
+.modal__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin-bottom: 1.1rem;
+}
+
+.modal__headtext {
+  flex: 1;
+  min-width: 0;
+}
+
+.modal__headtext .modal__subtitle {
+  margin-bottom: 0.35rem;
+}
+
 .modal__desc {
   color: #c7cbd0;
-  font-size: 0.95rem;
-  line-height: 1.55;
-  margin-bottom: 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+/* En pantallas angostas el CTA baja debajo de la descripción, a lo ancho */
+@media (max-width: 640px) {
+  .modal__head {
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .modal__head .modal__cta {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 .modal__stage {
@@ -902,15 +1482,104 @@ img {
   place-items: center;
 }
 
+/* Con modelo 3D el fondo iguala la ventana → el modelo "flota" integrado,
+   sin sensación de canvas recuadrado. */
+.modal__stage.has-model {
+  background: #141414;
+}
+
+/* Absoluta para que su caja sea exactamente la del stage: con height:100%
+   normal el grid no resuelve el porcentaje (altura circular) y la imagen
+   caía a su altura natural, recortándose. Con contain nunca se corta. */
 .modal__img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
 .modal__empty {
-  color: var(--muted);
+  /* Gris claro para el fondo oscuro del modal (5.5:1 sobre #141414) */
+  color: #b6bbc0;
   font-size: 0.95rem;
+}
+
+/* Visor 3D interactivo (PCB) — llena el stage por encima de la imagen.
+   Fondo igual a la ventana para que el modelo se vea integrado, no en un canvas. */
+.modal__model {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: #141414;
+  --poster-color: transparent;
+  --progress-bar-color: transparent; /* usamos nuestro spinner propio */
+  cursor: grab;
+}
+.modal__model:active {
+  cursor: grabbing;
+}
+
+/* Badge 360° (arriba-izquierda del visor) — indica que el modelo es rotable */
+.modal__badge360 {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  padding: 0.26rem 0.6rem 0.26rem 0.48rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.92);
+  color: #111;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+.modal__badge360 svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* Spinner de carga del modelo (mínimo 2 s; permanece si tarda más) */
+.modal__spinner {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  background: #141414;
+  transition: opacity 0.4s ease;
+}
+.modal__spinner.is-done {
+  opacity: 0;
+  pointer-events: none;
+}
+.modal__spinner-ring {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.15);
+  border-top-color: var(--red);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modal__spinner-ring {
+    animation: pulse 1.2s ease-in-out infinite;
+    border-top-color: rgba(255, 255, 255, 0.15);
+  }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
 }
 
 .modal__caption {
@@ -919,6 +1588,78 @@ img {
   font-size: 0.9rem;
   min-height: 1.2em;
   margin: 0.85rem 0 1rem;
+}
+
+/* Contenedor de galería: por defecto stage arriba y miniaturas debajo */
+.modal__gallery {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal__gallery[hidden] {
+  display: none;
+}
+
+/* Variante "selector" (PCBs con modelo 3D): miniaturas en columna a la
+   izquierda del stage. */
+.modal__gallery--side {
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.modal__gallery--side .modal__stage {
+  flex: 1;
+  min-width: 0;
+}
+
+.modal__gallery--side .modal__thumbs {
+  order: -1;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  margin-bottom: 0;
+  overflow-y: auto;
+}
+
+/* En la columna lateral cada miniatura conserva la proporción natural de su
+   imagen: la caja abraza a la imagen (nada de recortes) y ambas dimensiones
+   están limitadas para que cuadradas y horizontales se vean de tamaño parejo. */
+.modal__gallery--side .modal__thumb {
+  width: auto;
+  height: auto;
+  aspect-ratio: auto;
+  flex: 0 0 auto;
+  align-self: center;
+  background: none;
+}
+
+.modal__gallery--side .modal__thumb img {
+  width: auto;
+  height: auto;
+  max-width: 96px;
+  max-height: 62px;
+}
+
+/* La columna mantiene ancho estable aunque las miniaturas varíen */
+.modal__gallery--side .modal__thumbs {
+  flex: 0 0 102px;
+  align-items: center;
+}
+
+/* Imagen principal con un pequeño margen interior: escala las imágenes
+   (sobre todo las cuadradas) para que no toquen los bordes del stage. */
+.modal__gallery--side .modal__img {
+  padding: 0.9rem;
+}
+
+/* El visor 3D permanece en el DOM (precargado) mientras se muestra otra
+   imagen: solo se oculta visualmente junto con su badge y spinner. */
+.modal__stage.model-hidden .modal__model,
+.modal__stage.model-hidden .modal__badge360,
+.modal__stage.model-hidden .modal__spinner {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .modal__thumbs {
@@ -930,14 +1671,23 @@ img {
 }
 
 .modal__thumb {
+  position: relative;
   width: 84px;
   aspect-ratio: 16 / 9;
-  object-fit: cover;
+  background: #000;
   border-radius: 7px;
+  overflow: hidden;
   cursor: pointer;
   opacity: 0.5;
   border: 2px solid transparent;
   transition: opacity var(--transition), border-color var(--transition);
+}
+
+.modal__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .modal__thumb:hover {
@@ -947,6 +1697,68 @@ img {
 .modal__thumb.is-active {
   opacity: 1;
   border-color: var(--red);
+}
+
+/* Badge "360°" para la miniatura del modelo 3D */
+.modal__thumb--model::after {
+  content: "360°";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+/* En pantallas angostas la columna lateral no cabe: miniaturas debajo,
+   conservando el mismo escalado natural (sin recortes). */
+@media (max-width: 640px) {
+  .modal__gallery--side {
+    flex-direction: column;
+  }
+  .modal__gallery--side .modal__thumbs {
+    order: 0;
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.75rem;
+  }
+  .modal__gallery--side .modal__thumb img {
+    max-width: 96px;
+    max-height: 68px;
+  }
+}
+
+/* Badge de "play" para la miniatura de video */
+.modal__thumb--video::after {
+  content: "▶";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 0.8rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.modal__video {
+  position: absolute;
+  inset: 0;
+}
+
+.modal__video[hidden] {
+  display: none;
+}
+
+.modal__video iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .modal__renders {
@@ -973,10 +1785,10 @@ img {
 }
 
 .modal__cta {
-  width: 100%;
-  justify-content: center;
-  font-size: 1rem;
-  padding: 0.75rem 1.2rem;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: 0.95rem;
+  padding: 0.65rem 1.2rem;
 }
 
 .modal__cta.is-disabled {
@@ -1008,18 +1820,47 @@ img {
   margin-bottom: 1rem;
 }
 
-.pcb-placeholder {
+/* Tarjeta de presentación de vidrio 3D (contacto) */
+.glass-viewer {
   margin: 2.5rem auto;
-  max-width: 480px;
+  max-width: 560px;
   aspect-ratio: 16 / 10;
-  border: 2px dashed var(--red);
   border-radius: var(--radius);
+  overflow: hidden;
   display: grid;
   place-items: center;
+  /* Fondo oscuro: el vidrio necesita contraste para leerse como material */
+  background: radial-gradient(circle at 50% 42%, #26262c, #0a0a0a 82%);
+}
+
+.glass-viewer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.glass-viewer canvas:active {
+  cursor: grabbing;
+}
+
+.glass-viewer__fallback {
+  color: #b6bbc0;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.glass-viewer model-viewer {
+  width: 100%;
+  height: 100%;
+  --poster-color: transparent;
+}
+
+.glass-viewer__caption {
   text-align: center;
   color: var(--muted);
-  padding: 1.5rem;
-  background: rgba(228, 0, 58, 0.03);
+  font-size: 0.9rem;
+  margin: -1.75rem 0 0;
 }
 
 .contact-links {
@@ -1091,17 +1932,48 @@ img {
   }
 }
 
+/* Tarjetas destacadas: una sola columna y el lead se vuelve vertical */
+@media (max-width: 720px) {
+  .apps__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-card--lead .app-card__body {
+    align-items: center;
+    width: 100%;
+    text-align: center;
+    padding: 2rem 1.5rem 1.75rem;
+  }
+
+
+
+  .app-card--lead .feature__actions {
+    justify-content: center;
+  }
+}
+
 @media (max-width: 640px) {
   .hero__inner {
     grid-template-columns: 1fr;
     text-align: center;
-    justify-items: center;
   }
 
   .hero__photo {
+    justify-self: center;
     margin-block: 0;
-    width: 200px;
-    height: 200px;
+    width: 210px;
+    height: 210px;
+  }
+
+  .hero__scroll {
+    gap: 0.5rem;
+    padding-bottom: 1.75rem;
+    font-size: 0.78rem;
+  }
+
+  .hero__scroll-arrow {
+    width: 18px;
+    height: 18px;
   }
 
   .hero__title,

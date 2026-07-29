@@ -7,7 +7,7 @@
   <title>SMV — Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Zilla+Slab:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -16,6 +16,7 @@
     <nav class="nav container">
       <a href="index.html" class="nav__logo">SMV</a>
       <div class="nav__actions">
+        <a href="#about" class="nav__link">About</a>
         <a href="projects.html" class="btn btn--red">Projects</a>
         <a href="contact.html" class="btn btn--ghost-light">Contact</a>
       </div>
@@ -27,11 +28,11 @@
     <section class="hero">
       <div class="container hero__inner">
         <div class="hero__text">
-          <p class="hero__eyebrow">Sebastián Méndez Villegas</p>
-          <h1 class="hero__title">Mechatronics &amp; Cyber-Physical Systems Engineer</h1>
+          <h1 class="hero__title">Sebastián Méndez Villegas</h1>
+          <p class="hero__role">Mechatronics &amp; Cyber-Physical Systems Engineer</p>
           <p class="hero__lead">
-            Focused on robotics, embedded systems, automation, and the development of
-            integrated prototypes that connect hardware, software, sensors, and cloud technologies.
+            Robotics, embedded systems, and automation — integrated prototypes that
+            connect hardware, software, and the cloud.
           </p>
           <div class="hero__cta">
             <a href="projects.html" class="btn btn--white">See Projects</a>
@@ -41,9 +42,12 @@
           <img src="assets/img/perfil_smv.png" alt="Sebastián Méndez Villegas"
                onerror="this.remove()" />
           <span class="hero__photo-fallback" aria-hidden="true">SMV</span>
-          <span class="hero__photo-overlay">Sebastián Méndez Villegas</span>
         </div>
       </div>
+      <a href="#featured" class="hero__scroll">
+        <span class="hero__scroll-label">See featured projects</span>
+        <span class="hero__scroll-arrow" aria-hidden="true"></span>
+      </a>
     </section>
 
     <!-- ===== Proyectos destacados ===== -->
@@ -55,62 +59,64 @@
 
         <div class="apps__grid">
 
-          <!-- GearLab -->
-          <article class="app-card" id="gearlab">
-            <span class="ribbon" title="Built with AI">
-              <span class="ribbon__ia">IA</span>
-              <span class="ribbon__txt">powered</span>
-            </span>
-            <div class="feature__art" data-app="gearlab" data-alt="GearLab mascot"></div>
-            <span class="brandmark">MECATR<span class="gear-o" aria-hidden="true"></span>NICA</span>
-            <p class="feature__desc">
-              GearLab is a web-app to design and download STL, STEP or OBJ gears.
-              Based on a parametric design, creativity is the limit.
-            </p>
-            <div class="feature__actions">
-              <a class="btn btn--black" href="https://gear-designer.sebastianmendezv.com/"
-                 target="_blank" rel="noopener">GearLab web</a>
-              <a class="btn btn--red-outline" href="https://gear-designer.sebastianmendezv.com/community"
-                 target="_blank" rel="noopener">Community projects</a>
+          <!-- LEAD: GearLab — app en vivo, tarjeta ancha y horizontal -->
+          <article class="app-card app-card--lead" id="gearlab">
+            <div class="feature__video">
+              <video src="assets/vid/Hero_gearlab.mp4" autoplay loop muted playsinline></video>
+            </div>
+            <div class="app-card__body">
+              <div class="feature__actions">
+                <div class="feature__cta">
+                  <span class="feature__cta-hint" aria-hidden="true">WEB APP <span class="feature__cta-arrow">→</span></span>
+                  <a class="btn btn--white btn--logo-only" href="https://gear-designer.sebastianmendezv.com/"
+                     target="_blank" rel="noopener">
+                    <img class="btn__logo" src="assets/img/imagotipo.png" alt="Open the Torke web app" />
+                  </a>
+                </div>
+                <a class="btn btn--red-outline" href="https://gear-designer.sebastianmendezv.com/community"
+                   target="_blank" rel="noopener">Community</a>
+              </div>
             </div>
           </article>
 
-          <!-- Remote Hands (sin etiqueta IA) -->
-          <article class="app-card" id="remote-hands">
-            <div class="feature__art" data-app="remotehands" data-alt="Remote Hands"></div>
-            <span class="brandmark brandmark--text">Remote Hands</span>
-            <p class="feature__desc">
-              Teleoperated mobile-manipulator for inclusive logistics: mixed-reality
-              control, a ZMQ link and an ESP32-driven robot.
-            </p>
-            <div class="feature__actions">
-              <a class="btn btn--black"
-                 href="https://github.com/sebas30073007/teleop-mobile-manipulator"
-                 target="_blank" rel="noopener">Repository</a>
-              <button class="btn btn--red-outline" type="button" disabled>Docs</button>
+          <!-- SUPPORT: Remote Hands (repo, no app en vivo) -->
+          <article class="app-card app-card--support app-card--media" id="remote-hands">
+            <div class="feature__video feature__video--square">
+              <video src="assets/vid/Hero_remotehands.mp4" autoplay loop muted playsinline></video>
+            </div>
+            <div class="app-card__body">
+              <div class="feature__actions">
+                <a class="btn btn--white"
+                   href="https://github.com/sebas30073007/teleop-mobile-manipulator"
+                   target="_blank" rel="noopener">Repository</a>
+              </div>
             </div>
           </article>
 
-          <!-- Capa8 -->
-          <article class="app-card" id="capa8">
+          <!-- SUPPORT: Capa8 — app en vivo -->
+          <article class="app-card app-card--support" id="capa8">
             <span class="ribbon" title="Built with AI">
-              <span class="ribbon__ia">IA</span>
+              <span class="ribbon__ia">AI</span>
               <span class="ribbon__txt">powered</span>
             </span>
             <div class="feature__art" data-app="capa8" data-alt="Capa8 mascot"></div>
-            <span class="brandmark brandmark--logo">
-              <img class="brandmark__img" src="assets/img/capa8_logo.png" alt="Topologías — Capa8" />
-            </span>
-            <p class="feature__desc">
-              Capa8 is a web-app to generate network topology diagrams.
-              Based on the most common nodes of each OSI layer.
-            </p>
-            <div class="feature__actions">
-              <a class="btn btn--black" href="https://capa8.sebastianmendezv.com/"
-                 target="_blank" rel="noopener">Capa 8 web</a>
-              <a class="btn btn--red-outline"
-                 href="https://github.com/sebas30073007/IA_mecatronica_Capa8"
-                 target="_blank" rel="noopener">Repo</a>
+            <div class="app-card__body">
+              <span class="brandmark brandmark--logo">
+                <img class="brandmark__img" src="assets/img/capa8_logo.png" alt="Topologías — Capa8" />
+              </span>
+              <p class="feature__desc">
+                Capa8 is a web-app to generate network topology diagrams.
+                Based on the most common nodes of each OSI layer.
+              </p>
+              <div class="feature__actions">
+                <a class="btn btn--live" href="https://capa8.sebastianmendezv.com/"
+                   target="_blank" rel="noopener">
+                  <span class="btn__dot" aria-hidden="true"></span>Open Capa8 live
+                </a>
+                <a class="btn btn--red-outline"
+                   href="https://github.com/sebas30073007/IA_mecatronica_Capa8"
+                   target="_blank" rel="noopener">Repo</a>
+              </div>
             </div>
           </article>
 

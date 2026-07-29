@@ -7,7 +7,7 @@
   <title>SMV — Projects</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Zilla+Slab:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -16,6 +16,7 @@
     <nav class="nav container">
       <a href="index.html" class="nav__logo">SMV</a>
       <div class="nav__actions">
+        <a href="index.html#about" class="nav__link">About</a>
         <a href="contact.html" class="btn btn--ghost-light">Contact</a>
       </div>
     </nav>
@@ -26,9 +27,10 @@
     <section class="hero">
       <div class="container hero__inner">
         <div class="hero__text">
+          <h1 class="hero__title">Projects</h1>
           <p class="hero__lead">
-            All these projects are open-source. All CAD, scripts and architectures
-            are on each documentation.
+            All of these are open-source. The CAD, scripts and architecture
+            for each one live in its own documentation.
           </p>
           <a href="https://github.com/sebas30073007" target="_blank" rel="noopener"
              class="hero__github">
@@ -42,25 +44,24 @@
           <img src="assets/img/perfil_smv.png" alt="Sebastián Méndez Villegas"
                onerror="this.remove()" />
           <span class="hero__photo-fallback" aria-hidden="true">SMV</span>
-          <span class="hero__photo-overlay">Sebastián Méndez Villegas</span>
         </div>
       </div>
     </section>
 
     <!-- ===== Tabs / categorías ===== -->
     <div class="tabs">
-      <div class="tabs__group" id="tabsGroup" role="tablist">
-        <button class="tab is-active" data-cat="projects" role="tab">Projects</button>
-        <button class="tab" data-cat="papers" role="tab">Papers</button>
-        <button class="tab" data-cat="competitions" role="tab">Competitions</button>
-        <button class="tab" data-cat="pcbs" role="tab">PCB's</button>
+      <div class="tabs__group" id="tabsGroup" role="tablist" aria-label="Project categories">
+        <button class="tab is-active" id="tab-projects" data-cat="projects" role="tab" aria-selected="true" aria-controls="catContent">Projects</button>
+        <button class="tab" id="tab-papers" data-cat="papers" role="tab" aria-selected="false" aria-controls="catContent" tabindex="-1">Papers</button>
+        <button class="tab" id="tab-competitions" data-cat="competitions" role="tab" aria-selected="false" aria-controls="catContent" tabindex="-1">Competitions</button>
+        <button class="tab" id="tab-pcbs" data-cat="pcbs" role="tab" aria-selected="false" aria-controls="catContent" tabindex="-1">PCB's</button>
       </div>
     </div>
 
-    <!-- ===== Contenido (timeline por año) ===== -->
+    <!-- ===== Content (timeline by year) ===== -->
     <section class="section" style="padding-top: 2rem;">
-      <div class="container" id="catContent">
-        <!-- Generado en js/main.js según la categoría activa -->
+      <div class="container" id="catContent" role="tabpanel" tabindex="0" aria-labelledby="tab-projects">
+        <!-- Rendered by js/main.js based on the active category -->
       </div>
     </section>
   </main>
@@ -69,23 +70,33 @@
   <div class="modal" id="projectModal" hidden>
     <div class="modal__backdrop" data-close></div>
     <div class="modal__window" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button class="modal__close" type="button" data-close aria-label="Cerrar">&times;</button>
+      <button class="modal__close" type="button" data-close aria-label="Close">&times;</button>
       <h3 class="modal__title" id="modalTitle"></h3>
-      <p class="modal__desc" id="modalDesc"></p>
+      <!-- Descripción + CTA al mismo nivel: el botón visible desde el inicio -->
+      <div class="modal__head">
+        <div class="modal__headtext">
+          <h4 class="modal__subtitle" id="modalDescLabel" hidden></h4>
+          <p class="modal__desc" id="modalDesc"></p>
+        </div>
+        <a class="btn btn--red modal__cta" id="modalCta" target="_blank" rel="noopener">
+          View repository →
+        </a>
+      </div>
 
-      <div class="modal__stage">
-        <img class="modal__img" id="modalImg" alt="" />
-        <p class="modal__empty" id="modalEmpty" hidden>Imágenes próximamente</p>
+      <!-- Galería: en proyectos con modelo 3D las miniaturas van en columna
+           a la izquierda del stage (clase modal__gallery--side desde JS) -->
+      <div class="modal__gallery" id="modalGallery">
+        <div class="modal__stage">
+          <!-- src lo pone js/main.js al abrir un proyecto; oculto hasta entonces -->
+          <img class="modal__img" id="modalImg" alt="" hidden /><!-- impeccable-disable-line broken-image -->
+          <div class="modal__video" id="modalVideo" hidden></div>
+          <p class="modal__empty" id="modalEmpty" hidden>Images coming soon</p>
+        </div>
+        <div class="modal__thumbs" id="modalThumbs"></div>
       </div>
       <p class="modal__caption" id="modalCaption"></p>
 
-      <div class="modal__thumbs" id="modalThumbs"></div>
-
       <div class="modal__renders" id="modalRenders" hidden></div>
-
-      <a class="btn btn--red modal__cta" id="modalCta" target="_blank" rel="noopener">
-        Ver repositorio →
-      </a>
     </div>
   </div>
 
@@ -98,6 +109,7 @@
     </div>
   </footer>
 
+  <!-- model-viewer se carga bajo demanda desde main.js (solo cuando hay un .glb) -->
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
 </body>
