@@ -91,6 +91,30 @@ function initAboutCarousel() {
   document.querySelectorAll("[data-about]").forEach((el) => mountCarousel(el, ABOUT_PHOTOS, 7875));
 }
 
+// Videos de tarjeta (Remote Hands, Capa8): no arrancan hasta que la tarjeta
+// está mayormente en pantalla, y se pausan al salir (ahorra ancho de banda
+// y evita que varios videos peleen por red/CPU nada más cargar la página).
+function initPlayOnVisible() {
+  const videos = document.querySelectorAll(".js-play-on-visible");
+  if (!videos.length) return;
+
+  if (!("IntersectionObserver" in window)) {
+    videos.forEach((v) => v.play().catch(() => {}));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.play().catch(() => {});
+        else entry.target.pause();
+      });
+    },
+    { threshold: 0.6 }
+  );
+  videos.forEach((v) => observer.observe(v));
+}
+
 // ---------- Projects page ----------
 // Poner en true cuando quieras que el botón CTA del modal enlace al repo.
 const ENABLE_REPO_LINKS = false;
@@ -226,11 +250,23 @@ function syncTurntables() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   document.querySelectorAll(".pcard__video").forEach((v) => {
     if (!v.duration || !isFinite(v.duration)) return;
+    // Sin suficiente buffer todavía (carga en frío, sin caché): no lo toques.
+    // Forzar un seek a una zona no descargada solo provoca un stall, y en el
+    // siguiente tick se repite el salto → el "gira un poco y reinicia" que
+    // se veía en la primera visita (se resolvía solo al recargar por caché).
+    if (v.readyState < 3) return;
     const t = (performance.now() / 1000) % v.duration;
     // Corrige solo derivas visibles (ignorando el cruce del loop) para no
     // provocar micro-saltos en cada tick.
     const drift = Math.abs(v.currentTime - t);
-    if (drift > 0.2 && Math.abs(drift - v.duration) > 0.2) v.currentTime = t;
+    let targetBuffered = false;
+    for (let i = 0; i < v.buffered.length; i++) {
+      if (t >= v.buffered.start(i) && t <= v.buffered.end(i)) {
+        targetBuffered = true;
+        break;
+      }
+    }
+    if (drift > 0.2 && Math.abs(drift - v.duration) > 0.2 && targetBuffered) v.currentTime = t;
     if (v.paused) v.play().catch(() => {});
   });
 }
@@ -598,6 +634,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderTimeline();
   initFeatureCarousels();
   initAboutCarousel();
+  initPlayOnVisible();
   initTabs();
   initProjectModal();
   initTurntableSync();

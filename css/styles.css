@@ -1767,47 +1767,17 @@ img {
   margin-bottom: 1rem;
 }
 
-/* Tarjeta de presentación de vidrio 3D (contacto) */
-.glass-viewer {
-  margin: 2.5rem auto;
-  max-width: 560px;
-  aspect-ratio: 16 / 10;
-  border-radius: var(--radius);
-  overflow: hidden;
-  display: grid;
-  place-items: center;
-  /* Fondo oscuro: el vidrio necesita contraste para leerse como material */
-  background: radial-gradient(circle at 50% 42%, #26262c, #0a0a0a 82%);
+.contact-email {
+  margin: 2rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 700;
+  word-break: break-word;
 }
 
-.glass-viewer canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  cursor: grab;
-}
-
-.glass-viewer canvas:active {
-  cursor: grabbing;
-}
-
-.glass-viewer__fallback {
-  color: #b6bbc0;
-  text-align: center;
-  padding: 1.5rem;
-}
-
-.glass-viewer model-viewer {
-  width: 100%;
-  height: 100%;
-  --poster-color: transparent;
-}
-
-.glass-viewer__caption {
-  text-align: center;
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin: -1.75rem 0 0;
+.contact-email a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .contact-links {
