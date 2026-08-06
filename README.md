@@ -8,19 +8,22 @@ publicar en **GitHub Pages**. Diseño base tomado de `assets/docs/portfolio SMV.
 
 ```
 portfolio/
-├── index.html        # Home: hero + about me (timeline) + GearLab + Capa8
-├── projects.html     # Tabs (Projects/Papers/Competitions/PCB's) + timeline por año
-├── contact.html      # Contacto (placeholder tarjeta-PCB 3D)
+├── index.html              # Home: feed de proyectos (búsqueda + filtro), sin hero
+├── featured-projects.html  # Catálogo premium: Torque, Remote Hands, Capa8
 ├── css/
-│   └── styles.css    # Sistema de diseño (colores/tipografía en :root)
+│   └── styles.css          # Sistema de diseño (colores/tipografía en :root)
 ├── js/
-│   ├── data.js       # TODO el contenido editable (timeline + catálogo)
-│   └── main.js       # Render de timeline, tabs y tarjetas
+│   ├── data.js              # TODO el contenido editable (catálogo)
+│   └── main.js               # Render del feed, modal, filtros y paneles About/Contact
 ├── assets/
-│   ├── img/          # Coloca aquí profile.jpg (foto del hero)
-│   └── docs/         # PDF de diseño base
+│   ├── img/                # Coloca aquí profile.jpg (foto del hero)
+│   └── docs/                # PDF de diseño base
 └── README.md
 ```
+
+About y Contact ya no son páginas propias: viven como paneles tipo acordeón
+que se despliegan desde los botones del navbar (`js/main.js` → `initRevealPanels`),
+disponibles en cualquier página.
 
 ## Editar contenido
 

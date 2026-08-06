@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Portfolio of Sebastián Méndez Villegas — Mechatronics and Cyber-Physical Systems Engineer. Projects, papers, competitions and PCBs." />
-  <title>SMV — Projects</title>
+  <meta name="description" content="Featured projects by Sebastián Méndez Villegas — Torque, Remote Hands and Capa8." />
+  <title>SMV — Featured Projects</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Zilla+Slab:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -93,74 +93,69 @@
   </div>
 
   <main>
-    <h1 class="sr-only">Sebastián Méndez Villegas — Projects, papers, competitions and PCBs</h1>
+    <!-- ===== Proyectos destacados ===== -->
+    <section class="apps section" id="featured" style="padding-top: 3rem;">
+      <div class="container">
+        <header class="section-head section-head--center">
+          <h1 class="section-head__title">Featured projects</h1>
+        </header>
 
-    <!-- ===== Search + filter ===== -->
-    <div class="search-bar">
-      <div class="search-bar__row container">
-        <a href="featured-projects.html" class="btn btn--red search-bar__featured">Featured Projects</a>
-        <div class="search-bar__group">
-          <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="search" id="searchInput" class="search-bar__input" placeholder="Search" aria-label="Search projects" autocomplete="off" />
-          <div class="search-bar__filter-wrap">
-            <button type="button" id="filterToggle" class="search-bar__filter" aria-haspopup="true" aria-expanded="false" aria-controls="filterPanel" aria-label="Filter">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M7 12h10M10 19h4"/></svg>
-              <span class="search-bar__filter-count" id="filterCount" hidden></span>
-            </button>
-            <div class="filter-panel" id="filterPanel" role="group" aria-label="Filter by type" hidden>
-              <label class="filter-panel__opt"><input type="checkbox" data-filter="hardware" checked /><span>Hardware projects</span></label>
-              <label class="filter-panel__opt"><input type="checkbox" data-filter="software" checked /><span>Software projects</span></label>
-              <label class="filter-panel__opt"><input type="checkbox" data-filter="papers" checked /><span>Papers</span></label>
-              <label class="filter-panel__opt"><input type="checkbox" data-filter="competitions" checked /><span>Competitions</span></label>
-              <label class="filter-panel__opt"><input type="checkbox" data-filter="pcbs" checked /><span>PCB's</span></label>
-              <button type="button" class="filter-panel__clear" id="filterClear">Clear filters</button>
+        <div class="apps__grid">
+
+          <!-- LEAD: GearLab (Torque) — app en vivo, tarjeta ancha y horizontal -->
+          <article class="app-card app-card--lead" id="gearlab">
+            <div class="feature__video">
+              <video src="assets/vid/Hero_gearlab.mp4" autoplay loop muted playsinline></video>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            <div class="app-card__body">
+              <div class="feature__actions">
+                <div class="feature__cta">
+                  <span class="feature__cta-hint" aria-hidden="true">WEB APP <span class="feature__cta-arrow">→</span></span>
+                  <a class="btn btn--white btn--logo-only" href="https://gear-designer.sebastianmendezv.com/"
+                     target="_blank" rel="noopener">
+                    <img class="btn__logo" src="assets/img/imagotipo.png" alt="Open the Torke web app" />
+                  </a>
+                </div>
+                <a class="btn btn--red-outline" href="https://gear-designer.sebastianmendezv.com/community"
+                   target="_blank" rel="noopener">Community</a>
+              </div>
+            </div>
+          </article>
 
-    <!-- ===== Content (unified feed, sectioned by year) ===== -->
-    <section class="section" style="padding-top: 1.5rem;">
-      <div class="container" id="catContent">
-        <!-- Rendered by js/main.js -->
+          <!-- SUPPORT: Remote Hands (repo, no app en vivo) -->
+          <article class="app-card app-card--support app-card--media" id="remote-hands">
+            <div class="feature__video feature__video--square">
+              <video class="js-play-on-visible" src="assets/vid/Hero_remotehands.mp4" loop muted playsinline></video>
+            </div>
+            <div class="app-card__body">
+              <div class="feature__actions">
+                <a class="btn btn--white"
+                   href="https://github.com/sebas30073007/teleop-mobile-manipulator"
+                   target="_blank" rel="noopener">Repository</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- SUPPORT: Capa8 — app en vivo -->
+          <article class="app-card app-card--support app-card--media" id="capa8">
+            <div class="feature__video feature__video--square">
+              <video class="js-play-on-visible" src="assets/vid/Hero_capa8.mp4" loop muted playsinline></video>
+            </div>
+            <div class="app-card__body">
+              <div class="feature__actions">
+                <a class="btn btn--white" href="https://capa8.sebastianmendezv.com/"
+                   target="_blank" rel="noopener">Open Capa8 live</a>
+                <a class="btn btn--red-outline"
+                   href="https://github.com/sebas30073007/IA_mecatronica_Capa8"
+                   target="_blank" rel="noopener">Repo</a>
+              </div>
+            </div>
+          </article>
+
+        </div>
       </div>
     </section>
   </main>
-
-  <!-- ===== Modal de proyecto (galería) ===== -->
-  <div class="modal" id="projectModal" hidden>
-    <div class="modal__backdrop" data-close></div>
-    <div class="modal__window" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button class="modal__close" type="button" data-close aria-label="Close">&times;</button>
-      <h3 class="modal__title" id="modalTitle"></h3>
-      <!-- Descripción + CTA al mismo nivel: el botón visible desde el inicio -->
-      <div class="modal__head">
-        <div class="modal__headtext">
-          <h4 class="modal__subtitle" id="modalDescLabel" hidden></h4>
-          <p class="modal__desc" id="modalDesc"></p>
-        </div>
-        <a class="btn btn--red modal__cta" id="modalCta" target="_blank" rel="noopener">
-          View repository →
-        </a>
-      </div>
-
-      <!-- Galería: en proyectos con modelo 3D las miniaturas van en columna
-           a la izquierda del stage (clase modal__gallery--side desde JS) -->
-      <div class="modal__gallery" id="modalGallery">
-        <div class="modal__stage">
-          <!-- src lo pone js/main.js al abrir un proyecto; oculto hasta entonces -->
-          <img class="modal__img" id="modalImg" alt="" hidden /><!-- impeccable-disable-line broken-image -->
-          <div class="modal__video" id="modalVideo" hidden></div>
-          <p class="modal__empty" id="modalEmpty" hidden>Images coming soon</p>
-        </div>
-        <div class="modal__thumbs" id="modalThumbs"></div>
-      </div>
-      <p class="modal__caption" id="modalCaption"></p>
-
-      <div class="modal__renders" id="modalRenders" hidden></div>
-    </div>
-  </div>
 
   <!-- ===== Footer ===== -->
   <footer class="site-footer">
@@ -171,7 +166,6 @@
     </div>
   </footer>
 
-  <!-- model-viewer se carga bajo demanda desde main.js (solo cuando hay un .glb) -->
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
 </body>

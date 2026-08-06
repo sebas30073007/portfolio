@@ -48,6 +48,10 @@ const ABOUT_PHOTOS = [
    Cada item se pinta como tarjeta clicable que abre un modal con su galería.
    Campos de item:
      - title, tag, desc, tools
+     - subtype: "hardware" | "software" — solo en la categoría "projects";
+                alimenta el filtro de la página (Hardware projects / Software
+                projects). El resto de categorías usa su propia clave
+                (papers, competitions, pcbs) como tipo de filtro.
      - github: URL del repo (si es open-source → muestra el icono de GitHub).
                Pon null si es de código cerrado (no se muestra el icono).
      - url + ctaLabel: destino y texto del botón del modal.
@@ -64,6 +68,7 @@ const CATALOG = {
       2026: [
         {
           title: "Remote Hands",
+          subtype: "hardware",
           tag: "Robotics · XR",
           desc: "Teleoperated mobile-manipulator for inclusive logistics, with mixed-reality (Meta Quest) interface and ZMQ communication.",
           tools: "ROS 2 · ZMQ · MicroPython",
@@ -83,6 +88,7 @@ const CATALOG = {
         },
         {
           title: "Gear Lab",
+          subtype: "software",
           tag: "Web tool · CAD",
           desc: "Parametric web tool to design, visualize and export gear systems (STL/STEP/OBJ) for laser cutting and 3D printing.",
           tools: "TypeScript · Three.js",
@@ -101,6 +107,7 @@ const CATALOG = {
         },
         {
           title: "Structural Mapping in Mixed Reality",
+          subtype: "software",
           tag: "Mixed Reality",
           desc: "Structural mapping supported by mixed reality for inspection and environment registration.",
           tools: "Unity · AR Foundation",
@@ -113,6 +120,7 @@ const CATALOG = {
         },
         {
           title: "Capa 8 — Network AI",
+          subtype: "software",
           tag: "Artificial Intelligence",
           desc: "AI applied to computer networks — the 'layer 8', the human factor — generating OSI topology diagrams.",
           tools: "PyTorch · Scapy",
@@ -133,6 +141,7 @@ const CATALOG = {
       2025: [
         {
           title: "Waste Sorting Robot",
+          subtype: "hardware",
           tag: "Cyber-Physical Systems",
           desc: "Mobile robot that collects and classifies waste (glass, cans, Tetra Pak) using computer vision and a monitoring UI.",
           tools: "OpenCV · Python",

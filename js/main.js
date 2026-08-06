@@ -1,8 +1,10 @@
 /* ===================================================================
    Lógica del portafolio
    - Footer: año dinámico (todas las páginas)
-   - Index: timeline horizontal
-   - Projects: tabs de categorías + grid por año
+   - Header: paneles About/Contact tipo acordeón (todas las páginas)
+   - index.html (home): feed unificado de proyectos (búsqueda + filtro)
+     tipo masonry, por año
+   - featured-projects.html: catálogo premium (los 3 videos destacados)
    =================================================================== */
 
 // ---------- Footer year ----------
@@ -119,8 +121,6 @@ function initPlayOnVisible() {
 // Poner en true cuando quieras que el botón CTA del modal enlace al repo.
 const ENABLE_REPO_LINKS = false;
 
-const GH_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.6 18 4.9 18 4.9c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>`;
-
 const TOOL_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L4 16.8V20h3.2l5.3-5.3a4 4 0 0 0 5.2-5.4l-2.5 2.5-2.3-.6-.6-2.3 2.4-2.4z"/></svg>`;
 
 // Icono 360° (visor 3D rotable): órbita elíptica con flechas
@@ -153,72 +153,130 @@ function slugify(s) {
     .replace(/^-|-$/g, "");
 }
 
-function renderCategory(catKey) {
+function escapeHtml(s) {
+  return String(s).replace(
+    /[&<>"']/g,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+  );
+}
+
+// ---------- Feed unificado (búsqueda + filtro, estilo Pinterest) ----------
+// Categorías del CATALOG, en el orden en que se van intercalando dentro de
+// cada año. "projects" se reparte a su vez en hardware/software (ver
+// itemFilterType) para alimentar el panel de filtro.
+const FEED_CAT_ORDER = ["projects", "papers", "competitions", "pcbs"];
+const FILTER_TYPES = ["hardware", "software", "papers", "competitions", "pcbs"];
+
+function itemFilterType(catKey, item) {
+  return catKey === "projects" ? item.subtype || "hardware" : catKey;
+}
+
+// Agrupa todo el CATALOG por año → categoría → registros, sin filtrar todavía.
+function buildFeedIndex() {
+  const byYear = new Map();
+  FEED_CAT_ORDER.forEach((catKey) => {
+    const cat = CATALOG[catKey];
+    if (!cat || !cat.years) return;
+    Object.keys(cat.years).forEach((year) => {
+      cat.years[year].forEach((item, i) => {
+        const pid = `${catKey}-${slugify(item.title)}-${i}`;
+        const record = { catKey, year, item, pid, ftype: itemFilterType(catKey, item) };
+        if (!byYear.has(year)) byYear.set(year, {});
+        const bucket = byYear.get(year);
+        (bucket[catKey] = bucket[catKey] || []).push(record);
+      });
+    });
+  });
+  return byYear;
+}
+
+// Intercala round-robin entre categorías (projects, papers, competitions,
+// pcbs) para que el masonry mezcle proporciones en vez de agruparlas.
+function interleave(bucket, order) {
+  const queues = order.map((k) => (bucket[k] || []).slice());
+  const out = [];
+  let added = true;
+  while (added) {
+    added = false;
+    for (const q of queues) {
+      if (q.length) {
+        out.push(q.shift());
+        added = true;
+      }
+    }
+  }
+  return out;
+}
+
+function matchesSearch(item, query) {
+  if (!query) return true;
+  const haystack = [item.title, item.tag, item.tools, item.desc]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  return haystack.includes(query);
+}
+
+function renderCard(catKey, item, pid) {
+  const cover = item.cover || (item.gallery && item.gallery[0] ? item.gallery[0].src : "");
+  const bgStyle = cover ? ` style="background-image:url('${cover}')"` : "";
+  // Turntable 3D pre-renderizado (video liviano, sin WebGL en la tarjeta).
+  // Un click abre el modal con el modelo interactivo real.
+  // preload="auto" (antes "metadata"): con solo metadata, la descarga del
+  // video no arrancaba hasta el autoplay, así que en una carga fría (sin
+  // caché) alcanzaba a bufferear muy poco antes de reproducir — se veía
+  // girar un poco y reiniciar en bucle hasta que el buffer alcanzaba. Con
+  // "auto" el navegador empieza a bajar el video desde que carga la página,
+  // no desde que arranca a reproducirse.
+  const spin = item.spin
+    ? `<video class="pcard__video" autoplay loop muted playsinline preload="auto"${
+        item.poster ? ` poster="${item.poster}"` : ""
+      }>
+         <source src="${item.spin}.webm" type="video/webm">
+         <source src="${item.spin}.mp4" type="video/mp4">
+       </video>`
+    : "";
+  // La tarjeta ya no muestra el badge de GitHub (queda solo el CTA del
+  // modal); la imagen ocupa todo el fondo sin nada superpuesto encima.
+  const folderTag = item.tag ? `<span class="folder-card__tag">${item.tag}</span>` : "";
+
+  // Todas las categorías usan la tarjeta tipo carpeta (folder-card).
+  return `
+    <article class="pcard folder-card folder-card--${catKey}${cover ? "" : " pcard--noimg"}" data-pid="${pid}">
+      <div class="folder-card__media"${bgStyle}>${spin}</div>
+      <div class="folder-card__panel">
+        ${folderTag}
+        <h3 class="folder-card__title">
+          <button class="pcard__open" type="button" data-pid="${pid}"><span class="folder-card__titletext">${item.title}</span></button>
+        </h3>
+      </div>
+    </article>`;
+}
+
+// Índice construido una vez (el CATALOG no cambia en tiempo de ejecución)
+let FEED_INDEX = null;
+
+function renderFeed(activeFilters, query) {
   const container = document.getElementById("catContent");
   if (!container || typeof CATALOG === "undefined") return;
 
-  const cat = CATALOG[catKey];
-  const years = cat && cat.years ? Object.keys(cat.years).sort((a, b) => b - a) : [];
+  if (!FEED_INDEX) FEED_INDEX = buildFeedIndex();
+  const years = [...FEED_INDEX.keys()].sort((a, b) => b - a);
 
   PROJECT_INDEX = {};
+  let totalShown = 0;
 
-  // Estado vacío: nota de lo que viene + una acción real (no un callejón sin salida)
-  if (years.length === 0) {
-    const note = cat && cat.note ? cat.note : "Nothing here yet — this section is on the way.";
-    container.innerHTML = `
-      <div class="empty-state">
-        <h3>${cat ? cat.label : ""}</h3>
-        <p>${note}</p>
-        <a class="btn btn--red-outline empty-state__cta"
-           href="https://github.com/sebas30073007" target="_blank" rel="noopener">
-          Browse my GitHub in the meantime →
-        </a>
-      </div>`;
-    return;
-  }
-
-  // model-viewer ya NO se usa en las tarjetas (usan video turntable): la
-  // librería 3D se carga bajo demanda solo al abrir un modal con .glb.
-
-  container.innerHTML = years
+  const blocks = years
     .map((year) => {
-      const cards = cat.years[year]
-        .map((item, i) => {
-          const pid = `${catKey}-${slugify(item.title)}-${i}`;
-          PROJECT_INDEX[pid] = item;
-
-          const cover =
-            item.cover || (item.gallery && item.gallery[0] ? item.gallery[0].src : "");
-          const bgStyle = cover ? ` style="background-image:url('${cover}')"` : "";
-          // Turntable 3D pre-renderizado (video liviano, sin WebGL en la tarjeta).
-          // Un click abre el modal con el modelo interactivo real.
-          const spin = item.spin
-            ? `<video class="pcard__video" autoplay loop muted playsinline preload="metadata"${
-                item.poster ? ` poster="${item.poster}"` : ""
-              }>
-                 <source src="${item.spin}.webm" type="video/webm">
-                 <source src="${item.spin}.mp4" type="video/mp4">
-               </video>`
-            : "";
-          // Icono GitHub solo si el proyecto es open-source (tiene github)
-          const gh = item.github
-            ? `<a class="folder-card__gh" href="${item.github}" target="_blank" rel="noopener" aria-label="GitHub">${GH_ICON}</a>`
-            : "";
-          const folderTag = item.tag
-            ? `<span class="folder-card__tag">${item.tag}</span>`
-            : "";
-
-          // Todas las categorías usan la tarjeta tipo carpeta (folder-card).
-          return `
-            <article class="pcard folder-card folder-card--${catKey}${cover ? "" : " pcard--noimg"}" data-pid="${pid}">
-              <div class="folder-card__media"${bgStyle}>${spin}${gh}</div>
-              <div class="folder-card__panel">
-                ${folderTag}
-                <h3 class="folder-card__title">
-                  <button class="pcard__open" type="button" data-pid="${pid}"><span class="folder-card__titletext">${item.title}</span></button>
-                </h3>
-              </div>
-            </article>`;
+      const records = interleave(FEED_INDEX.get(year), FEED_CAT_ORDER).filter(
+        (r) => activeFilters.has(r.ftype) && matchesSearch(r.item, query)
+      );
+      if (!records.length) return "";
+      totalShown += records.length;
+      const cards = records
+        .map((r) => {
+          PROJECT_INDEX[r.pid] = r.item;
+          return renderCard(r.catKey, r.item, r.pid);
         })
         .join("");
 
@@ -232,6 +290,22 @@ function renderCategory(catKey) {
         </div>`;
     })
     .join("");
+
+  if (!totalShown) {
+    const msg = query
+      ? `No results for “${escapeHtml(query)}”. Try another keyword or reset the search and filters.`
+      : "No projects match the selected filters.";
+    const resetLabel = query ? "Clear search" : "Clear filters";
+    container.innerHTML = `
+      <div class="empty-state">
+        <h3>Nothing here</h3>
+        <p>${msg}</p>
+        <button type="button" class="btn btn--red-outline empty-state__cta" id="emptyStateReset">${resetLabel}</button>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = blocks;
 
   // Respeta "reduce motion": no reproduce los turntables (queda el poster fijo)
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -586,45 +660,182 @@ function initProjectModal() {
   });
 }
 
-function initTabs() {
-  const group = document.getElementById("tabsGroup");
-  if (!group) return;
+// Lee el filtro activo desde location.hash (p. ej. "#pcbs" o
+// "#hardware,pcbs"). Sin hash, o con un hash que no reconoce ningún tipo,
+// muestra todo — así el link normal de la página sigue siendo el histórico
+// completo.
+function parseHashFilters() {
+  const raw = decodeURIComponent(location.hash.replace(/^#/, "")).trim().toLowerCase();
+  if (!raw) return new Set(FILTER_TYPES);
+  const parts = raw.split(",").map((s) => s.trim()).filter((s) => FILTER_TYPES.includes(s));
+  return parts.length ? new Set(parts) : new Set(FILTER_TYPES);
+}
 
-  const tabs = [...group.querySelectorAll(".tab")];
-  const panel = document.getElementById("catContent");
+// Refleja el filtro activo en la URL para que sea compartible (link con
+// filtro ya aplicado). Con todo activo no deja hash (URL limpia).
+function writeHashFilters(activeFilters) {
+  const isAll = activeFilters.size === FILTER_TYPES.length;
+  const value = isAll ? "" : FILTER_TYPES.filter((t) => activeFilters.has(t)).join(",");
+  const newUrl = value ? `${location.pathname}${location.search}#${value}` : `${location.pathname}${location.search}`;
+  history.replaceState(null, "", newUrl);
+}
 
-  // Activa una pestaña: clases + ARIA + tabindex rodante + render del panel
-  function selectTab(tab, focus) {
-    tabs.forEach((t) => {
-      const on = t === tab;
-      t.classList.toggle("is-active", on);
-      t.setAttribute("aria-selected", on ? "true" : "false");
-      t.tabIndex = on ? 0 : -1;
-    });
-    if (panel) panel.setAttribute("aria-labelledby", tab.id);
-    renderCategory(tab.dataset.cat);
-    if (focus) tab.focus();
+function initSearchFilter() {
+  const searchInput = document.getElementById("searchInput");
+  const filterToggle = document.getElementById("filterToggle");
+  const filterPanel = document.getElementById("filterPanel");
+  const filterCount = document.getElementById("filterCount");
+  const filterClear = document.getElementById("filterClear");
+  const container = document.getElementById("catContent");
+  if (!searchInput || !filterToggle || !filterPanel || !container) return;
+
+  const checkboxes = [...filterPanel.querySelectorAll("input[data-filter]")];
+  let activeFilters = parseHashFilters();
+  let query = "";
+
+  function syncCheckboxes() {
+    checkboxes.forEach((cb) => (cb.checked = activeFilters.has(cb.dataset.filter)));
   }
 
-  selectTab(group.querySelector(".tab.is-active") || tabs[0], false);
+  function updateFilterBadge() {
+    const isAll = activeFilters.size === FILTER_TYPES.length;
+    filterCount.hidden = isAll;
+    filterCount.textContent = String(activeFilters.size);
+    filterToggle.classList.toggle("is-active", !isAll);
+  }
 
-  group.addEventListener("click", (e) => {
-    const tab = e.target.closest(".tab");
-    if (tab) selectTab(tab, false);
+  function resetFilters() {
+    activeFilters = new Set(FILTER_TYPES);
+    syncCheckboxes();
+    updateFilterBadge();
+    writeHashFilters(activeFilters);
+    renderFeed(activeFilters, query);
+  }
+
+  // Botón del estado vacío: a diferencia de "Clear filters" del panel (que
+  // solo toca el filtro), este también limpia la búsqueda — si el vacío lo
+  // causó el texto buscado, resetear solo el filtro no mostraría nada.
+  function resetAll() {
+    query = "";
+    searchInput.value = "";
+    activeFilters = new Set(FILTER_TYPES);
+    syncCheckboxes();
+    updateFilterBadge();
+    writeHashFilters(activeFilters);
+    renderFeed(activeFilters, query);
+  }
+
+  function openPanel() {
+    filterPanel.hidden = false;
+    filterToggle.setAttribute("aria-expanded", "true");
+  }
+  function closePanel() {
+    filterPanel.hidden = true;
+    filterToggle.setAttribute("aria-expanded", "false");
+  }
+
+  syncCheckboxes();
+  updateFilterBadge();
+  renderFeed(activeFilters, query);
+
+  searchInput.addEventListener("input", () => {
+    query = searchInput.value.trim().toLowerCase();
+    renderFeed(activeFilters, query);
   });
 
-  // Navegación con flechas / Home / End (patrón tablist ARIA)
-  group.addEventListener("keydown", (e) => {
-    const i = tabs.indexOf(document.activeElement);
-    if (i < 0) return;
-    let j = null;
-    if (e.key === "ArrowRight" || e.key === "ArrowDown") j = (i + 1) % tabs.length;
-    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") j = (i - 1 + tabs.length) % tabs.length;
-    else if (e.key === "Home") j = 0;
-    else if (e.key === "End") j = tabs.length - 1;
-    if (j === null) return;
-    e.preventDefault();
-    selectTab(tabs[j], true);
+  checkboxes.forEach((cb) => {
+    cb.addEventListener("change", () => {
+      if (cb.checked) activeFilters.add(cb.dataset.filter);
+      else activeFilters.delete(cb.dataset.filter);
+      // No dejar la vista sin ningún tipo activo: revierte el último click
+      if (activeFilters.size === 0) {
+        cb.checked = true;
+        activeFilters.add(cb.dataset.filter);
+      }
+      updateFilterBadge();
+      writeHashFilters(activeFilters);
+      renderFeed(activeFilters, query);
+    });
+  });
+
+  filterClear.addEventListener("click", resetFilters);
+
+  filterToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (filterPanel.hidden) openPanel();
+    else closePanel();
+  });
+  document.addEventListener("click", (e) => {
+    if (filterPanel.hidden) return;
+    if (filterPanel.contains(e.target) || filterToggle.contains(e.target)) return;
+    closePanel();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closePanel();
+  });
+
+  // Botón "Clear filters" del estado vacío (delegado: el nodo se re-crea)
+  container.addEventListener("click", (e) => {
+    if (e.target.closest("#emptyStateReset")) resetAll();
+  });
+
+  // Link compartido con hash distinto (o navegación atrás/adelante)
+  window.addEventListener("hashchange", () => {
+    activeFilters = parseHashFilters();
+    syncCheckboxes();
+    updateFilterBadge();
+    renderFeed(activeFilters, query);
+  });
+}
+
+// ---------- Paneles About / Contact (acordeón bajo el header) ----------
+// Presentes en todas las páginas (mismo bloque duplicado en cada .html).
+// Un solo panel abierto a la vez; "Show less" y click fuera también cierran.
+function initRevealPanels() {
+  const panels = {
+    about: document.getElementById("panel-about"),
+    contact: document.getElementById("panel-contact"),
+  };
+  const triggers = {
+    about: document.getElementById("navAbout"),
+    contact: document.getElementById("navContact"),
+  };
+  if (!panels.about && !panels.contact) return;
+
+  const keys = Object.keys(panels).filter((k) => panels[k] && triggers[k]);
+
+  function closeAll() {
+    keys.forEach((k) => {
+      panels[k].classList.remove("is-open");
+      triggers[k].setAttribute("aria-expanded", "false");
+    });
+  }
+
+  function toggle(key) {
+    const wasOpen = panels[key].classList.contains("is-open");
+    closeAll();
+    if (!wasOpen) {
+      panels[key].classList.add("is-open");
+      triggers[key].setAttribute("aria-expanded", "true");
+    }
+  }
+
+  keys.forEach((k) => triggers[k].addEventListener("click", () => toggle(k)));
+
+  document.querySelectorAll("[data-close-panel]").forEach((btn) => {
+    btn.addEventListener("click", closeAll);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeAll();
+  });
+
+  // Click fuera de un panel abierto (y fuera de su disparador) lo cierra
+  document.addEventListener("click", (e) => {
+    const openKey = keys.find((k) => panels[k].classList.contains("is-open"));
+    if (!openKey) return;
+    if (panels[openKey].contains(e.target) || triggers[openKey].contains(e.target)) return;
+    closeAll();
   });
 }
 
@@ -635,7 +846,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initFeatureCarousels();
   initAboutCarousel();
   initPlayOnVisible();
-  initTabs();
+  initSearchFilter();
   initProjectModal();
   initTurntableSync();
+  initRevealPanels();
 });
