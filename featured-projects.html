@@ -3,18 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Featured projects by Sebastián Méndez Villegas — Torque, Remote Hands and Capa8." />
-  <title>SMV — Featured Projects</title>
+  <meta name="description" content="Featured projects by SEBS — Sebastián Méndez Villegas — Torque, Remote Hands and Capa8." />
+  <title>SEBS — Featured Projects</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="assets/img/favicon-48.png" />
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Zilla+Slab:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <!-- ===== Header ===== -->
-  <header class="site-header">
+  <header class="site-header surface-dark">
     <nav class="nav container">
-      <a href="index.html" class="nav__logo">SMV</a>
+      <a href="index.html" class="nav__logo" aria-label="SEBS — inicio">
+        <img src="assets/img/logo-horizontal-invertido.png" alt="SEBS" />
+      </a>
       <div class="nav__actions">
         <button type="button" class="nav__link" id="navAbout" aria-expanded="false" aria-controls="panel-about">About</button>
         <button type="button" class="btn btn--ghost-light" id="navContact" aria-expanded="false" aria-controls="panel-contact">Contact</button>
@@ -23,7 +28,7 @@
   </header>
 
   <!-- ===== About / Contact (paneles acordeón, comparten estructura) ===== -->
-  <div class="reveal-panel" id="panel-about">
+  <div class="reveal-panel surface-dark" id="panel-about">
     <div class="reveal-panel__inner">
       <section class="hero">
         <div class="container hero__inner">
@@ -52,7 +57,7 @@
     </div>
   </div>
 
-  <div class="reveal-panel" id="panel-contact">
+  <div class="reveal-panel surface-dark" id="panel-contact">
     <div class="reveal-panel__inner">
       <section class="hero">
         <div class="container hero__inner hero__inner--contact">
@@ -79,7 +84,7 @@
             <img src="assets/img/perfil_smv.png" alt="Sebastián Méndez Villegas"
                  onerror="this.remove()" />
             <span class="hero__photo-overlay">Sebastián Méndez Villegas</span>
-            <span class="hero__photo-fallback" aria-hidden="true">SMV</span>
+            <span class="hero__photo-fallback" aria-hidden="true">SEBS</span>
           </div>
         </div>
         <div class="reveal-panel__footer">
@@ -158,7 +163,7 @@
   </main>
 
   <!-- ===== Footer ===== -->
-  <footer class="site-footer">
+  <footer class="site-footer surface-dark">
     <div class="container">
       <p>&copy; <span id="year"></span> Sebastián Méndez Villegas ·
         <a href="https://github.com/sebas30073007" target="_blank" rel="noopener">GitHub</a>

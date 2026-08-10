@@ -1,34 +1,137 @@
 /* ===================================================================
-   Portafolio — Sebastián Méndez Villegas (SMV)
-   Sistema de diseño base. Ajusta color/tipografía en :root
-   Basado en el diseño "portfolio SMV.pdf"
+   SEBS — sebs.mx
+   Portafolio de Sebastián Méndez Villegas.
+   Sistema de diseño: Identidad SEBS v1.1 (ver "Identidad SEBS.md").
+   Los tokens y las superficies se ajustan en :root, no en los componentes.
    =================================================================== */
 
 :root {
-  /* ---- Colores ---- */
-  --red: #e00034;
-  --red-dark: #bd002c;
-  --ink: #0d0d0d;
-  --ink-soft: #1a1a1a;
-  --paper: #f3f3f4;
-  /* Blanco puro para texto/relleno: sobre el rojo da 4.98:1 (AA); el off-white
-     #f3f3f4 se quedaba en 4.49 y no pasaba. El fondo del body sigue en --paper. */
-  --white: #ffffff;
-  --muted: #6b7280;
-  --card: #000000;
+  /* ===================================================================
+     SEBS — tokens de marca. Identidad SEBS v1.1
+     Regla no negociable: --sebs-signal es SEÑAL, nunca SUPERFICIE.
+     ~1-2% del área visible, jamás fondo de nav, hero, card o sección.
+     Ver .claude/skills/sebs-brand/references/color.md
+     =================================================================== */
+
+  /* ---- Paleta base ---- */
+  --technical-white: #ffffff;
+  --graphite: #111317;
+  --graphite-raised: #1a1d22;
+  --alloy: #6b6f76;
+  --alloy-light: #8e939b;   /* texto 2º sobre grafito: 6.02:1 (alloy normal falla) */
+  --mist: #e5e7eb;
+  --divider-dark: #2a2d33;
+
+  /* ---- Señal ---- */
+  --sebs-signal: #e30613;
+  --sebs-signal-hover: #b80510;
+  --sebs-signal-light: #ff3b47;   /* señal como texto sobre grafito: 5.28:1 */
+  --sebs-signal-tint: rgba(227, 6, 19, 0.12);
+  --sebs-signal-tint-soft: rgba(227, 6, 19, 0.06);
+
+  /* ---- Estado ---- */
+  --success: #16a34a;
+
+  /* ---- Superficie por defecto (light). Las clases .surface-* la redefinen. ---- */
+  --surface: var(--technical-white);
+  --surface-secondary: var(--mist);
+  --text: var(--graphite);
+  --text-secondary: var(--alloy);
+  --divider: var(--mist);
+  --signal-text: var(--sebs-signal);
+
+  /* ---- Alias del sistema anterior (SMV) ----
+     Mantienen vivo el CSS que aún no se migra. Se retiran cuando no queden usos. */
+  --red: var(--sebs-signal);
+  --red-dark: var(--sebs-signal-hover);
+  --ink: var(--graphite);
+  --ink-soft: var(--graphite-raised);
+  --paper: var(--technical-white);
+  --white: var(--technical-white);
+  --muted: var(--alloy);
+  --card: var(--graphite);
 
   /* ---- Tipografía ----
-     Display: Zilla Slab — losa mecánica, carácter de ingeniería (no "serif de moda").
-     Cuerpo:  Hanken Grotesk — grotesca humanista, muy legible (AA) y cálida. */
-  --font-display: "Zilla Slab", Rockwell, Georgia, serif;
-  --font-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+     Manrope para todo. IBM Plex Mono solo para datos técnicos:
+     revisiones, IDs, timestamps, nombres de señal, archivos. Nunca para prosa. */
+  --font-display: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Consolas, monospace;
+
+  /* ---- Espaciado (base 4px) ---- */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+  --space-4xl: 64px;
+  --space-5xl: 96px;
+  --space-6xl: 128px;
+
+  /* ---- Radios ---- */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-round: 9999px;
 
   /* ---- Layout ---- */
-  --max: 1180px;
-  --radius: 16px;
-  --radius-btn: 7px;
-  --radius-pill: 999px;
+  --max: 1280px;
+  --radius: var(--radius-xl);
+  --radius-btn: var(--radius-md);
+  --radius-pill: var(--radius-round);
+
+  /* ---- Motion ---- */
   --transition: 0.2s ease;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-micro: 150ms;
+  --dur-component: 250ms;
+  --dur-section: 400ms;
+}
+
+/* ===================================================================
+   Superficies. Toda sección, panel o card declara la suya; los hijos
+   heredan los tokens correctos vía var(--surface) / var(--text), así
+   el mismo componente sirve en claro y oscuro sin duplicar CSS.
+   El ritmo visual de SEBS se construye alternando estas superficies,
+   NO añadiendo rojo.
+   =================================================================== */
+
+.surface-light {
+  --surface: var(--technical-white);
+  --surface-secondary: var(--mist);
+  --text: var(--graphite);
+  --text-secondary: var(--alloy);
+  --divider: var(--mist);
+  --signal-text: var(--sebs-signal);
+}
+
+.surface-mist {
+  --surface: var(--mist);
+  --surface-secondary: var(--technical-white);
+  --text: var(--graphite);
+  --text-secondary: var(--alloy);   /* 4.08:1 — solo texto grande */
+  --divider: var(--technical-white);
+  --signal-text: var(--sebs-signal);
+}
+
+.surface-dark {
+  --surface: var(--graphite);
+  --surface-secondary: var(--graphite-raised);
+  --text: var(--technical-white);
+  --text-secondary: var(--alloy-light);
+  --divider: var(--divider-dark);
+  --signal-text: var(--sebs-signal-light);
+}
+
+.surface-light,
+.surface-mist,
+.surface-dark {
+  background: var(--surface);
+  color: var(--text);
 }
 
 /* ===== Reset ===== */
@@ -44,10 +147,12 @@ html {
   scroll-behavior: smooth;
 }
 
+/* El body es la superficie light por defecto. Las secciones que necesiten
+   otra la declaran con .surface-dark / .surface-mist. */
 body {
   font-family: var(--font-sans);
-  color: var(--ink);
-  background: var(--paper);
+  color: var(--text);
+  background: var(--surface);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
@@ -76,7 +181,12 @@ img {
 }
 
 .section {
-  padding-block: 4.5rem;
+  padding-block: var(--space-5xl);
+}
+
+/* El feed arranca pegado a los tabs: el aire lo pone .pins */
+.section--flush {
+  padding-top: 0;
 }
 
 /* ===== Botones / pills ===== */
@@ -122,8 +232,11 @@ img {
   border-radius: 14px;
 }
 
+/* Botón primario: uno por vista. Es el mayor consumo de rojo que autoriza
+   el sistema (regla 3.4). Si una vista necesita dos acciones, la segunda
+   es .btn--black o .btn--red-outline. */
 .btn--red {
-  background: var(--red);
+  background: var(--red); /* sebs-allow: boton primario */
   color: var(--white);
 }
 
@@ -136,7 +249,7 @@ img {
 }
 
 .btn--red-outline:hover {
-  background: var(--red);
+  background: var(--red); /* sebs-allow: hover, estado transitorio */
   color: var(--white);
 }
 
@@ -162,7 +275,7 @@ img {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #1c9e5a;
+  background: var(--success);
   box-shadow: 0 0 0 0 rgba(28, 158, 90, 0.55);
   animation: live-pulse 2.2s ease-out infinite;
 }
@@ -206,12 +319,14 @@ img {
 }
 
 /* ===== Header ===== */
+/* Superficie dark declarada en el HTML (class="site-header surface-dark"):
+   el header toma color de la superficie, no de un valor propio. */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 60;
-  background: var(--ink);
-  color: var(--white);
+  background: var(--surface);
+  color: var(--text);
 }
 
 .nav {
@@ -221,12 +336,18 @@ img {
   height: 56px;
 }
 
+/* El wordmark SEBS es un asset geométrico, nunca texto con fuente (§2.2).
+   Versión negativa porque el header es superficie dark. */
 .nav__logo {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.7rem;
-  letter-spacing: 0.01em;
-  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav__logo img {
+  /* 32px: mínimo verificado del símbolo. Por debajo, los canales internos
+     del monograma se cierran y la marca se vuelve una mancha (§2.7). */
+  height: 32px;
+  width: auto;
 }
 
 .nav__actions {
@@ -261,12 +382,15 @@ img {
 
 /* ===== Paneles About / Contact (acordeón bajo el header) =====
    Siempre están en el DOM; se expanden con el truco grid-template-rows
-   0fr → 1fr (mismo patrón que .pcard__detail) para animar una altura que
+   0fr → 1fr para animar una altura que
    no conocemos de antemano, sin medir con JS. */
+/* Superficie dark, no roja: un panel a pantalla completa en rojo lee como
+   identidad institucional (regla 3.4). En grafito gana presencia y queda
+   alineado con el header. La superficie se declara en el HTML. */
 .reveal-panel {
   display: grid;
   grid-template-rows: 0fr;
-  background: var(--red);
+  background: var(--surface);
   transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -361,7 +485,7 @@ img {
    de Contact — el bloque de texto de About es más largo (2 párrafos), y a
    240px la foto quedaba con mucho más margen arriba/abajo que el texto. */
 .hero__photo[data-about] {
-  background: #1a1a1a;
+  background: var(--graphite-raised);
   width: 300px;
   height: 300px;
 }
@@ -401,10 +525,13 @@ img {
   border: 0;
 }
 
-/* ===== Hero (banda roja) ===== */
+/* ===== Hero (superficie dark) =====
+   Era una banda roja a sangre: el mayor consumo de rojo de la página y la
+   razón principal de que se leyera como marca institucional. El contraste
+   lo da ahora la superficie, no el color (regla 3.3). */
 .hero {
-  background: var(--red);
-  color: var(--white);
+  background: var(--surface);
+  color: var(--text);
 }
 
 .hero__inner {
@@ -421,11 +548,12 @@ img {
   max-width: none;
 }
 
-/* El h1 es el nombre: manda en la primera pantalla, por encima de cualquier
-   título de sección. La losa Zilla le da el carácter de ingeniería. */
+/* El h1 manda en la primera pantalla, por encima de cualquier título de
+   sección. Manrope ExtraBold + tracking negativo: sin el -0.02em la grotesca
+   se ve suelta y pierde el carácter técnico (escala H1 del sistema). */
 .hero__title {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 800;
   font-size: clamp(2.3rem, 5vw, 3.6rem);
   line-height: 1.03;
   letter-spacing: -0.02em;
@@ -579,7 +707,7 @@ img {
   margin-top: 0.85rem;
   font-size: 1.05rem;
   line-height: 1.55;
-  color: #3f4145;
+  color: var(--text-secondary);
   max-width: 52ch;
   text-wrap: pretty;
 }
@@ -610,7 +738,8 @@ img {
   min-width: 140px;
 }
 
-/* Pin de año (rojo, apunta hacia abajo, sobre la línea) */
+/* Pin de año (grafito, apunta hacia abajo, sobre la línea).
+   El año es un dato, no un acento: va en grafito y en mono. */
 .tl-year {
   position: absolute;
   bottom: 100%;
@@ -618,9 +747,10 @@ img {
   transform: translateY(-6px);
   width: 56px;
   height: 56px;
-  background: var(--red);
-  color: var(--white);
-  font-weight: 700;
+  background: var(--graphite);
+  color: var(--technical-white);
+  font-family: var(--font-mono);
+  font-weight: 500;
   font-size: 0.95rem;
   display: grid;
   place-items: center;
@@ -635,13 +765,14 @@ img {
   left: 0;
   width: 54px;
   height: 46px;
-  color: var(--red);
-  font-weight: 700;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-weight: 500;
   font-size: 0.8rem;
   display: grid;
   place-items: center;
-  background: var(--paper);
-  border: 2px solid var(--red);
+  background: var(--surface);
+  border: 2px solid var(--divider);
   clip-path: polygon(0 0, 100% 0, 100% 62%, 50% 100%, 0 62%);
   padding-bottom: 6px;
 }
@@ -656,7 +787,7 @@ img {
 .app-card {
   position: relative;
   overflow: hidden;
-  background: var(--red);
+  background: var(--graphite);
   color: var(--white);
   border-radius: 20px;
   display: flex;
@@ -679,7 +810,7 @@ img {
   width: 100%;
   aspect-ratio: 3 / 1;
   overflow: hidden;
-  background: #0a0a0a;
+  background: var(--graphite);
   flex-shrink: 0;
 }
 
@@ -748,7 +879,7 @@ img {
 .feature__art {
   position: relative;
   border-radius: 50%;
-  background: var(--paper);
+  background: var(--surface-secondary);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -767,7 +898,7 @@ img {
 
 /* GearLab: comercial 3D en el círculo (fondo oscuro estudio) */
 .feature__art--reel {
-  background: #0a0a0a;
+  background: var(--graphite);
 }
 .feature__reel {
   position: absolute;
@@ -840,7 +971,7 @@ img {
 /* Variante con imagen de logo (Capa8 = "Topologías", fondo negro) */
 .brandmark--logo {
   padding: 0 0.9rem;
-  background: #000; /* igual al fondo del PNG, sin borde visible */
+  background: var(--graphite); /* igual al fondo del PNG, sin borde visible */
 }
 
 .brandmark__img {
@@ -868,12 +999,15 @@ img {
   margin: 0 1px;
 }
 
+/* Blanco, no rojo: el engrane va sobre el ribbon grafito, así que necesita
+   ser claro para leerse. Nota aparte: el engrane como recurso de marca es
+   un antipatrón explícito del sistema (§26) — decisión pendiente. */
 .gear-o::before {
   content: "";
   position: absolute;
   inset: 4.5%;
   border-radius: 50%;
-  background: var(--red);
+  background: var(--technical-white);
   clip-path: polygon(
     50% 0%, 58% 12%, 72% 7%, 78% 21%, 93% 22%, 88% 38%,
     100% 50%, 88% 62%, 93% 78%, 78% 79%, 72% 93%, 58% 88%,
@@ -1050,8 +1184,8 @@ img {
   gap: 0.6rem;
   width: 100%;
   max-width: 640px;
-  background: var(--white);
-  border: 1px solid rgba(13, 13, 13, 0.12);
+  background: var(--surface);
+  border: 1px solid var(--divider);
   /* Antes era un pill completo (999px); se suaviza un poco hacia el radio
      de los botones de al lado, sin llegar a ser tan cuadrada. */
   border-radius: 20px;
@@ -1092,490 +1226,302 @@ img {
   color: var(--muted);
 }
 
-.search-bar__filter-wrap {
-  position: relative;
-  flex-shrink: 0;
-}
-
-.search-bar__filter {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border: none;
-  border-radius: 50%;
-  background: var(--paper);
-  color: var(--ink);
-  cursor: pointer;
-  transition: background var(--transition), color var(--transition);
-}
-
-.search-bar__filter svg {
-  width: 19px;
-  height: 19px;
-}
-
-.search-bar__filter:hover {
-  background: var(--ink);
-  color: var(--white);
-}
-
-.search-bar__filter.is-active {
-  background: var(--red);
-  color: var(--white);
-}
-
-.search-bar__filter-count {
-  position: absolute;
-  top: -3px;
-  right: -3px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 3px;
-  border-radius: var(--radius-pill);
-  background: var(--ink);
-  color: var(--white);
-  font-size: 0.62rem;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: center;
-}
-
-/* Panel desplegable del filtro */
-.filter-panel {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  z-index: 10;
-  min-width: 210px;
-  background: var(--white);
-  border-radius: var(--radius);
-  padding: 0.6rem;
-  box-shadow: 0 18px 40px -18px rgba(13, 13, 13, 0.45);
-  border: 1px solid rgba(13, 13, 13, 0.08);
-}
-
-.filter-panel__opt {
+/* ===== Tabs de categoría =====
+   Sustituyen al panel de filtros con checkboxes: selección única, con la
+   barra de subrayado como único indicador de estado. El subrayado va en
+   Graphite, no en rojo — es navegación, no una acción (regla 3.4). */
+.tabs {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.45rem 0.5rem;
-  border-radius: calc(var(--radius) - 6px);
-  font-size: 0.9rem;
-  color: var(--ink);
-  cursor: pointer;
-  transition: background var(--transition);
+  gap: var(--space-xl);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-block: var(--space-lg) 0;
+  border-bottom: 1px solid var(--divider);
 }
 
-.filter-panel__opt:hover {
-  background: var(--paper);
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 
-.filter-panel__opt input {
-  accent-color: var(--red);
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-}
-
-.filter-panel__clear {
-  width: 100%;
-  margin-top: 0.3rem;
-  padding: 0.5rem;
-  border: none;
-  border-top: 1px solid rgba(13, 13, 13, 0.08);
-  background: none;
-  color: var(--red);
-  font-weight: 700;
-  font-size: 0.85rem;
-  cursor: pointer;
-  border-radius: 0;
-}
-
-.filter-panel__clear:hover {
-  text-decoration: underline;
-}
-
-/* Encabezado de año: número en negro + línea delimitadora */
-.year-block {
-  padding-block: 1.5rem 0.5rem;
-}
-
-.year-head {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.year-label {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 2rem;
-  line-height: 1;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-}
-
-.year-line {
-  flex: 1;
-  height: 1px;
-  background: rgba(13, 13, 13, 0.15);
-}
-
-/* Masonry estilo Pinterest: 4 columnas, cada tarjeta cae en la columna más
-   corta disponible (CSS multi-column) en vez de alinearse en filas — así
-   las proporciones mixtas (cuadrada, vertical, 16:9) se entrelazan. */
-.cards {
-  column-count: 4;
-  column-gap: 1.25rem;
-}
-
-.cards > .pcard {
-  width: 100%;
-  break-inside: avoid;
-  margin-bottom: 1.25rem;
-}
-
-@media (max-width: 1100px) {
-  .cards { column-count: 3; }
-}
-
-@media (max-width: 760px) {
-  .cards { column-count: 2; }
-}
-
-@media (max-width: 480px) {
-  .cards { column-count: 1; }
-}
-
-/* Tarjeta = imagen de portada + panel inferior que se expande en hover */
-.pcard {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius);
-  overflow: hidden;
-  cursor: pointer;
-  color: var(--white);
-  background: #0a0a0a center / cover no-repeat;
-}
-
-.pcard--noimg {
-  background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-}
-
-/* Preview 3D en la tarjeta (gira solo, no interactivo → clic abre el modal) */
-.pcard__model {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(circle at 50% 38%, #24242a, #0a0a0a 82%);
-  --poster-color: transparent;
-}
-
-/* Atenúa la imagen y oscurece la base para el texto */
-.pcard__scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.92) 0%,
-    rgba(0, 0, 0, 0.55) 32%,
-    rgba(0, 0, 0, 0.28) 60%,
-    rgba(0, 0, 0, 0.28) 100%
-  );
-}
-
-/* El contorno de foco lo dispara el <button> del título (focus-within) */
-.pcard:focus-within {
-  outline: 2px solid var(--red);
-  outline-offset: 3px;
-}
-
-/* Indicador de keywords (arriba-izquierda) */
-.pcard__kw {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  z-index: 4;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--white);
-  background: var(--red);
-  padding: 0.22rem 0.6rem;
-  border-radius: var(--radius-pill);
-}
-
-/* Icono GitHub (arriba-derecha) */
-.pcard__gh {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 2;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: var(--white);
-  display: grid;
-  place-items: center;
-}
-
-.pcard__gh svg {
-  width: 21px;
-  height: 21px;
-  color: #111;
-}
-
-/* Panel inferior */
-.pcard__panel {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-  padding: 1rem 1.15rem 1.15rem;
-}
-
-.pcard__title {
-  font-size: 1.2rem;
-  font-weight: 700;
-  line-height: 1.2;
-  margin: 0;
-}
-
-/* Título clicable: botón real (accesible por teclado) sin estilos de botón.
-   El anillo de foco lo pinta .pcard:focus-within. */
-.pcard__open {
+.tab {
   appearance: none;
-  -webkit-appearance: none;
-  margin: 0;
-  padding: 0;
-  border: 0;
   background: none;
-  color: inherit;
+  border: none;
   font: inherit;
-  letter-spacing: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 0 0 var(--space-md);
+  /* -1px: el subrayado del tab activo monta sobre el borde del contenedor
+     en vez de dibujar una segunda línea debajo. */
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+}
+
+.tab:hover {
+  color: var(--text);
+}
+
+.tab[aria-selected="true"] {
+  color: var(--text);
+  font-weight: 700;
+  border-bottom-color: var(--text);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--sebs-signal);
+  outline-offset: 3px;
+  border-radius: var(--radius-xs);
+}
+
+/* ===== Feed masonry (pins) =====
+   Flujo continuo: una sola columna de masonry para todo el catálogo. El año
+   dejó de ser un encabezado de bloque y viaja como dato en cada tarjeta. */
+.pins {
+  column-count: 4;
+  column-gap: var(--space-lg);
+  padding-top: var(--space-xl);
+}
+
+@media (max-width: 1099px) {
+  .pins { column-count: 3; }
+}
+
+@media (max-width: 699px) {
+  .pins {
+    column-count: 2;
+    column-gap: var(--space-md);
+  }
+}
+
+.pin {
+  break-inside: avoid;
+  margin-bottom: var(--space-xl);
+  /* Ancla del menú "..." */
+  position: relative;
+}
+
+/* La imagen ES la tarjeta. Sin panel, sin marco, sin recorte a una
+   proporción fija: cada portada entra con su relación natural, que es lo
+   que produce el escalonado del masonry. */
+.pin__media {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: var(--surface-secondary);
+  box-shadow: 0 1px 2px rgba(17, 19, 23, 0.06), 0 6px 16px -10px rgba(17, 19, 23, 0.18);
+  cursor: pointer;
+}
+
+.pin__media img,
+.pin__media video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Sin portada: bloque grafito con proporción de reserva */
+.pin__media--empty {
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg, var(--graphite-raised), var(--graphite));
+}
+
+/* Foco de teclado: lo dispara el <button> del título */
+.pin:focus-within .pin__media {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+/* ---- Acciones sobre la imagen ----
+   Sin transición a propósito: aparecen y desaparecen en seco, sin animación
+   de movimiento ni de opacidad. La tarjeta tampoco se desplaza en hover. */
+.pin__act {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--radius-round);
+  background: var(--technical-white);
+  color: var(--graphite);
+  box-shadow: 0 1px 3px rgba(17, 19, 23, 0.22);
+  cursor: pointer;
+  opacity: 0;
+}
+
+.pin__act svg {
+  width: 17px;
+  height: 17px;
+}
+
+.pin__act--link {
+  top: var(--space-sm);
+  right: var(--space-sm);
+}
+
+.pin__act--share {
+  left: var(--space-sm);
+  bottom: var(--space-sm);
+}
+
+.pin__media:hover .pin__act,
+.pin:focus-within .pin__act,
+.pin__act:focus-visible {
+  opacity: 1;
+}
+
+.pin__act:hover {
+  background: var(--mist);
+}
+
+.pin__act:focus-visible {
+  outline: 2px solid var(--sebs-signal);
+  outline-offset: 2px;
+}
+
+/* En táctil no existe hover: las acciones se quedan visibles o serían
+   inalcanzables. */
+@media (hover: none) {
+  .pin__act { opacity: 1; }
+}
+
+/* ---- Pie: título + "..." ---- */
+.pin__foot {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-xs) 0;
+}
+
+.pin__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pin__title {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text);
+}
+
+/* Botón real (accesible por teclado) sin estilos de botón: es la vía de
+   entrada al modal desde el teclado. */
+.pin__open {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pin__open:focus-visible {
+  outline: none;
+}
+
+.pin__meta {
+  margin: 2px 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pin__more {
+  appearance: none;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: var(--radius-round);
+  background: none;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pin__more:hover,
+.pin__more[aria-expanded="true"] {
+  background: var(--surface-secondary);
+  color: var(--text);
+}
+
+.pin__more:focus-visible {
+  outline: 2px solid var(--sebs-signal);
+  outline-offset: 2px;
+}
+
+/* ---- Menú del "..." ---- */
+.pin__menu {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  top: 100%;
+  min-width: 168px;
+  padding: var(--space-xs);
+  background: var(--surface);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 18px 40px -18px rgba(17, 19, 23, 0.45);
+}
+
+.pin__menuitem {
+  appearance: none;
+  display: block;
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--text);
   text-align: left;
   cursor: pointer;
 }
 
-.pcard__open:focus-visible {
-  outline: none;
+.pin__menuitem:hover {
+  background: var(--surface-secondary);
 }
 
-/* Detalle: colapsado por defecto, se despliega en hover/focus */
-.pcard__detail {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  transition: grid-template-rows 0.35s ease, opacity 0.3s ease;
+.pin__menuitem:focus-visible {
+  outline: 2px solid var(--sebs-signal);
+  outline-offset: -2px;
 }
 
-.pcard__detail-inner {
-  overflow: hidden;
-  min-height: 0;
-}
-
-.pcard:hover .pcard__detail,
-.pcard:focus-visible .pcard__detail,
-.pcard:focus-within .pcard__detail {
-  grid-template-rows: 1fr;
-  opacity: 1;
-}
-
-.pcard__desc {
-  font-size: 0.9rem;
-  color: #d5d7da;
-  margin: 0.6rem 0 0;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.pcard__tools {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: 0.7rem;
-  font-size: 0.8rem;
-  color: #b6bbc0;
-}
-
-.pcard__tools svg {
-  width: 15px;
-  height: 15px;
-  flex-shrink: 0;
-}
-
-.pcard__more {
-  display: inline-block;
-  margin-top: 0.9rem;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--white);
-  background: var(--red);
-  padding: 0.4rem 0.9rem;
-  border-radius: var(--radius-btn);
-}
-
-/* Folder cards: Projects, Papers, Competitions and PCB's.
-   Dos capas:
-     1) la imagen, a sangre completa (todo el fondo oscuro de la tarjeta es
-        la imagen — antes tenía un marco rojo de 12px alrededor; se quitó
-        para darle protagonismo a la imagen),
-     2) una tira frontal roja con la silueta de la pestaña, con el tag y el
-        título (compacto: minimizado para no restarle alto a la imagen).
-   La proporción de la imagen cambia por categoría (papers ≈ A4 vertical) y
-   el título reserva 2 líneas para que todas las tarjetas queden a la par. */
-.folder-card {
-  position: relative;
-  /* Cancela el aspect-ratio 4/3 que .pcard impone al <article>: aquí manda
-     la proporción de la imagen (A4 en papers), no un marco fijo. */
-  aspect-ratio: auto;
-  background: var(--red-dark); /* respaldo mientras carga la imagen */
-  border-radius: 16px;
-  overflow: hidden; /* recorta todas las esquinas → nada puntiagudo */
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  box-shadow: 0 12px 26px -16px rgba(13, 13, 13, 0.55);
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-
-/* Capa 1: imagen — llena todo el fondo de la tarjeta (mismo radio que la
-   tarjeta arriba, sin esquinas propias abajo: se corta con el panel). */
-.folder-card .folder-card__media {
-  position: relative;
-  border-radius: 16px 16px 0 0;
-  overflow: hidden;
-  background: #ececec center / cover no-repeat;
-  aspect-ratio: 4 / 3; /* por defecto; se sobrescribe por categoría */
-  transition: transform var(--transition);
-}
-
-/* Proporciones por categoría (las de siempre; "projects" usa el 4/3 por
-   defecto de arriba, sin override). */
-.folder-card--papers .folder-card__media { aspect-ratio: 210 / 297; } /* A4 vertical */
-.folder-card--competitions .folder-card__media { aspect-ratio: 16 / 9; }
-.folder-card--pcbs .folder-card__media { aspect-ratio: 4 / 3; }
-
-/* Fallback cuando un item no trae portada */
-.folder-card.pcard--noimg .folder-card__media {
-  background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-}
-
-.folder-card .pcard__model { z-index: 1; }
-
-/* Turntable pre-renderizado (video) que llena la imagen. Sin captura de clic
-   → el click abre el modal. */
-.folder-card .pcard__video {
+/* Confirmación de "Copy link" / "Share": texto, no solo color (regla de
+   no depender del color como única señal). */
+.pin__toast {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
-  display: block;
+  z-index: 21;
+  left: var(--space-sm);
+  bottom: 52px;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--graphite);
+  color: var(--technical-white);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
   pointer-events: none;
-}
-
-/* Capa 2: tira frontal roja (a sangre completa hasta los bordes) */
-.folder-card__panel {
-  position: relative;
-  z-index: 2;
-  padding: 0.6rem 1.1rem 0.7rem;
-  background: var(--red);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.3rem;
-}
-
-/* Silueta de la pestaña: nace de la tira y sube sobre la imagen */
-.folder-card__panel::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: calc(100% - 1px);
-  width: 46%;
-  height: 20px;
-  background: var(--red);
-  border-radius: 7px 7px 0 0;
-  clip-path: polygon(0 0, 78% 0, 100% 100%, 0 100%);
-}
-
-.folder-card__tag {
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--white);
-  background: rgba(0, 0, 0, 0.2);
-  padding: 0.16rem 0.55rem;
-  border-radius: var(--radius-pill);
-}
-
-/* Título minimizado: menos alto para la tira de texto → más protagonismo
-   para la imagen arriba (antes clamp(1.02rem,1.4vw,1.2rem) + 2.5em). */
-.folder-card__title {
-  margin: 0;
-  color: var(--white);
-  font-size: clamp(0.84rem, 1vw, 0.95rem);
-  font-weight: 700;
-  line-height: 1.2;
-  /* Recorta a 2 líneas y reserva su alto → tarjetas a la par (el min-height
-     iguala 2 líneas: 2 × line-height). El texto vive en el botón hijo, que
-     va en línea para que el box-clamp del h3 lo tome. */
-  min-height: 2.4em;
-}
-
-/* El botón ocupa el ancho para que el span envuelva y recorte bien */
-.folder-card__title .folder-card__open {
-  display: block;
-  width: 100%;
-}
-
-/* El texto vive en un span (los <button> no se dejan recortar por
-   -webkit-line-clamp): aquí sí corta limpio a 2 líneas. */
-.folder-card__titletext {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-}
-
-/* Hover / focus: la carpeta se eleva y el documento asoma */
-.folder-card:hover,
-.folder-card:focus-within {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 34px -18px rgba(13, 13, 13, 0.7);
-}
-
-.folder-card:hover .folder-card__media,
-.folder-card:focus-within .folder-card__media {
-  transform: translateY(-3px);
-}
-
-/* Anillo de foco visible sobre el rojo (el rojo del pcard no se vería) */
-.folder-card:focus-within {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .folder-card,
-  .folder-card .folder-card__media { transition: none; }
-  .folder-card:hover,
-  .folder-card:focus-within,
-  .folder-card:hover .folder-card__media,
-  .folder-card:focus-within .folder-card__media { transform: none; }
 }
 
 /* Estado vacío (Papers, Competitions, PCB's) */
@@ -1583,7 +1529,7 @@ img {
   text-align: center;
   padding: 4rem 1rem;
   /* Gris más oscuro que --muted: 4.6:1 sobre --paper (AA); el --muted fallaba */
-  color: #565c67;
+  color: var(--alloy);
 }
 
 .empty-state h3 {
@@ -1631,9 +1577,9 @@ img {
   width: min(760px, 100%);
   max-height: 92vh;
   overflow-y: auto;
-  background: #141414;
-  color: var(--white);
-  border-radius: 18px;
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-xl);
   padding: 1.4rem;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
   animation: pop-in 0.22s ease;
@@ -1683,7 +1629,7 @@ img {
 }
 
 .modal__desc {
-  color: #c7cbd0;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.5;
   margin-bottom: 0;
@@ -1704,7 +1650,7 @@ img {
 .modal__stage {
   position: relative;
   aspect-ratio: 16 / 9;
-  background: #000;
+  background: var(--graphite);
   border-radius: 12px;
   overflow: hidden;
   display: grid;
@@ -1714,7 +1660,7 @@ img {
 /* Con modelo 3D el fondo iguala la ventana → el modelo "flota" integrado,
    sin sensación de canvas recuadrado. */
 .modal__stage.has-model {
-  background: #141414;
+  background: var(--graphite-raised);
 }
 
 /* Absoluta para que su caja sea exactamente la del stage: con height:100%
@@ -1729,8 +1675,8 @@ img {
 }
 
 .modal__empty {
-  /* Gris claro para el fondo oscuro del modal (5.5:1 sobre #141414) */
-  color: #b6bbc0;
+  /* Gris claro para el fondo oscuro del modal (alloy-light sobre graphite-raised: 5.47:1) */
+  color: var(--alloy-light);
   font-size: 0.95rem;
 }
 
@@ -1742,7 +1688,7 @@ img {
   width: 100%;
   height: 100%;
   z-index: 1;
-  background: #141414;
+  background: var(--graphite-raised);
   --poster-color: transparent;
   --progress-bar-color: transparent; /* usamos nuestro spinner propio */
   cursor: grab;
@@ -1763,7 +1709,7 @@ img {
   padding: 0.26rem 0.6rem 0.26rem 0.48rem;
   border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.92);
-  color: #111;
+  color: var(--graphite);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -1782,7 +1728,7 @@ img {
   z-index: 5;
   display: grid;
   place-items: center;
-  background: #141414;
+  background: var(--graphite-raised);
   transition: opacity 0.4s ease;
 }
 .modal__spinner.is-done {
@@ -1813,7 +1759,7 @@ img {
 
 .modal__caption {
   text-align: center;
-  color: #9aa0a6;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   min-height: 1.2em;
   margin: 0.85rem 0 1rem;
@@ -1903,7 +1849,7 @@ img {
   position: relative;
   width: 84px;
   aspect-ratio: 16 / 9;
-  background: #000;
+  background: var(--graphite);
   border-radius: 7px;
   overflow: hidden;
   cursor: pointer;
@@ -2039,16 +1985,18 @@ img {
 }
 
 /* ===== Footer ===== */
+/* Superficie dark declarada en el HTML. --text-secondary sobre grafito es
+   --alloy-light (6.02:1); el rgba(255,255,255,.65) anterior era un valor suelto. */
 .site-footer {
-  background: var(--ink);
-  color: rgba(255, 255, 255, 0.65);
-  padding-block: 2rem;
+  background: var(--surface);
+  color: var(--text-secondary);
+  padding-block: var(--space-2xl);
   text-align: center;
   font-size: 0.9rem;
 }
 
 .site-footer a {
-  color: var(--white);
+  color: var(--text);
 }
 
 /* ===== Responsive ===== */

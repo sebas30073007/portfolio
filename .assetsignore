@@ -4,6 +4,8 @@
 .git
 .gitignore
 .assetsignore
+.claude
+.impeccable
 .wrangler
 wrangler.jsonc
 wrangler.toml

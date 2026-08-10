@@ -171,6 +171,11 @@ function itemFilterType(catKey, item) {
   return catKey === "projects" ? item.subtype || "hardware" : catKey;
 }
 
+// Índice completo pid -> proyecto, independiente del filtro activo. PROJECT_INDEX
+// solo contiene lo que está pintado, así que un deep link a un proyecto que el
+// tab actual oculta no lo encontraría ahí.
+let ALL_PROJECTS = {};
+
 // Agrupa todo el CATALOG por año → categoría → registros, sin filtrar todavía.
 function buildFeedIndex() {
   const byYear = new Map();
@@ -181,6 +186,7 @@ function buildFeedIndex() {
       cat.years[year].forEach((item, i) => {
         const pid = `${catKey}-${slugify(item.title)}-${i}`;
         const record = { catKey, year, item, pid, ftype: itemFilterType(catKey, item) };
+        ALL_PROJECTS[pid] = item;
         if (!byYear.has(year)) byYear.set(year, {});
         const bucket = byYear.get(year);
         (bucket[catKey] = bucket[catKey] || []).push(record);
@@ -217,9 +223,13 @@ function matchesSearch(item, query) {
   return haystack.includes(query);
 }
 
-function renderCard(catKey, item, pid) {
+const ICON_SHARE =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"/><path d="m8 8 4-4 4 4"/><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>';
+const ICON_EXT =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>';
+
+function renderCard(catKey, item, pid, year) {
   const cover = item.cover || (item.gallery && item.gallery[0] ? item.gallery[0].src : "");
-  const bgStyle = cover ? ` style="background-image:url('${cover}')"` : "";
   // Turntable 3D pre-renderizado (video liviano, sin WebGL en la tarjeta).
   // Un click abre el modal con el modelo interactivo real.
   // preload="auto" (antes "metadata"): con solo metadata, la descarga del
@@ -229,26 +239,55 @@ function renderCard(catKey, item, pid) {
   // "auto" el navegador empieza a bajar el video desde que carga la página,
   // no desde que arranca a reproducirse.
   const spin = item.spin
-    ? `<video class="pcard__video" autoplay loop muted playsinline preload="auto"${
+    ? `<video class="pin__video" autoplay loop muted playsinline preload="auto"${
         item.poster ? ` poster="${item.poster}"` : ""
       }>
          <source src="${item.spin}.webm" type="video/webm">
          <source src="${item.spin}.mp4" type="video/mp4">
        </video>`
     : "";
-  // La tarjeta ya no muestra el badge de GitHub (queda solo el CTA del
-  // modal); la imagen ocupa todo el fondo sin nada superpuesto encima.
-  const folderTag = item.tag ? `<span class="folder-card__tag">${item.tag}</span>` : "";
 
-  // Todas las categorías usan la tarjeta tipo carpeta (folder-card).
+  // La imagen entra con su proporción natural (width:100%; height:auto). Es
+  // lo que produce el escalonado del masonry: si se recortara a una caja
+  // fija, todas las columnas quedarían a la misma altura y se perdería.
+  // alt="" porque la tarjeta ya se nombra con el título de al lado; un alt
+  // duplicado solo repetiría el mismo texto al lector de pantalla.
+  const media =
+    spin ||
+    (cover
+      ? `<img src="${cover}" alt="" loading="lazy" decoding="async" />`
+      : "");
+
+  // Enlace externo: solo item.url, nunca item.github — el CTA del modal
+  // tampoco enlaza repos (ver ENABLE_REPO_LINKS). Si la tarjeta enlazara el
+  // repo, expondría lo que el modal decide no exponer. Muchos items no
+  // tienen url: ahí la tarjeta solo muestra el botón de compartir.
+  const ext = item.url || "";
+  const extLabel = escapeHtml(item.ctaLabel || "Open link");
+  const extBtn = ext
+    ? `<a class="pin__act pin__act--link" href="${ext}" target="_blank" rel="noopener"
+          title="${extLabel}" aria-label="${extLabel}: ${escapeHtml(item.title)}">${ICON_EXT}</a>`
+    : "";
+
+  const meta = [year, item.tag].filter(Boolean).join(" · ");
+
   return `
-    <article class="pcard folder-card folder-card--${catKey}${cover ? "" : " pcard--noimg"}" data-pid="${pid}">
-      <div class="folder-card__media"${bgStyle}>${spin}</div>
-      <div class="folder-card__panel">
-        ${folderTag}
-        <h3 class="folder-card__title">
-          <button class="pcard__open" type="button" data-pid="${pid}"><span class="folder-card__titletext">${item.title}</span></button>
-        </h3>
+    <article class="pin" data-pid="${pid}">
+      <div class="pin__media${media ? "" : " pin__media--empty"}">
+        ${media}
+        ${extBtn}
+        <button class="pin__act pin__act--share" type="button" data-act="share"
+                title="Share" aria-label="Share ${escapeHtml(item.title)}">${ICON_SHARE}</button>
+      </div>
+      <div class="pin__foot">
+        <div class="pin__text">
+          <h3 class="pin__title">
+            <button class="pin__open" type="button" data-pid="${pid}">${escapeHtml(item.title)}</button>
+          </h3>
+          <p class="pin__meta">${escapeHtml(meta)}</p>
+        </div>
+        <button class="pin__more" type="button" data-act="menu" aria-haspopup="true"
+                aria-expanded="false" aria-label="More options for ${escapeHtml(item.title)}">&#183;&#183;&#183;</button>
       </div>
     </article>`;
 }
@@ -256,7 +295,11 @@ function renderCard(catKey, item, pid) {
 // Índice construido una vez (el CATALOG no cambia en tiempo de ejecución)
 let FEED_INDEX = null;
 
-function renderFeed(activeFilters, query) {
+// Un único masonry continuo para todo el catálogo (antes: un bloque de
+// columnas por año). Los años siguen ordenando el recorrido — se recorren de
+// más reciente a más antiguo — pero ya no cortan el flujo: el año viaja como
+// dato en cada tarjeta.
+function renderFeed(filter, query) {
   const container = document.getElementById("catContent");
   if (!container || typeof CATALOG === "undefined") return;
 
@@ -264,34 +307,21 @@ function renderFeed(activeFilters, query) {
   const years = [...FEED_INDEX.keys()].sort((a, b) => b - a);
 
   PROJECT_INDEX = {};
-  let totalShown = 0;
+  const cards = [];
 
-  const blocks = years
-    .map((year) => {
-      const records = interleave(FEED_INDEX.get(year), FEED_CAT_ORDER).filter(
-        (r) => activeFilters.has(r.ftype) && matchesSearch(r.item, query)
-      );
-      if (!records.length) return "";
-      totalShown += records.length;
-      const cards = records
-        .map((r) => {
-          PROJECT_INDEX[r.pid] = r.item;
-          return renderCard(r.catKey, r.item, r.pid);
-        })
-        .join("");
+  years.forEach((year) => {
+    interleave(FEED_INDEX.get(year), FEED_CAT_ORDER)
+      .filter(
+        (r) =>
+          (filter === "all" || r.ftype === filter) && matchesSearch(r.item, query)
+      )
+      .forEach((r) => {
+        PROJECT_INDEX[r.pid] = r.item;
+        cards.push(renderCard(r.catKey, r.item, r.pid, r.year));
+      });
+  });
 
-      return `
-        <div class="year-block">
-          <div class="year-head">
-            <span class="year-label">${year}</span>
-            <span class="year-line"></span>
-          </div>
-          <div class="cards">${cards}</div>
-        </div>`;
-    })
-    .join("");
-
-  if (!totalShown) {
+  if (!cards.length) {
     const msg = query
       ? `No results for “${escapeHtml(query)}”. Try another keyword or reset the search and filters.`
       : "No projects match the selected filters.";
@@ -305,11 +335,11 @@ function renderFeed(activeFilters, query) {
     return;
   }
 
-  container.innerHTML = blocks;
+  container.innerHTML = `<div class="pins">${cards.join("")}</div>`;
 
   // Respeta "reduce motion": no reproduce los turntables (queda el poster fijo)
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    container.querySelectorAll(".pcard__video").forEach((v) => {
+    container.querySelectorAll(".pin__video").forEach((v) => {
       v.removeAttribute("autoplay");
       v.pause();
     });
@@ -322,7 +352,7 @@ function renderFeed(activeFilters, query) {
 // al reanudarse se re-engancha en la misma fase que los demás.
 function syncTurntables() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  document.querySelectorAll(".pcard__video").forEach((v) => {
+  document.querySelectorAll(".pin__video").forEach((v) => {
     if (!v.duration || !isFinite(v.duration)) return;
     // Sin suficiente buffer todavía (carga en frío, sin caché): no lo toques.
     // Forzar un seek a una zona no descargada solo provoca un stall, y en el
@@ -410,7 +440,13 @@ function showModalSlide(i) {
   });
 }
 
-function openProjectModal(project) {
+function openProjectModal(project, pid) {
+  // Deep link: mientras el modal está abierto la URL apunta al proyecto, así
+  // "Compartir" y "Copiar enlace" tienen algo real que compartir.
+  if (pid) {
+    OPEN_PID = pid;
+    writeHash(CURRENT_FILTER, pid);
+  }
   const modal = document.getElementById("projectModal");
   const img = document.getElementById("modalImg");
   const empty = document.getElementById("modalEmpty");
@@ -588,6 +624,9 @@ function closeProjectModal() {
   }
   modal.hidden = true;
   document.body.style.overflow = "";
+  // Saca el proyecto de la URL, dejando solo el tab activo
+  OPEN_PID = null;
+  writeHash(CURRENT_FILTER, null);
   // Re-engancha los turntables de las tarjetas en la fase común
   syncTurntables();
   // Devuelve el foco a la tarjeta que abrió el modal
@@ -600,16 +639,18 @@ function initProjectModal() {
   const modal = document.getElementById("projectModal");
   if (!container || !modal) return;
 
-  // Abrir: clic en cualquier parte de la tarjeta (menos el enlace de GitHub).
-  // El teclado entra por el <button> del título, que dispara este mismo clic.
+  // Abrir: clic en cualquier parte de la tarjeta, menos en sus controles
+  // propios (enlace externo, compartir, "..." y su menú), que tienen su
+  // propio handler. El teclado entra por el <button> del título.
   const openFromEvent = (e) => {
-    if (e.target.closest("a")) return; // deja pasar el enlace de GitHub
-    const card = e.target.closest(".pcard[data-pid]");
+    if (e.target.closest("a")) return;
+    if (e.target.closest(".pin__act, .pin__more, .pin__menu")) return;
+    const card = e.target.closest(".pin[data-pid]");
     if (!card) return;
     const project = PROJECT_INDEX[card.dataset.pid];
     if (!project) return;
-    modalTrigger = card.querySelector(".pcard__open") || card;
-    openProjectModal(project);
+    modalTrigger = card.querySelector(".pin__open") || card;
+    openProjectModal(project, card.dataset.pid);
   };
 
   container.addEventListener("click", openFromEvent);
@@ -660,132 +701,225 @@ function initProjectModal() {
   });
 }
 
-// Lee el filtro activo desde location.hash (p. ej. "#pcbs" o
-// "#hardware,pcbs"). Sin hash, o con un hash que no reconoce ningún tipo,
-// muestra todo — así el link normal de la página sigue siendo el histórico
-// completo.
-function parseHashFilters() {
-  const raw = decodeURIComponent(location.hash.replace(/^#/, "")).trim().toLowerCase();
-  if (!raw) return new Set(FILTER_TYPES);
-  const parts = raw.split(",").map((s) => s.trim()).filter((s) => FILTER_TYPES.includes(s));
-  return parts.length ? new Set(parts) : new Set(FILTER_TYPES);
+// ---------- Hash: tab activo + proyecto abierto ----------
+// Formatos: "#papers", "#project=projects-remote-hands-0", o ambos unidos por
+// "&". Sin hash (o con uno que no reconoce nada) muestra todo, así el link
+// limpio de la página sigue siendo el archivo completo.
+let CURRENT_FILTER = "all";
+let OPEN_PID = null;
+
+function parseHash() {
+  const raw = decodeURIComponent(location.hash.replace(/^#/, "")).trim();
+  const out = { filter: "all", project: null };
+  raw
+    .split("&")
+    .filter(Boolean)
+    .forEach((part) => {
+      if (part.startsWith("project=")) out.project = part.slice(8);
+      else if (FILTER_TYPES.includes(part.toLowerCase())) out.filter = part.toLowerCase();
+    });
+  return out;
 }
 
-// Refleja el filtro activo en la URL para que sea compartible (link con
-// filtro ya aplicado). Con todo activo no deja hash (URL limpia).
-function writeHashFilters(activeFilters) {
-  const isAll = activeFilters.size === FILTER_TYPES.length;
-  const value = isAll ? "" : FILTER_TYPES.filter((t) => activeFilters.has(t)).join(",");
-  const newUrl = value ? `${location.pathname}${location.search}#${value}` : `${location.pathname}${location.search}`;
-  history.replaceState(null, "", newUrl);
+function writeHash(filter, project) {
+  const parts = [];
+  if (filter && filter !== "all") parts.push(filter);
+  if (project) parts.push("project=" + encodeURIComponent(project));
+  const url = parts.length
+    ? `${location.pathname}${location.search}#${parts.join("&")}`
+    : `${location.pathname}${location.search}`;
+  // replaceState (no location.hash =): no dispara hashchange, así que no
+  // provoca un re-render en cada apertura de modal.
+  history.replaceState(null, "", url);
 }
 
+function projectUrl(pid) {
+  return `${location.origin}${location.pathname}#project=${encodeURIComponent(pid)}`;
+}
+
+// ---------- Acciones de tarjeta (compartir / menú "...") ----------
+function closePinMenus() {
+  document.querySelectorAll(".pin__menu").forEach((m) => m.remove());
+  document
+    .querySelectorAll('.pin__more[aria-expanded="true"]')
+    .forEach((b) => b.setAttribute("aria-expanded", "false"));
+}
+
+// Confirmación en texto (no solo un cambio de color): compartir y copiar no
+// tienen ningún efecto visible por sí solos y sin esto parece que no pasó nada.
+function pinToast(pin, msg) {
+  pin.querySelectorAll(".pin__toast").forEach((t) => t.remove());
+  const el = document.createElement("span");
+  el.className = "pin__toast";
+  el.setAttribute("role", "status");
+  el.textContent = msg;
+  pin.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+
+async function sharePin(pin, pid) {
+  const item = PROJECT_INDEX[pid];
+  if (!item) return;
+  const url = projectUrl(pid);
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: item.title, text: item.desc || "", url });
+      return; // la hoja nativa ya es la confirmación
+    } catch (err) {
+      // Cancelar la hoja de compartir no es un error que reportar
+      if (err && err.name === "AbortError") return;
+    }
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    pinToast(pin, "Link copied");
+  } catch (err) {
+    pinToast(pin, "Copy failed");
+  }
+}
+
+async function copyPinLink(pin, pid) {
+  try {
+    await navigator.clipboard.writeText(projectUrl(pid));
+    pinToast(pin, "Link copied");
+  } catch (err) {
+    pinToast(pin, "Copy failed");
+  }
+}
+
+function openPinMenu(btn) {
+  const pin = btn.closest(".pin");
+  closePinMenus();
+  const menu = document.createElement("div");
+  menu.className = "pin__menu";
+  menu.setAttribute("role", "menu");
+  // Solo "Copy link": "View project" duplicaba lo que ya hace el clic en la
+  // tarjeta y en el título.
+  menu.innerHTML =
+    '<button class="pin__menuitem" type="button" role="menuitem" data-act="copy">Copy link</button>';
+  pin.appendChild(menu);
+  btn.setAttribute("aria-expanded", "true");
+  menu.querySelector(".pin__menuitem").focus();
+}
+
+function initPinActions() {
+  const container = document.getElementById("catContent");
+  if (!container) return;
+
+  container.addEventListener("click", (e) => {
+    const pin = e.target.closest(".pin[data-pid]");
+
+    const share = e.target.closest('.pin__act--share');
+    if (share && pin) {
+      sharePin(pin, pin.dataset.pid);
+      return;
+    }
+
+    const more = e.target.closest(".pin__more");
+    if (more && pin) {
+      if (more.getAttribute("aria-expanded") === "true") closePinMenus();
+      else openPinMenu(more);
+      return;
+    }
+
+    const menuItem = e.target.closest(".pin__menuitem");
+    if (menuItem && pin) {
+      const act = menuItem.dataset.act;
+      closePinMenus();
+      if (act === "copy") copyPinLink(pin, pin.dataset.pid);
+    }
+  });
+
+  // Cerrar el menú al hacer clic fuera o con Escape
+  document.addEventListener("click", (e) => {
+    if (e.target.closest(".pin__menu, .pin__more")) return;
+    closePinMenus();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closePinMenus();
+  });
+}
+
+// ---------- Tabs de categoría + búsqueda ----------
 function initSearchFilter() {
   const searchInput = document.getElementById("searchInput");
-  const filterToggle = document.getElementById("filterToggle");
-  const filterPanel = document.getElementById("filterPanel");
-  const filterCount = document.getElementById("filterCount");
-  const filterClear = document.getElementById("filterClear");
+  const tablist = document.getElementById("filterTabs");
   const container = document.getElementById("catContent");
-  if (!searchInput || !filterToggle || !filterPanel || !container) return;
+  if (!searchInput || !tablist || !container) return;
 
-  const checkboxes = [...filterPanel.querySelectorAll("input[data-filter]")];
-  let activeFilters = parseHashFilters();
+  const tabs = [...tablist.querySelectorAll(".tab")];
   let query = "";
 
-  function syncCheckboxes() {
-    checkboxes.forEach((cb) => (cb.checked = activeFilters.has(cb.dataset.filter)));
+  function selectTab(filter, { focus = false } = {}) {
+    CURRENT_FILTER = filter;
+    tabs.forEach((t) => {
+      const on = t.dataset.filter === filter;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      // Roving tabindex: dentro de un tablist solo el tab activo entra en el
+      // orden de tabulación; entre tabs se navega con flechas.
+      t.tabIndex = on ? 0 : -1;
+      if (on) {
+        container.setAttribute("aria-labelledby", t.id);
+        if (focus) t.focus();
+      }
+    });
+    writeHash(filter, OPEN_PID);
+    renderFeed(filter, query);
   }
 
-  function updateFilterBadge() {
-    const isAll = activeFilters.size === FILTER_TYPES.length;
-    filterCount.hidden = isAll;
-    filterCount.textContent = String(activeFilters.size);
-    filterToggle.classList.toggle("is-active", !isAll);
-  }
+  // Estado inicial desde la URL
+  const initial = parseHash();
+  selectTab(initial.filter);
 
-  function resetFilters() {
-    activeFilters = new Set(FILTER_TYPES);
-    syncCheckboxes();
-    updateFilterBadge();
-    writeHashFilters(activeFilters);
-    renderFeed(activeFilters, query);
-  }
+  tablist.addEventListener("click", (e) => {
+    const tab = e.target.closest(".tab");
+    if (tab) selectTab(tab.dataset.filter);
+  });
 
-  // Botón del estado vacío: a diferencia de "Clear filters" del panel (que
-  // solo toca el filtro), este también limpia la búsqueda — si el vacío lo
-  // causó el texto buscado, resetear solo el filtro no mostraría nada.
-  function resetAll() {
-    query = "";
-    searchInput.value = "";
-    activeFilters = new Set(FILTER_TYPES);
-    syncCheckboxes();
-    updateFilterBadge();
-    writeHashFilters(activeFilters);
-    renderFeed(activeFilters, query);
-  }
-
-  function openPanel() {
-    filterPanel.hidden = false;
-    filterToggle.setAttribute("aria-expanded", "true");
-  }
-  function closePanel() {
-    filterPanel.hidden = true;
-    filterToggle.setAttribute("aria-expanded", "false");
-  }
-
-  syncCheckboxes();
-  updateFilterBadge();
-  renderFeed(activeFilters, query);
+  tablist.addEventListener("keydown", (e) => {
+    const i = tabs.findIndex((t) => t.dataset.filter === CURRENT_FILTER);
+    let next = null;
+    if (e.key === "ArrowRight") next = tabs[(i + 1) % tabs.length];
+    else if (e.key === "ArrowLeft") next = tabs[(i - 1 + tabs.length) % tabs.length];
+    else if (e.key === "Home") next = tabs[0];
+    else if (e.key === "End") next = tabs[tabs.length - 1];
+    if (!next) return;
+    e.preventDefault();
+    selectTab(next.dataset.filter, { focus: true });
+  });
 
   searchInput.addEventListener("input", () => {
     query = searchInput.value.trim().toLowerCase();
-    renderFeed(activeFilters, query);
+    renderFeed(CURRENT_FILTER, query);
   });
 
-  checkboxes.forEach((cb) => {
-    cb.addEventListener("change", () => {
-      if (cb.checked) activeFilters.add(cb.dataset.filter);
-      else activeFilters.delete(cb.dataset.filter);
-      // No dejar la vista sin ningún tipo activo: revierte el último click
-      if (activeFilters.size === 0) {
-        cb.checked = true;
-        activeFilters.add(cb.dataset.filter);
-      }
-      updateFilterBadge();
-      writeHashFilters(activeFilters);
-      renderFeed(activeFilters, query);
-    });
-  });
-
-  filterClear.addEventListener("click", resetFilters);
-
-  filterToggle.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (filterPanel.hidden) openPanel();
-    else closePanel();
-  });
-  document.addEventListener("click", (e) => {
-    if (filterPanel.hidden) return;
-    if (filterPanel.contains(e.target) || filterToggle.contains(e.target)) return;
-    closePanel();
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closePanel();
-  });
-
-  // Botón "Clear filters" del estado vacío (delegado: el nodo se re-crea)
+  // Botón del estado vacío: limpia búsqueda y tab a la vez. Si el vacío lo
+  // causó el texto buscado, resetear solo el tab no mostraría nada.
   container.addEventListener("click", (e) => {
-    if (e.target.closest("#emptyStateReset")) resetAll();
+    if (!e.target.closest("#emptyStateReset")) return;
+    query = "";
+    searchInput.value = "";
+    selectTab("all");
   });
 
-  // Link compartido con hash distinto (o navegación atrás/adelante)
+  // Link compartido con otro hash, o navegación atrás/adelante
   window.addEventListener("hashchange", () => {
-    activeFilters = parseHashFilters();
-    syncCheckboxes();
-    updateFilterBadge();
-    renderFeed(activeFilters, query);
+    const state = parseHash();
+    if (state.filter !== CURRENT_FILTER) selectTab(state.filter);
+    if (state.project) openProjectFromHash(state.project);
   });
+}
+
+// Abre el modal de un proyecto referenciado en la URL. Se llama al cargar
+// (link compartido) y en hashchange.
+function openProjectFromHash(pid) {
+  // ALL_PROJECTS, no PROJECT_INDEX: el proyecto puede estar oculto por el tab
+  // activo y aun así el link debe abrirlo.
+  const project = ALL_PROJECTS[pid];
+  if (!project) return;
+  const card = document.querySelector(`.pin[data-pid="${CSS.escape(pid)}"]`);
+  modalTrigger = card ? card.querySelector(".pin__open") || card : null;
+  openProjectModal(project, pid);
 }
 
 // ---------- Paneles About / Contact (acordeón bajo el header) ----------
@@ -841,13 +975,22 @@ function initRevealPanels() {
 
 // ---------- Init ----------
 document.addEventListener("DOMContentLoaded", () => {
+  // Se lee ANTES de initSearchFilter: al fijar el tab inicial, esa función
+  // reescribe el hash con writeHash(filter, OPEN_PID) y OPEN_PID todavía es
+  // null, así que borraría el "project=" de la URL antes de poder leerlo.
+  const fromHash = parseHash();
+
   setYear();
   renderTimeline();
   initFeatureCarousels();
   initAboutCarousel();
   initPlayOnVisible();
-  initSearchFilter();
+  initSearchFilter(); // pinta el feed y llena PROJECT_INDEX
   initProjectModal();
+  initPinActions();
   initTurntableSync();
   initRevealPanels();
+
+  // Link compartido a un proyecto: se abre una vez que el feed existe.
+  if (fromHash.project) openProjectFromHash(fromHash.project);
 });

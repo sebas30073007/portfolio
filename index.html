@@ -3,18 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Portfolio of Sebastián Méndez Villegas — Mechatronics and Cyber-Physical Systems Engineer. Projects, papers, competitions and PCBs." />
-  <title>SMV — Projects</title>
+  <meta name="description" content="SEBS — engineering studio of Sebastián Méndez Villegas, Mechatronics and Cyber-Physical Systems Engineer. Projects, papers, competitions and PCBs." />
+  <title>SEBS — Projects</title>
+  <!-- 32px es el mínimo verificado del símbolo: por debajo los canales
+       internos se cierran. Falta el micro-logo para 16px (Identidad SEBS §2.7). -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="assets/img/favicon-48.png" />
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Zilla+Slab:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <!-- ===== Header ===== -->
-  <header class="site-header">
+  <header class="site-header surface-dark">
     <nav class="nav container">
-      <a href="index.html" class="nav__logo">SMV</a>
+      <a href="index.html" class="nav__logo" aria-label="SEBS — inicio">
+        <img src="assets/img/logo-horizontal-invertido.png" alt="SEBS" />
+      </a>
       <div class="nav__actions">
         <button type="button" class="nav__link" id="navAbout" aria-expanded="false" aria-controls="panel-about">About</button>
         <button type="button" class="btn btn--ghost-light" id="navContact" aria-expanded="false" aria-controls="panel-contact">Contact</button>
@@ -23,7 +30,7 @@
   </header>
 
   <!-- ===== About / Contact (paneles acordeón, comparten estructura) ===== -->
-  <div class="reveal-panel" id="panel-about">
+  <div class="reveal-panel surface-dark" id="panel-about">
     <div class="reveal-panel__inner">
       <section class="hero">
         <div class="container hero__inner">
@@ -52,7 +59,7 @@
     </div>
   </div>
 
-  <div class="reveal-panel" id="panel-contact">
+  <div class="reveal-panel surface-dark" id="panel-contact">
     <div class="reveal-panel__inner">
       <section class="hero">
         <div class="container hero__inner hero__inner--contact">
@@ -79,7 +86,7 @@
             <img src="assets/img/perfil_smv.png" alt="Sebastián Méndez Villegas"
                  onerror="this.remove()" />
             <span class="hero__photo-overlay">Sebastián Méndez Villegas</span>
-            <span class="hero__photo-fallback" aria-hidden="true">SMV</span>
+            <span class="hero__photo-fallback" aria-hidden="true">SEBS</span>
           </div>
         </div>
         <div class="reveal-panel__footer">
@@ -98,31 +105,31 @@
     <!-- ===== Search + filter ===== -->
     <div class="search-bar">
       <div class="search-bar__row container">
-        <a href="featured-projects.html" class="btn btn--red search-bar__featured">Featured Projects</a>
+        <!-- Secundario en grafito: el botón primario rojo es uno por vista y
+             en esta página le toca al CTA del modal de proyecto. -->
+        <a href="featured-projects.html" class="btn btn--black search-bar__featured">Featured Projects</a>
         <div class="search-bar__group">
           <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <input type="search" id="searchInput" class="search-bar__input" placeholder="Search" aria-label="Search projects" autocomplete="off" />
-          <div class="search-bar__filter-wrap">
-            <button type="button" id="filterToggle" class="search-bar__filter" aria-haspopup="true" aria-expanded="false" aria-controls="filterPanel" aria-label="Filter">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M7 12h10M10 19h4"/></svg>
-              <span class="search-bar__filter-count" id="filterCount" hidden></span>
-            </button>
-            <div class="filter-panel" id="filterPanel" role="group" aria-label="Filter by type" hidden>
-              <label class="filter-panel__opt"><input type="checkbox" data-filter="hardware" checked /><span>Hardware projects</span></label>
-              <label class="filter-panel__opt"><input type="checkbox" data-filter="software" checked /><span>Software projects</span></label>
-              <label class="filter-panel__opt"><input type="checkbox" data-filter="papers" checked /><span>Papers</span></label>
-              <label class="filter-panel__opt"><input type="checkbox" data-filter="competitions" checked /><span>Competitions</span></label>
-              <label class="filter-panel__opt"><input type="checkbox" data-filter="pcbs" checked /><span>PCB's</span></label>
-              <button type="button" class="filter-panel__clear" id="filterClear">Clear filters</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
 
-    <!-- ===== Content (unified feed, sectioned by year) ===== -->
-    <section class="section" style="padding-top: 1.5rem;">
-      <div class="container" id="catContent">
+    <!-- ===== Tabs de categoría (selección única) ===== -->
+    <div class="container">
+      <div class="tabs" id="filterTabs" role="tablist" aria-label="Filter by type">
+        <button type="button" class="tab" role="tab" id="tab-all" data-filter="all" aria-selected="true" aria-controls="catContent">All</button>
+        <button type="button" class="tab" role="tab" id="tab-hardware" data-filter="hardware" aria-selected="false" aria-controls="catContent" tabindex="-1">Hardware</button>
+        <button type="button" class="tab" role="tab" id="tab-software" data-filter="software" aria-selected="false" aria-controls="catContent" tabindex="-1">Software</button>
+        <button type="button" class="tab" role="tab" id="tab-papers" data-filter="papers" aria-selected="false" aria-controls="catContent" tabindex="-1">Papers</button>
+        <button type="button" class="tab" role="tab" id="tab-competitions" data-filter="competitions" aria-selected="false" aria-controls="catContent" tabindex="-1">Competitions</button>
+        <button type="button" class="tab" role="tab" id="tab-pcbs" data-filter="pcbs" aria-selected="false" aria-controls="catContent" tabindex="-1">PCBs</button>
+      </div>
+    </div>
+
+    <!-- ===== Content (feed continuo estilo masonry) ===== -->
+    <section class="section section--flush">
+      <div class="container" id="catContent" role="tabpanel" aria-labelledby="tab-all">
         <!-- Rendered by js/main.js -->
       </div>
     </section>
@@ -131,7 +138,7 @@
   <!-- ===== Modal de proyecto (galería) ===== -->
   <div class="modal" id="projectModal" hidden>
     <div class="modal__backdrop" data-close></div>
-    <div class="modal__window" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal__window surface-dark" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <button class="modal__close" type="button" data-close aria-label="Close">&times;</button>
       <h3 class="modal__title" id="modalTitle"></h3>
       <!-- Descripción + CTA al mismo nivel: el botón visible desde el inicio -->
@@ -163,7 +170,7 @@
   </div>
 
   <!-- ===== Footer ===== -->
-  <footer class="site-footer">
+  <footer class="site-footer surface-dark">
     <div class="container">
       <p>&copy; <span id="year"></span> Sebastián Méndez Villegas ·
         <a href="https://github.com/sebas30073007" target="_blank" rel="noopener">GitHub</a>

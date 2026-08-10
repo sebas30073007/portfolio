@@ -16,6 +16,13 @@ _foldertest.html
 _pcbtest.html
 _modaltest.html
 
-# Configuración local de herramientas (no es contenido del sitio)
-.claude/
+# Configuración local de herramientas (no es contenido del sitio).
+# Se ignora por niveles en vez de con ".claude/" a secas: git no puede
+# des-ignorar archivos dentro de un directorio ya ignorado, así que hay que
+# abrir cada nivel para poder exceptuar solo la skill de marca. Las skills
+# instaladas de terceros (impeccable, gstack) se quedan fuera del repo.
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/sebs-brand/
 .impeccable/
