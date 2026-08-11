@@ -58,8 +58,8 @@ function mountCarousel(el, images, interval = 2625) {
 // Círculos de las apps destacadas (index)
 function initFeatureCarousels() {
   document.querySelectorAll(".feature__art[data-app]").forEach((art) => {
-    // GearLab: comercial 3D pre-renderizado (video) en vez del carrusel de PNGs
-    if (art.dataset.app === "gearlab") {
+    // Torke: comercial 3D pre-renderizado (video) en vez del carrusel de PNGs
+    if (art.dataset.app === "torke") {
       mountGearReel(art);
       return;
     }
@@ -69,14 +69,14 @@ function initFeatureCarousels() {
   });
 }
 
-// Comercial de engranes: video en bucle dentro del círculo de GearLab
+// Comercial de engranes: video en bucle dentro del círculo de Torke
 function mountGearReel(el) {
   el.classList.add("feature__art--reel");
   el.innerHTML = `
     <video class="feature__reel" autoplay loop muted playsinline preload="metadata"
-           poster="projects/gear-lab/reel-poster.webp">
-      <source src="projects/gear-lab/reel.webm" type="video/webm">
-      <source src="projects/gear-lab/reel.mp4" type="video/mp4">
+           poster="projects/torke/reel-poster.webp">
+      <source src="projects/torke/reel.webm" type="video/webm">
+      <source src="projects/torke/reel.mp4" type="video/mp4">
     </video>`;
   // Respeta "reduce motion": deja el poster fijo
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

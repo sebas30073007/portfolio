@@ -5,14 +5,14 @@
 /* --- Carrusel del círculo de las apps destacadas (index) ---
    Las imágenes rotan con crossfade cada ~2.6s. */
 const FEATURE_SLIDES = {
-  gearlab: {
+  torke: {
     images: [
-      "projects/gear-lab/simple-gear.png",
-      "projects/gear-lab/planetary-gear.png",
-      "projects/gear-lab/bevel-gear.png",
-      "projects/gear-lab/worm-gear.png",
-      "projects/gear-lab/rack-pinion-gear.png",
-      "projects/gear-lab/internal-gear.png",
+      "projects/torke/simple-gear.png",
+      "projects/torke/planetary-gear.png",
+      "projects/torke/bevel-gear.png",
+      "projects/torke/worm-gear.png",
+      "projects/torke/rack-pinion-gear.png",
+      "projects/torke/internal-gear.png",
     ],
   },
   remotehands: {
@@ -87,21 +87,21 @@ const CATALOG = {
           renders: [],
         },
         {
-          title: "Gear Lab",
+          title: "Torke",
           subtype: "software",
           tag: "Web tool · CAD",
           desc: "Parametric web tool to design, visualize and export gear systems (STL/STEP/OBJ) for laser cutting and 3D printing.",
           tools: "TypeScript · Three.js",
           github: null,
-          url: "https://gear-designer.sebastianmendezv.com/",
+          url: "https://torke.sebs.mx/",
           ctaLabel: "Visit site",
-          cover: "projects/gear-lab/main.png",
+          cover: "projects/torke/main.png",
           gallery: [
-            { src: "projects/gear-lab/%231.png", caption: "Parametric gear design" },
-            { src: "projects/gear-lab/%232.png", caption: "3D preview" },
-            { src: "projects/gear-lab/%233.png", caption: "Gear catalog" },
-            { src: "projects/gear-lab/%234.png", caption: "Export options" },
-            { src: "projects/gear-lab/%235.png", caption: "CAD panel" },
+            { src: "projects/torke/%231.png", caption: "Parametric gear design" },
+            { src: "projects/torke/%232.png", caption: "3D preview" },
+            { src: "projects/torke/%233.png", caption: "Gear catalog" },
+            { src: "projects/torke/%234.png", caption: "Export options" },
+            { src: "projects/torke/%235.png", caption: "CAD panel" },
           ],
           renders: [],
         },
@@ -125,8 +125,8 @@ const CATALOG = {
           desc: "AI applied to computer networks — the 'layer 8', the human factor — generating OSI topology diagrams.",
           tools: "PyTorch · Scapy",
           github: "https://github.com/sebas30073007/IA_mecatronica_Capa8",
-          url: "https://github.com/sebas30073007/IA_mecatronica_Capa8",
-          ctaLabel: "View repository",
+          url: "https://capa8.sebs.mx/",
+          ctaLabel: "Visit site",
           cover: "projects/capa-8/main.png",
           gallery: [
             { src: "projects/capa-8/%231.png", caption: "Topology overview" },

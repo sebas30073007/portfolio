@@ -63,8 +63,10 @@ Base del diseño replicada. Pendiente para siguientes iteraciones:
 ## Enlaces
 
 - GitHub: https://github.com/sebas30073007
+- Torke (app en vivo): https://torke.sebs.mx/
+- Capa 8 (app en vivo): https://capa8.sebs.mx/
 - Capa 8 (open source): https://github.com/sebas30073007/IA_mecatronica_Capa8
 
 > Nota: se corrigieron typos del PDF ("Proyects"→"Projects",
 > "arquitectures"→"architectures", etc.) por tratarse de un portafolio público.
-> GearLab aún sin enlaces (código cerrado en desarrollo).
+> Torke es de código cerrado (sin repo público).

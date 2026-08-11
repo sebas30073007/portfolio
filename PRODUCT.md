@@ -22,10 +22,10 @@ Sebastián builds complete, working cyber-physical systems end to end — mechan
 
 ## Conversion & proof
 
-- Primary and secondary CTA: Primary is **explore the projects** (drive into the featured work and the Projects page). Secondary, for a visitor not ready to dig in, is **try the live apps** — GearLab and Capa8 are running products they can open and use immediately.
+- Primary and secondary CTA: Primary is **explore the projects** (drive into the featured work and the Projects page). Secondary, for a visitor not ready to dig in, is **try the live apps** — Torke and Capa8 are running products they can open and use immediately.
 - The line a visitor remembers after 10 seconds: "A mechatronics engineer who actually builds and ships working robots and tools."
 - Belief ladder: (1) this is a real engineer, not a template; (2) the work spans hardware and software, done for real; (3) the projects are substantial and genuinely functional; (4) the proof is one click away — live apps and open repositories; (5) worth remembering, reaching out to, or trusting with real work.
-- Proof on hand: Live working web apps — GearLab (parametric gear designer, `gear-designer.sebastianmendezv.com`) and Capa8 (network-topology generator, `capa8.sebastianmendezv.com`); open-source repositories on GitHub (`github.com/sebas30073007`), including the Remote Hands teleoperated mobile-manipulator; project imagery and, on the Projects page, interactive 3D models.
+- Proof on hand: Live working web apps — Torke (parametric gear designer, `torke.sebs.mx`) and Capa8 (network-topology generator, `capa8.sebs.mx`); open-source repositories on GitHub (`github.com/sebas30073007`), including the Remote Hands teleoperated mobile-manipulator; project imagery and, on the Projects page, interactive 3D models.
 
 ## Brand Personality
 

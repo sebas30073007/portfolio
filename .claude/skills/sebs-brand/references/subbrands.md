@@ -55,7 +55,7 @@ Implementación: redefinir el token de señal en el scope del proyecto y todo lo
 
 ```
 Nivel 1 — Marca       SEBS
-Nivel 2 — Proyecto    Torke · Capa 8 · Remote Hands · GearLab
+Nivel 2 — Proyecto    Torke · Capa 8 · Remote Hands
 Nivel 3 — Producto    Controller v2 · Driver Board · Rev A · Firmware 2.1
 ```
 
@@ -78,7 +78,7 @@ Verificación: poner la página del proyecto junto a la de SEBS. Deben verse dis
 
 ## 5. Proyectos actuales
 
-`projects/`: capa-8 · gear-lab · remote-hands
+`projects/`: capa-8 · torke · remote-hands
 `competitions/`: 2° Concurso Colombiano de Cohetería Deportiva · Reto del Fuego · The James Dyson Award
 `pcbs/`: Drivers-controller · PuenteH · Servo-controller
 `papers/`: Balancing Accuracy and Adaptability — Hybrid Analytical Neural Control in Omnidirectional Robots

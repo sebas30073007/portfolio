@@ -1,6 +1,6 @@
 ---
 name: sebs-brand
-description: Sistema de identidad de marca SEBS (sebs.mx) — estudio de ingeniería de Sebastián Méndez. Usar al diseñar, construir o revisar cualquier interfaz, página, componente, documento o aplicación física de SEBS o de sus proyectos (Torke, Capa 8, Remote Hands, GearLab, PCBs, papers). Cubre color, superficies, tipografía, espaciado, componentes, uso de logo y sub-marcas. Invocar cuando se mencione SEBS, sebs.mx, marca, identidad, branding, paleta, "el rojo", tokens de diseño, o al escribir HTML/CSS para el portafolio.
+description: Sistema de identidad de marca SEBS (sebs.mx) — estudio de ingeniería de Sebastián Méndez. Usar al diseñar, construir o revisar cualquier interfaz, página, componente, documento o aplicación física de SEBS o de sus proyectos (Torke, Capa 8, Remote Hands, PCBs, papers). Cubre color, superficies, tipografía, espaciado, componentes, uso de logo y sub-marcas. Invocar cuando se mencione SEBS, sebs.mx, marca, identidad, branding, paleta, "el rojo", tokens de diseño, o al escribir HTML/CSS para el portafolio.
 ---
 
 # Identidad SEBS

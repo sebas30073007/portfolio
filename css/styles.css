@@ -793,7 +793,7 @@ img {
   display: flex;
 }
 
-/* Lead (GearLab): ancho completo, video 3:1 arriba y contenido debajo
+/* Lead (Torke): ancho completo, video 3:1 arriba y contenido debajo
    (nada de texto superpuesto sobre el video). */
 .app-card--lead {
   grid-column: 1 / -1;
@@ -896,7 +896,7 @@ img {
   margin-bottom: 1.5rem;
 }
 
-/* GearLab: comercial 3D en el círculo (fondo oscuro estudio) */
+/* Torke: comercial 3D en el círculo (fondo oscuro estudio) */
 .feature__art--reel {
   background: var(--graphite);
 }
