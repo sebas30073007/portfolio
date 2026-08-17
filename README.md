@@ -9,7 +9,7 @@ publicar en **GitHub Pages**. Diseño base tomado de `assets/docs/portfolio SMV.
 ```
 portfolio/
 ├── index.html              # Home: feed de proyectos (búsqueda + filtro), sin hero
-├── featured-projects.html  # Catálogo premium: Torque, Remote Hands, Capa8
+├── featured-projects.html  # Catálogo premium: Torque, Teleop Mobile Manipulator, Capa8
 ├── css/
 │   └── styles.css          # Sistema de diseño (colores/tipografía en :root)
 ├── js/

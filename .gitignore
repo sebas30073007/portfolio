@@ -26,3 +26,4 @@ _modaltest.html
 .claude/skills/*
 !.claude/skills/sebs-brand/
 .impeccable/
+.gstack/

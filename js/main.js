@@ -93,7 +93,7 @@ function initAboutCarousel() {
   document.querySelectorAll("[data-about]").forEach((el) => mountCarousel(el, ABOUT_PHOTOS, 7875));
 }
 
-// Videos de tarjeta (Remote Hands, Capa8): no arrancan hasta que la tarjeta
+// Videos de tarjeta (Teleop Mobile Manipulator, Capa8): no arrancan hasta que la tarjeta
 // está mayormente en pantalla, y se pausan al salir (ahorra ancho de banda
 // y evita que varios videos peleen por red/CPU nada más cargar la página).
 function initPlayOnVisible() {
@@ -164,8 +164,8 @@ function escapeHtml(s) {
 // Categorías del CATALOG, en el orden en que se van intercalando dentro de
 // cada año. "projects" se reparte a su vez en hardware/software (ver
 // itemFilterType) para alimentar el panel de filtro.
-const FEED_CAT_ORDER = ["projects", "papers", "competitions", "pcbs"];
-const FILTER_TYPES = ["hardware", "software", "papers", "competitions", "pcbs"];
+const FEED_CAT_ORDER = ["projects", "papers", "competitions", "pcbs", "courses"];
+const FILTER_TYPES = ["hardware", "software", "papers", "competitions", "pcbs", "courses"];
 
 function itemFilterType(catKey, item) {
   return catKey === "projects" ? item.subtype || "hardware" : catKey;
@@ -223,10 +223,17 @@ function matchesSearch(item, query) {
   return haystack.includes(query);
 }
 
-const ICON_SHARE =
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"/><path d="m8 8 4-4 4 4"/><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>';
+// Copiar link sustituyó a "compartir": la hoja nativa de share solo existe en
+// móvil y en escritorio caía igual en el portapapeles, así que el icono
+// prometía más de lo que hacía. El eslabón de cadena dice exactamente qué pasa.
+const ICON_LINK =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+const ICON_INFO =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>';
 const ICON_EXT =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>';
+const ICON_LOCK =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
 
 function renderCard(catKey, item, pid, year) {
   const cover = item.cover || (item.gallery && item.gallery[0] ? item.gallery[0].src : "");
@@ -258,26 +265,62 @@ function renderCard(catKey, item, pid, year) {
       ? `<img src="${cover}" alt="" loading="lazy" decoding="async" />`
       : "");
 
+  // Dos destinos distintos, ambos etiquetados. Antes la tarjeta solo mostraba
+  // la flecha del enlace externo y el modal quedaba escondido detrás de un
+  // clic en cualquier parte: quien apuntaba a la flecha se saltaba el detalle
+  // sin saber que existía, y al revés. Ahora el par está a la vista con texto,
+  // no solo con un tooltip que hay que provocar.
+  //
   // Enlace externo: solo item.url, nunca item.github — el CTA del modal
   // tampoco enlaza repos (ver ENABLE_REPO_LINKS). Si la tarjeta enlazara el
-  // repo, expondría lo que el modal decide no exponer. Muchos items no
-  // tienen url: ahí la tarjeta solo muestra el botón de compartir.
+  // repo, expondría lo que el modal decide no exponer. Muchos items no tienen
+  // url: ahí queda solo "More info".
   const ext = item.url || "";
-  const extLabel = escapeHtml(item.ctaLabel || "Open link");
+  // La etiqueta la pone el item (Visit site / Open paper / View KiCad files):
+  // "See project" genérico mentiría en un PDF o en un repo de KiCad.
+  const extLabel = escapeHtml(item.ctaLabel || "See project");
   const extBtn = ext
-    ? `<a class="pin__act pin__act--link" href="${ext}" target="_blank" rel="noopener"
-          title="${extLabel}" aria-label="${extLabel}: ${escapeHtml(item.title)}">${ICON_EXT}</a>`
+    ? `<a class="pin__act pin__act--pill pin__act--link" href="${ext}" target="_blank" rel="noopener"
+          aria-label="${extLabel}: ${escapeHtml(item.title)}"
+          >${ICON_EXT}<span class="pin__act-label">${extLabel}</span></a>`
     : "";
 
   const meta = [year, item.tag].filter(Boolean).join(" · ");
+
+  // Bloqueada ("Coming soon"): portada atenuada, sin acciones ni apertura de
+  // modal — nada que mostrar todavía. El título queda como texto plano (no
+  // <button>) para que ni el mouse ni el teclado sugieran que hay algo detrás.
+  if (item.locked) {
+    return `
+      <article class="pin pin--locked" data-pid="${pid}">
+        <div class="pin__media${media ? "" : " pin__media--empty"}">
+          ${media}
+          <div class="pin__lock">
+            ${ICON_LOCK}
+            <span>Coming soon</span>
+          </div>
+        </div>
+        <div class="pin__foot">
+          <div class="pin__text">
+            <h3 class="pin__title">${escapeHtml(item.title)}</h3>
+            <p class="pin__meta">${escapeHtml(meta)}</p>
+          </div>
+        </div>
+      </article>`;
+  }
 
   return `
     <article class="pin" data-pid="${pid}">
       <div class="pin__media${media ? "" : " pin__media--empty"}">
         ${media}
-        ${extBtn}
-        <button class="pin__act pin__act--share" type="button" data-act="share"
-                title="Share" aria-label="Share ${escapeHtml(item.title)}">${ICON_SHARE}</button>
+        <div class="pin__acts">
+          <button class="pin__act pin__act--pill pin__act--info" type="button" data-act="info"
+                  aria-label="More info about ${escapeHtml(item.title)}"
+                  >${ICON_INFO}<span class="pin__act-label">More info</span></button>
+          ${extBtn}
+        </div>
+        <button class="pin__act pin__act--copy" type="button" data-act="copy"
+                title="Copy link" aria-label="Copy link to ${escapeHtml(item.title)}">${ICON_LINK}</button>
       </div>
       <div class="pin__foot">
         <div class="pin__text">
@@ -286,8 +329,6 @@ function renderCard(catKey, item, pid, year) {
           </h3>
           <p class="pin__meta">${escapeHtml(meta)}</p>
         </div>
-        <button class="pin__more" type="button" data-act="menu" aria-haspopup="true"
-                aria-expanded="false" aria-label="More options for ${escapeHtml(item.title)}">&#183;&#183;&#183;</button>
       </div>
     </article>`;
 }
@@ -455,6 +496,12 @@ function openProjectModal(project, pid) {
   const cta = document.getElementById("modalCta");
 
   document.getElementById("modalTitle").textContent = project.title;
+  // Detalle de mes ("Mon YYYY"), opcional — la tarjeta ya muestra el año solo.
+  const dateEl = document.getElementById("modalDate");
+  if (dateEl) {
+    dateEl.textContent = project.date || "";
+    dateEl.hidden = !project.date;
+  }
   document.getElementById("modalDesc").textContent = project.desc || "";
   // Etiqueta opcional sobre la descripción (p. ej. "Abstract" en papers)
   const descLabel = document.getElementById("modalDescLabel");
@@ -504,6 +551,7 @@ function openProjectModal(project, pid) {
     mv.setAttribute("exposure", "1.1");
     mv.setAttribute("alt", project.title);
     if (project.cover) mv.setAttribute("poster", project.cover);
+    if (project.modelBg) mv.style.background = project.modelBg; // override puntual del fondo del visor
     stage.prepend(mv);
 
     // Badge 360° (arriba-izquierda): indica que el modelo se puede rotar
@@ -640,16 +688,24 @@ function initProjectModal() {
   if (!container || !modal) return;
 
   // Abrir: clic en cualquier parte de la tarjeta, menos en sus controles
-  // propios (enlace externo, compartir, "..." y su menú), que tienen su
-  // propio handler. El teclado entra por el <button> del título.
+  // propios (enlace externo, copiar link), que tienen su propio handler.
+  // "More info" es la excepción: es justo el botón que abre este modal, así
+  // que se deja pasar aunque sea un .pin__act. El teclado entra por ahí o por
+  // el <button> del título.
   const openFromEvent = (e) => {
-    if (e.target.closest("a")) return;
-    if (e.target.closest(".pin__act, .pin__more, .pin__menu")) return;
+    if (!e.target.closest(".pin__act--info")) {
+      if (e.target.closest("a")) return;
+      if (e.target.closest(".pin__act")) return;
+    }
     const card = e.target.closest(".pin[data-pid]");
     if (!card) return;
+    if (card.classList.contains("pin--locked")) return; // "Coming soon": nada que abrir
     const project = PROJECT_INDEX[card.dataset.pid];
     if (!project) return;
-    modalTrigger = card.querySelector(".pin__open") || card;
+    // Al cerrar, el foco vuelve al control que abrió: el botón "More info" si
+    // se entró por ahí, si no el título.
+    modalTrigger =
+      e.target.closest(".pin__act--info") || card.querySelector(".pin__open") || card;
     openProjectModal(project, card.dataset.pid);
   };
 
@@ -702,7 +758,7 @@ function initProjectModal() {
 }
 
 // ---------- Hash: tab activo + proyecto abierto ----------
-// Formatos: "#papers", "#project=projects-remote-hands-0", o ambos unidos por
+// Formatos: "#papers", "#project=projects-teleop-mobile-manipulator-0", o ambos unidos por
 // "&". Sin hash (o con uno que no reconoce nada) muestra todo, así el link
 // limpio de la página sigue siendo el archivo completo.
 let CURRENT_FILTER = "all";
@@ -737,16 +793,9 @@ function projectUrl(pid) {
   return `${location.origin}${location.pathname}#project=${encodeURIComponent(pid)}`;
 }
 
-// ---------- Acciones de tarjeta (compartir / menú "...") ----------
-function closePinMenus() {
-  document.querySelectorAll(".pin__menu").forEach((m) => m.remove());
-  document
-    .querySelectorAll('.pin__more[aria-expanded="true"]')
-    .forEach((b) => b.setAttribute("aria-expanded", "false"));
-}
-
-// Confirmación en texto (no solo un cambio de color): compartir y copiar no
-// tienen ningún efecto visible por sí solos y sin esto parece que no pasó nada.
+// ---------- Acciones de tarjeta (copiar link) ----------
+// Confirmación en texto (no solo un cambio de color): copiar no tiene ningún
+// efecto visible por sí solo y sin esto parece que no pasó nada.
 function pinToast(pin, msg) {
   pin.querySelectorAll(".pin__toast").forEach((t) => t.remove());
   const el = document.createElement("span");
@@ -755,27 +804,6 @@ function pinToast(pin, msg) {
   el.textContent = msg;
   pin.appendChild(el);
   setTimeout(() => el.remove(), 1800);
-}
-
-async function sharePin(pin, pid) {
-  const item = PROJECT_INDEX[pid];
-  if (!item) return;
-  const url = projectUrl(pid);
-  if (navigator.share) {
-    try {
-      await navigator.share({ title: item.title, text: item.desc || "", url });
-      return; // la hoja nativa ya es la confirmación
-    } catch (err) {
-      // Cancelar la hoja de compartir no es un error que reportar
-      if (err && err.name === "AbortError") return;
-    }
-  }
-  try {
-    await navigator.clipboard.writeText(url);
-    pinToast(pin, "Link copied");
-  } catch (err) {
-    pinToast(pin, "Copy failed");
-  }
 }
 
 async function copyPinLink(pin, pid) {
@@ -787,56 +815,16 @@ async function copyPinLink(pin, pid) {
   }
 }
 
-function openPinMenu(btn) {
-  const pin = btn.closest(".pin");
-  closePinMenus();
-  const menu = document.createElement("div");
-  menu.className = "pin__menu";
-  menu.setAttribute("role", "menu");
-  // Solo "Copy link": "View project" duplicaba lo que ya hace el clic en la
-  // tarjeta y en el título.
-  menu.innerHTML =
-    '<button class="pin__menuitem" type="button" role="menuitem" data-act="copy">Copy link</button>';
-  pin.appendChild(menu);
-  btn.setAttribute("aria-expanded", "true");
-  menu.querySelector(".pin__menuitem").focus();
-}
-
+// El menú de "..." desapareció: su único ítem era "Copy link", así que ahora
+// esa acción es un botón directo sobre la imagen — un clic en vez de dos.
 function initPinActions() {
   const container = document.getElementById("catContent");
   if (!container) return;
 
   container.addEventListener("click", (e) => {
     const pin = e.target.closest(".pin[data-pid]");
-
-    const share = e.target.closest('.pin__act--share');
-    if (share && pin) {
-      sharePin(pin, pin.dataset.pid);
-      return;
-    }
-
-    const more = e.target.closest(".pin__more");
-    if (more && pin) {
-      if (more.getAttribute("aria-expanded") === "true") closePinMenus();
-      else openPinMenu(more);
-      return;
-    }
-
-    const menuItem = e.target.closest(".pin__menuitem");
-    if (menuItem && pin) {
-      const act = menuItem.dataset.act;
-      closePinMenus();
-      if (act === "copy") copyPinLink(pin, pin.dataset.pid);
-    }
-  });
-
-  // Cerrar el menú al hacer clic fuera o con Escape
-  document.addEventListener("click", (e) => {
-    if (e.target.closest(".pin__menu, .pin__more")) return;
-    closePinMenus();
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closePinMenus();
+    const copy = e.target.closest(".pin__act--copy");
+    if (copy && pin) copyPinLink(pin, pin.dataset.pid);
   });
 }
 

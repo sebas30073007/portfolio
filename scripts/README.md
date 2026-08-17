@@ -56,11 +56,28 @@ WebGL a ~0.25 MB de video.
    **Modos de movimiento**
    - `--mode swing` (balanceo con easing en los extremos, vía onda seno).
      Ajustes: `--amp 45` (grados a cada lado), `--loop 7` (segundos por bucle),
-     `--fps 30`.
-   - `--mode spin` (giro 360° continuo). Ajustes: `--frames 60`, `--fps 12`.
+     `--fps 30`. Bien para piezas planas/de frente (PCBs): el balanceo muestra
+     la cara principal casi todo el tiempo.
+   - `--mode spin` (giro 360° continuo, bucle perfecto por construcción — el
+     salto entre el último frame y el primero es de `360/frames` grados,
+     imperceptible). Ajustes: `--frames 360`, `--fps 20` (18s por vuelta,
+     lento). Mejor para volúmenes 3D (ensambles, robots): siempre parece que
+     está girando, sin quedarse "de frente" mirando al espectador.
 
    Comunes: `--elev 68` (elevación de cámara; menor = más de frente),
-   `--width 800` (px del video). `--all` procesa todas las carpetas de `pcbs/`.
+   `--width 800` (px del video), `--ratio 4:3` (proporción ancho:alto de la
+   tarjeta — el feed usa el tamaño natural del video/poster, así que esto
+   *es* la proporción de la tarjeta; ver Convención de proporción abajo),
+   `--bg dark|light` (fondo del canvas; `dark` por defecto, igual al de
+   siempre). `--all` procesa todas las carpetas de `pcbs/` (siempre con los
+   defaults — para folders fuera de `pcbs/` u opciones distintas, corré el
+   script apuntando a esa carpeta directamente).
+
+   ### Convención de proporción por tipo de proyecto
+   | Tipo | `--ratio` | Por qué |
+   |---|---|---|
+   | PCBs | `4:3` (default) | piezas planas, de frente — apaisado se ve bien |
+   | Proyectos de hardware (ensambles, robots) | `4:5` | vertical, homologado entre todos; ver Teleop Mobile Manipulator |
 3. Agregá las imágenes de detalle (manufactura, capas, esquemático) a la carpeta.
 4. Añadí la entrada en `js/data.js` (sección `pcbs`):
    ```js

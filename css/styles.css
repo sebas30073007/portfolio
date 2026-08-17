@@ -826,7 +826,7 @@ img {
   padding: clamp(1.1rem, 2.5vw, 1.55rem) clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 2.5vw, 1.55rem);
 }
 
-/* Support (Remote Hands, Capa8): vertical y centrado, más compacto */
+/* Support (Teleop Mobile Manipulator, Capa8): vertical y centrado, más compacto */
 .app-card--support {
   flex-direction: column;
   align-items: center;
@@ -834,7 +834,7 @@ img {
   padding: 2.75rem 2rem 2.25rem;
 }
 
-/* Variante con video de portada (Remote Hands): mismo tratamiento que el
+/* Variante con video de portada (Teleop Mobile Manipulator): mismo tratamiento que el
    lead — video a sangre, tarjeta negra, franja de acciones delgada.
    La tarjeta entera es cuadrada; el video ocupa el espacio restante tras
    la franja de acciones y se recorta por abajo (object-position: top). */
@@ -980,7 +980,7 @@ img {
   width: auto;
 }
 
-/* Variante solo texto (Remote Hands, sin logo propio) */
+/* Variante solo texto (Teleop Mobile Manipulator, sin logo propio) */
 .brandmark--text {
   font-size: 1.5rem;
   letter-spacing: 0.02em;
@@ -1281,7 +1281,7 @@ img {
    Flujo continuo: una sola columna de masonry para todo el catálogo. El año
    dejó de ser un encabezado de bloque y viaja como dato en cada tarjeta. */
 .pins {
-  column-count: 4;
+  column-count: 3;
   column-gap: var(--space-lg);
   padding-top: var(--space-xl);
 }
@@ -1300,7 +1300,7 @@ img {
 .pin {
   break-inside: avoid;
   margin-bottom: var(--space-xl);
-  /* Ancla del menú "..." */
+  /* Ancla del toast de "Copy link" */
   position: relative;
 }
 
@@ -1335,36 +1335,129 @@ img {
   outline-offset: 2px;
 }
 
+/* Tarjeta bloqueada ("Coming soon"): portada atenuada + velo oscuro fijo
+   (no solo al hover, para que se lea "bloqueada" de entrada) con el
+   candado y la leyenda centrados. Sin cursor pointer: no hay nada que abrir. */
+.pin--locked .pin__media {
+  cursor: default;
+}
+
+.pin--locked .pin__media img {
+  filter: grayscale(60%) brightness(0.55);
+}
+
+.pin__lock {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  background: rgba(10, 10, 12, 0.38);
+  color: var(--technical-white);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.pin__lock svg {
+  width: 22px;
+  height: 22px;
+}
+
+.pin--locked .pin__title {
+  color: var(--text-secondary);
+}
+
 /* ---- Acciones sobre la imagen ----
    Sin transición a propósito: aparecen y desaparecen en seco, sin animación
    de movimiento ni de opacidad. La tarjeta tampoco se desplaza en hover. */
 .pin__act {
   position: absolute;
   z-index: 2;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 36px;
   height: 36px;
-  border: none;
+  /* Contorno, no solo sombra: sobre una portada blanca (la primera página de
+     un paper) la sombra suave desaparecía y el botón se perdía dentro de la
+     imagen. El hairline lo despega de cualquier fondo claro. */
+  border: 1px solid rgba(17, 19, 23, 0.14);
   border-radius: var(--radius-round);
   background: var(--technical-white);
   color: var(--graphite);
   box-shadow: 0 1px 3px rgba(17, 19, 23, 0.22);
   cursor: pointer;
   opacity: 0;
+  text-decoration: none;
 }
 
 .pin__act svg {
+  flex: none;
   width: 17px;
   height: 17px;
 }
 
-.pin__act--link {
+/* Barra superior: "More info" a la izquierda, el destino externo a la derecha.
+   Los dos son relevantes y ninguno debe ganar por omisión, así que van al
+   mismo peso visual y en extremos opuestos. */
+.pin__acts {
+  position: absolute;
+  z-index: 2;
   top: var(--space-sm);
+  left: var(--space-sm);
   right: var(--space-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  /* La barra ocupa todo el ancho: sin esto taparía el clic al modal en la
+     franja superior de la imagen. Solo los botones reciben el puntero. */
+  pointer-events: none;
 }
 
-.pin__act--share {
+.pin__acts > * {
+  pointer-events: auto;
+}
+
+/* Variante con etiqueta: los botones de destino llevan texto porque un tooltip
+   solo aparece si ya apuntaste, y para eso hay que sospechar que el botón
+   hace algo distinto de lo que ya hace la tarjeta. */
+.pin__act--pill {
+  position: static;
+  width: auto;
+  max-width: 100%;
+  height: var(--space-2xl);
+  padding: 0 var(--space-sm);
+  gap: var(--space-xs);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--graphite);
+}
+
+.pin__act--pill svg {
+  width: 14px;
+  height: 14px;
+}
+
+.pin__act-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Orden de lectura dentro de la píldora: el icono antecede al texto en "More
+   info", pero en el enlace externo la flecha cierra la frase. */
+.pin__act--link {
+  flex-direction: row-reverse;
+}
+
+.pin__act--copy {
   left: var(--space-sm);
   bottom: var(--space-sm);
 }
@@ -1390,7 +1483,21 @@ img {
   .pin__act { opacity: 1; }
 }
 
-/* ---- Pie: título + "..." ---- */
+/* Debajo de ~800px la tarjeta baja de 224px y las dos píldoras con texto ya
+   no caben lado a lado (la más larga, "View KiCad files", pide 214px con
+   "More info"). Se retiran las etiquetas y quedan los iconos; el aria-label
+   sigue completo, así que el lector de pantalla no pierde nada. El corte no
+   coincide con el de columnas a propósito: manda el ancho de tarjeta. */
+@media (max-width: 799px) {
+  .pin__act--pill {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+  }
+  .pin__act-label { display: none; }
+}
+
+/* ---- Pie: título ---- */
 .pin__foot {
   display: flex;
   align-items: flex-start;
@@ -1443,73 +1550,8 @@ img {
   text-overflow: ellipsis;
 }
 
-.pin__more {
-  appearance: none;
-  flex: none;
-  width: 28px;
-  height: 28px;
-  display: grid;
-  place-items: center;
-  border: none;
-  border-radius: var(--radius-round);
-  background: none;
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.pin__more:hover,
-.pin__more[aria-expanded="true"] {
-  background: var(--surface-secondary);
-  color: var(--text);
-}
-
-.pin__more:focus-visible {
-  outline: 2px solid var(--sebs-signal);
-  outline-offset: 2px;
-}
-
-/* ---- Menú del "..." ---- */
-.pin__menu {
-  position: absolute;
-  z-index: 20;
-  right: 0;
-  top: 100%;
-  min-width: 168px;
-  padding: var(--space-xs);
-  background: var(--surface);
-  border: 1px solid var(--divider);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 18px 40px -18px rgba(17, 19, 23, 0.45);
-}
-
-.pin__menuitem {
-  appearance: none;
-  display: block;
-  width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  border: none;
-  border-radius: var(--radius-sm);
-  background: none;
-  font: inherit;
-  font-size: 0.85rem;
-  color: var(--text);
-  text-align: left;
-  cursor: pointer;
-}
-
-.pin__menuitem:hover {
-  background: var(--surface-secondary);
-}
-
-.pin__menuitem:focus-visible {
-  outline: 2px solid var(--sebs-signal);
-  outline-offset: -2px;
-}
-
-/* Confirmación de "Copy link" / "Share": texto, no solo color (regla de
-   no depender del color como única señal). */
+/* Confirmación de "Copy link": texto, no solo color (regla de no depender del
+   color como única señal). */
 .pin__toast {
   position: absolute;
   z-index: 21;
@@ -1609,6 +1651,14 @@ img {
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
   padding-right: 2rem;
+}
+
+/* Detalle de mes ("Mon YYYY"), discreto — la tarjeta ya muestra el año solo */
+.modal__date {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  margin: -0.3rem 0 0.9rem;
 }
 
 /* Cabecera del modal: descripción a la izquierda y CTA visible a la derecha */
