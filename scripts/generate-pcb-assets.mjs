@@ -44,7 +44,7 @@ const PROJ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 // ---- args ----
 const argv = process.argv.slice(2);
-const VALUE_FLAGS = ["mode", "elev", "frames", "fps", "width", "amp", "loop"];
+const VALUE_FLAGS = ["mode", "elev", "frames", "fps", "width", "amp", "loop", "ratio", "bg"];
 const opt = (name, def) => {
   const i = argv.indexOf(`--${name}`);
   return i >= 0 && argv[i + 1] ? argv[i + 1] : def;
@@ -58,6 +58,25 @@ const ELEV = `${opt("elev", "68")}deg`;
 // frames: swing → loop×fps; spin → --frames (default 60)
 const FRAMES = MODE === "swing" ? Math.round(LOOP * FPS) : Number(opt("frames", "60"));
 const WIDTH = Number(opt("width", "800")); // salida del video (px de ancho)
+// Proporción de la tarjeta (el feed usa el tamaño natural del video/poster,
+// sin recorte — ver css .pin__media). "4:3" = comportamiento histórico de
+// las PCBs (de frente, apaisado). Los proyectos de hardware usan algo más
+// vertical (ver js/data.js / README de este script).
+const [RATIO_W, RATIO_H] = opt("ratio", "4:3").split(":").map(Number);
+const HEIGHT = Math.round((WIDTH * RATIO_H) / RATIO_W / 2) * 2; // par, para el encoder
+// Fondo del canvas: presets "dark" (default, degradado gris oscuro de
+// siempre) y "light" (gris claro). "blue" es el mismo azul que usa el
+// modelBg de las PCBs en js/data.js — mantenerlo en sync si cambia ahí.
+// También acepta dos colores propios separados por coma: --bg "c1,c2"
+// (c1 = centro, c2 = borde).
+const BG_PRESETS = {
+  dark: ["#26262c", "#0a0a0a"],
+  light: ["#f4f5f7", "#dcdfe4"],
+  blue: ["#4d5eea", "#1c2570"],
+};
+const bgOpt = opt("bg", "dark");
+const [BG_A, BG_B] = BG_PRESETS[bgOpt] || bgOpt.split(",");
+const BG = `radial-gradient(circle at 50% 42%, ${BG_A}, ${BG_B} 82%)`;
 const all = argv.includes("--all");
 const folders = all
   ? readdirSync(path.join(PROJ, "pcbs"))
@@ -66,13 +85,17 @@ const folders = all
   : argv.filter((a, k) => !a.startsWith("--") && !VALUE_FLAGS.includes((argv[k - 1] || "").replace(/^--/, "")));
 
 if (!folders.length) {
-  console.error("Uso: node scripts/generate-pcb-assets.mjs pcbs/<Carpeta> [--all] [--mode spin|swing] [--elev N] [--amp N] [--loop N] [--fps N] [--frames N]");
+  console.error("Uso: node scripts/generate-pcb-assets.mjs pcbs/<Carpeta> [--all] [--mode spin|swing] [--elev N] [--amp N] [--loop N] [--fps N] [--frames N] [--ratio W:H] [--bg dark|light|blue|c1,c2]");
   process.exit(1);
 }
 
 // ---- helpers ----
 const run = (cmd, args) => {
-  const r = spawnSync(cmd, args, { stdio: "inherit", shell: process.platform === "win32" });
+  // spawnSync con shell:true en Windows arma el comando concatenando los args
+  // con espacios SIN comillas propias; si el repo vive bajo una ruta con
+  // espacios (como esta), los argumentos se cortan mal. Los citamos a mano.
+  const winArgs = process.platform === "win32" ? args.map((a) => (/[\s"]/.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a)) : args;
+  const r = spawnSync(cmd, winArgs, { stdio: "inherit", shell: process.platform === "win32" });
   if (r.status !== 0) throw new Error(`${cmd} falló (${r.status})`);
 };
 
@@ -117,7 +140,7 @@ async function captureTurntable(puppeteer, chrome, port, glbRel, framesDir) {
   const url = `http://127.0.0.1:${port}/${glbRel.split(path.sep).join("/")}`;
   const html = `<!doctype html><meta charset=utf-8>
 <script type=module src="https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js"></script>
-<style>html,body{margin:0}#mv{width:${WIDTH}px;height:${Math.round((WIDTH * 3) / 4)}px;background:radial-gradient(circle at 50% 42%,#26262c,#0a0a0a 82%)}</style>
+<style>html,body{margin:0}#mv{width:${WIDTH}px;height:${HEIGHT}px;background:${BG}}</style>
 <model-viewer id=mv src="${url}" environment-image=neutral exposure=1.15 shadow-intensity=1 shadow-softness=1 camera-orbit="0deg ${ELEV} auto" interaction-prompt=none disable-zoom></model-viewer>
 <script>window.__loaded=false;mv.addEventListener('load',()=>window.__loaded=true);</script>`;
   const { writeFileSync } = await import("node:fs");
@@ -128,7 +151,7 @@ async function captureTurntable(puppeteer, chrome, port, glbRel, framesDir) {
   });
   try {
     const page = await browser.newPage();
-    await page.setViewport({ width: WIDTH, height: Math.round((WIDTH * 3) / 4), deviceScaleFactor: 1 });
+    await page.setViewport({ width: WIDTH, height: HEIGHT, deviceScaleFactor: 1 });
     await page.goto(`http://127.0.0.1:${port}/_pcb_cap.html`, { waitUntil: "load" });
     await page.waitForFunction(() => window.__loaded === true, { timeout: 60000 });
     await new Promise((r) => setTimeout(r, 600));
@@ -162,12 +185,21 @@ for (const folderRel of folders) {
 
   // 1) comprimir
   console.log("· comprimiendo → model.glb");
-  run("npx", ["--yes", "@gltf-transform/cli", "optimize", path.join(absFolder, raw), path.join(absFolder, "model.glb"),
-    "--compress", "draco", "--simplify", "false", "--texture-compress", "webp", "--instance", "false"]);
+  const optimizeArgs = (textureCompress) => ["--yes", "@gltf-transform/cli", "optimize", path.join(absFolder, raw), path.join(absFolder, "model.glb"),
+    "--compress", "draco", "--simplify", "false", "--texture-compress", textureCompress, "--instance", "false"];
+  try {
+    run("npx", optimizeArgs("webp"));
+  } catch (e) {
+    // Algunas texturas (colorspace no-RGB, p.ej. exportes de ciertos CADs) hacen
+    // fallar la recompresión a WebP en libvips; reintentamos sin tocar texturas.
+    console.log("· webp falló para las texturas, reintento sin comprimirlas");
+    run("npx", optimizeArgs("false"));
+  }
 
   // 2) captura del movimiento
   const framesDir = mkdtempSync(path.join(tmpdir(), "pcbturn-"));
-  console.log(`· ${MODE} (${FRAMES} frames, elev ${ELEV}${MODE === "swing" ? `, ±${AMP}°, ${LOOP}s` : ""})`);
+  const durationS = (FRAMES / FPS).toFixed(1);
+  console.log(`· ${MODE} (${FRAMES} frames, ${durationS}s, elev ${ELEV}${MODE === "swing" ? `, ±${AMP}°` : ""}, ratio ${RATIO_W}:${RATIO_H}, bg ${opt("bg", "dark")})`);
   await captureTurntable(puppeteer, chrome, port, path.join(folderRel, "model.glb"), framesDir);
 
   // 3) encode

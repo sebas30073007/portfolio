@@ -17,11 +17,11 @@ const FEATURE_SLIDES = {
   },
   remotehands: {
     images: [
-      "projects/remote-hands/Full-body.jpg",
-      "projects/remote-hands/Gripper.jpg",
-      "projects/remote-hands/depth-cam.jpg",
-      "projects/remote-hands/lidar.jpg",
-      "projects/remote-hands/PCB.jpg",
+      "projects/teleop-mobile-manipulator/Full-body.jpg",
+      "projects/teleop-mobile-manipulator/Gripper.jpg",
+      "projects/teleop-mobile-manipulator/depth-cam.jpg",
+      "projects/teleop-mobile-manipulator/lidar.jpg",
+      "projects/teleop-mobile-manipulator/PCB.jpg",
     ],
   },
   capa8: {
@@ -60,29 +60,54 @@ const ABOUT_PHOTOS = [
                 o { type: "video", id: "<youtubeId>", caption } para un video.
      - renders: [] (imágenes de render 3D, opcional).
      - model: ruta a un .glb para mostrar un visor 3D interactivo en el modal
-              (los espacios de la carpeta van como %20 en la ruta). */
+              (los espacios de la carpeta van como %20 en la ruta).
+     - modelBg: opcional, override del fondo del visor 3D (CSS background).
+                Sin esto usa el fondo oscuro por defecto de .modal__model.
+     - locked: true → tarjeta bloqueada ("Coming soon"): portada atenuada,
+               sin acciones (More info / enlace externo) y sin abrir el
+               modal al hacer clic. Para módulos de un curso aún no listos.
+     - date: opcional, "Mon YYYY" (mes abreviado en inglés). La tarjeta sigue
+             mostrando solo el año (la clave del bucket `years`); este campo
+             es el detalle de mes que se ve dentro del modal. Si el mes real
+             cae en un año distinto al de siempre mostrado, la tarjeta se
+             reubica en el bucket `years` de ese año. Las PCB's no llevan
+             `date` todavía — se quedan solo con el año. */
 const CATALOG = {
   projects: {
     label: "Projects",
     years: {
       2026: [
         {
-          title: "Remote Hands",
+          // Antes "Remote Hands". El prototipo se documenta en dos fichas
+          // separadas: aquí el desarrollo de hardware, y en competitions →
+          // "James Dyson Award" el material de la convocatoria. Misma máquina,
+          // documentación distinta, carpetas distintas.
+          title: "Teleop Mobile Manipulator",
           subtype: "hardware",
-          tag: "Robotics · XR",
-          desc: "Teleoperated mobile-manipulator for inclusive logistics, with mixed-reality (Meta Quest) interface and ZMQ communication.",
+          tag: "Robotics · Teleoperation",
+          date: "May 2026",
+          desc: "Teleoperated mobile manipulator for inclusive logistics: tracked base, belt-driven arm with a custom gripper, depth camera and LiDAR onboard, and an in-house ESP32-C3 control board. ROS 2 + ZMQ link the machine to the operator station.",
           tools: "ROS 2 · ZMQ · MicroPython",
           github: "https://github.com/sebas30073007/teleop-mobile-manipulator",
           url: "https://sebas30073007.github.io/teleop-mobile-manipulator/",
           ctaLabel: "Visit site",
-          cover: "projects/remote-hands/main.png",
+          // Tarjeta: video turntable (spin) + poster. Modal: model.glb (Draco)
+          // como primer elemento de la galería + imágenes seleccionables.
+          // Generado con scripts/generate-pcb-assets.mjs (mismo pipeline que las PCBs).
+          spin: "projects/teleop-mobile-manipulator/turntable",
+          poster: "projects/teleop-mobile-manipulator/poster.webp",
+          cover: "projects/teleop-mobile-manipulator/poster.webp",
+          model: "projects/teleop-mobile-manipulator/model.glb",
+          // Fondo más claro solo en este visor 3D (el resto de proyectos/PCBs
+          // usa el fondo oscuro por defecto de .modal__model).
+          modelBg: "radial-gradient(circle at 50% 42%, #f4f5f7, #dcdfe4 82%)",
           gallery: [
-            { src: "projects/remote-hands/%231.png", caption: "System overview" },
-            { type: "video", id: "mCvmUQFTl2M", caption: "Demo video" },
-            { src: "projects/remote-hands/%232.png", caption: "XR teleoperation interface" },
-            { src: "projects/remote-hands/%233.png", caption: "Mobile base + manipulator" },
-            { src: "projects/remote-hands/%234.png", caption: "Control architecture" },
-            { src: "projects/remote-hands/%235.png", caption: "Field test" },
+            { src: "projects/teleop-mobile-manipulator/main.png", caption: "Manipulator render" },
+            { src: "projects/teleop-mobile-manipulator/Full-body.jpg", caption: "Assembled platform" },
+            { src: "projects/teleop-mobile-manipulator/Gripper.jpg", caption: "Custom gripper" },
+            { src: "projects/teleop-mobile-manipulator/depth-cam.jpg", caption: "Intel i435 depth camera" },
+            { src: "projects/teleop-mobile-manipulator/lidar.jpg", caption: "RPLidar C1" },
+            { src: "projects/teleop-mobile-manipulator/PCB.jpg", caption: "Custom ESP32-C3 control board" },
           ],
           renders: [],
         },
@@ -90,6 +115,7 @@ const CATALOG = {
           title: "Torke",
           subtype: "software",
           tag: "Web tool · CAD",
+          date: "Oct 2026",
           desc: "Parametric web tool to design, visualize and export gear systems (STL/STEP/OBJ) for laser cutting and 3D printing.",
           tools: "TypeScript · Three.js",
           github: null,
@@ -122,6 +148,7 @@ const CATALOG = {
           title: "Capa 8 — Network AI",
           subtype: "software",
           tag: "Artificial Intelligence",
+          date: "May 2026",
           desc: "AI applied to computer networks — the 'layer 8', the human factor — generating OSI topology diagrams.",
           tools: "PyTorch · Scapy",
           github: "https://github.com/sebas30073007/IA_mecatronica_Capa8",
@@ -143,13 +170,22 @@ const CATALOG = {
           title: "Waste Sorting Robot",
           subtype: "hardware",
           tag: "Cyber-Physical Systems",
-          desc: "Mobile robot that collects and classifies waste (glass, cans, Tetra Pak) using computer vision and a monitoring UI.",
-          tools: "OpenCV · Python",
+          date: "Dec 2025",
+          desc: "UR3 robotic arm cell that identifies and sorts glass, cans and Tetra Pak using computer vision, with an RFID-gated HMI, cloud APIs and a monitoring dashboard.",
+          tools: "UR3 · Computer Vision · Jetson · Firebase",
           github: "https://github.com/sebas30073007/Sistemas_Ciberfisicos_Proyecto",
-          url: "https://github.com/sebas30073007/Sistemas_Ciberfisicos_Proyecto",
-          ctaLabel: "View repository",
-          cover: "",
-          gallery: [],
+          url: "https://sebas30073007.github.io/Sistemas_Ciberfisicos_Proyecto/",
+          ctaLabel: "View documentation",
+          // Tarjeta: foto fija (sin turntable por ahora). Modal: model.glb
+          // (Draco, comprimido con el mismo pipeline que las PCBs, sin video)
+          // como primer elemento de la galería.
+          cover: "projects/clasifica-basura/Robot.jpg",
+          model: "projects/clasifica-basura/model.glb",
+          // Mismo fondo claro que el visor 3D de Teleop Mobile Manipulator.
+          modelBg: "radial-gradient(circle at 50% 42%, #f4f5f7, #dcdfe4 82%)",
+          gallery: [
+            { src: "projects/clasifica-basura/Robot.jpg", caption: "Assembled robot cabinet" },
+          ],
           renders: [],
         },
       ],
@@ -159,9 +195,10 @@ const CATALOG = {
   papers: {
     label: "Papers",
     years: {
-      2026: [{
+      2025: [{
         title: "Balancing Accuracy and Adaptability: Hybrid Analytical-Neural Control in Omnidirectional Robots",
         tag: "Robotics · Control",
+        date: "Nov 2025",
         desc: "Three control strategies for navigation and trajectory tracking are presented and compared using the omnidirectional mobile robot RoboMaster S1, equipped with a Vicon motion capture system and controlled via Python: (1) classic potential field control, (2) neural network + proportional–integral control with a feed-forward neural network predicting wheel velocities, and (3) hybrid potential + NN control, where a second neural network trained on the residual error supplies an online corrective signal. Main contributions: empirical validation of a neural model for velocity prediction in omnidirectional platforms, a neural compensator integrated with analytical control laws, and a comparative experimental analysis of potential-based, neural and hybrid control approaches.",
         descLabel: "Abstract",
         tools: "Control · Neural Networks", github: null,
@@ -180,7 +217,29 @@ const CATALOG = {
     years: {
       2026: [
         {
+          // Convocatoria del prototipo que en projects vive como "Teleop Mobile
+          // Manipulator": aquí van los tableros de la entrega y el video, no el
+          // desarrollo de hardware.
+          title: "James Dyson Award", tag: "Design · Competition",
+          date: "Sep 2026",
+          desc: "Award entry built on the teleoperated mobile manipulator, framed as inclusive logistics: an operator in a wheelchair picks and places warehouse stock through a Meta Quest mixed-reality interface, with a real-time digital twin, selectable LiDAR views and a live depth-camera feed.",
+          tools: "Product Design · XR", github: null, url: null, ctaLabel: "Entry page coming soon",
+          cover: "competitions/The%20James%20Dyson%20Award/main.png",
+          gallery: [
+            { src: "competitions/The%20James%20Dyson%20Award/%231.png", caption: "Entry board — system overview" },
+            { type: "video", id: "mCvmUQFTl2M", caption: "Submission video" },
+            { src: "competitions/The%20James%20Dyson%20Award/%232.png", caption: "XR teleoperation interface" },
+            { src: "competitions/The%20James%20Dyson%20Award/%233.png", caption: "Operator view + real-time digital twin" },
+            { src: "competitions/The%20James%20Dyson%20Award/%234.png", caption: "Control architecture" },
+            { src: "competitions/The%20James%20Dyson%20Award/%235.png", caption: "Field test" },
+          ],
+          renders: [],
+        },
+      ],
+      2024: [
+        {
           title: "2° Concurso Colombiano de Cohetería Deportiva", tag: "Rocketry · Competition",
+          date: "Nov 2024",
           desc: "Participation in the Colombian sport rocketry competition. Preparation, technical work, analysis and results will be documented here.",
           tools: "Rocketry · Engineering", github: null, url: null, ctaLabel: "More details coming soon",
           cover: "competitions/2%C2%B0%20Concurso%20Colombiano%20de%20Coheter%C3%ADa%20Deportiva/IMG-20241124-WA0004.jpg",
@@ -188,17 +247,49 @@ const CATALOG = {
         },
         {
           title: "Reto del Fuego", tag: "Engineering · Competition",
+          date: "May 2024",
           desc: "Engineering competition participation. Project development, presentation and results will be added here.",
           tools: "Design · Prototyping", github: null, url: null, ctaLabel: "More details coming soon",
           cover: "competitions/Reto%20del%20Fuego/IMG-20240502-WA0012.jpg",
           gallery: [{ src: "competitions/Reto%20del%20Fuego/IMG-20240502-WA0012.jpg", caption: "Competition team" }], renders: [],
         },
+      ],
+    },
+  },
+
+  courses: {
+    label: "Courses",
+    years: {
+      2026: [
         {
-          title: "James Dyson Award", tag: "Design · Competition",
-          desc: "Entry for the James Dyson Award. The design process, supporting material and outcome will be documented here.",
-          tools: "Product Design · XR", github: null, url: null, ctaLabel: "More details coming soon",
-          cover: "competitions/The%20James%20Dyson%20Award/main.png",
-          gallery: [{ src: "competitions/The%20James%20Dyson%20Award/main.png", caption: "Project presentation" }], renders: [],
+          title: "KiCad Basics",
+          tag: "Course · KiCad",
+          date: "Sep 2026",
+          desc: "Getting started with KiCad: schematic capture fundamentals, symbols, wiring and project setup.",
+          tools: "KiCad", github: null,
+          url: "https://sebas30073007.github.io/course-docs/",
+          ctaLabel: "Start course",
+          cover: "courses/KiCad/kicad-basics.png",
+          gallery: [{ src: "courses/KiCad/kicad-basics.png", caption: "KiCad Basics" }],
+          renders: [],
+        },
+        {
+          title: "KiCad Intermediate",
+          tag: "Course · KiCad",
+          desc: "Coming soon.",
+          tools: "KiCad", github: null, url: null, ctaLabel: "Coming soon",
+          cover: "courses/KiCad/kicad-intermediate.png",
+          gallery: [], renders: [],
+          locked: true,
+        },
+        {
+          title: "KiCad Advanced",
+          tag: "Course · KiCad",
+          desc: "Coming soon.",
+          tools: "KiCad", github: null, url: null, ctaLabel: "Coming soon",
+          cover: "courses/KiCad/kicad-advanced.png",
+          gallery: [], renders: [],
+          locked: true,
         },
       ],
     },
@@ -220,6 +311,9 @@ const CATALOG = {
           poster: "pcbs/Drivers-controller/poster.webp",
           cover: "pcbs/Drivers-controller/poster.webp",
           model: "pcbs/Drivers-controller/model.glb",
+          // Solo el visor 3D del modal — la tarjeta (turntable/poster) no se
+          // regeneró, sigue con el fondo oscuro de siempre.
+          modelBg: "radial-gradient(circle at 50% 42%, #4d5eea, #1c2570 82%)",
           gallery: [
             { src: "pcbs/Drivers-controller/Real.png", caption: "Assembled board" },
             { src: "pcbs/Drivers-controller/Render.png", caption: "Manufacturing render" },
@@ -239,6 +333,7 @@ const CATALOG = {
           poster: "pcbs/PuenteH/poster.webp",
           cover: "pcbs/PuenteH/poster.webp",
           model: "pcbs/PuenteH/model.glb",
+          modelBg: "radial-gradient(circle at 50% 42%, #4d5eea, #1c2570 82%)",
           gallery: [
             { src: "pcbs/PuenteH/Real.png", caption: "Assembled board" },
             { src: "pcbs/PuenteH/Render.png", caption: "Manufacturing render" },
@@ -260,6 +355,7 @@ const CATALOG = {
           poster: "pcbs/Servo-controller/poster.webp",
           cover: "pcbs/Servo-controller/poster.webp",
           model: "pcbs/Servo-controller/model.glb",
+          modelBg: "radial-gradient(circle at 50% 42%, #4d5eea, #1c2570 82%)",
           gallery: [
             { src: "pcbs/Servo-controller/Render.png", caption: "Manufacturing render" },
             { src: "pcbs/Servo-controller/Top_layer.png", caption: "Top copper layer" },
