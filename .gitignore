@@ -7,6 +7,11 @@ fp-info-cache
 *.lck
 *.kicad_prl
 
+# Fuentes crudas de CAD >25 MiB: exceden el límite por archivo de Cloudflare
+# Workers Static Assets y rompen el deploy completo. No se publican de
+# todas formas (ver scripts/README.md) — quedan solo en disco local.
+projects/clasifica-basura/Ensamblaje1.glb
+
 # Archivos temporales del capturador de turntables
 _cap.html
 _pcb_cap.html
