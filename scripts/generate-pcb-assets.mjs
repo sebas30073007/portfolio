@@ -35,7 +35,7 @@
  */
 import { createServer } from "node:http";
 import { spawn, spawnSync } from "node:child_process";
-import { readFileSync, existsSync, readdirSync, statSync, mkdtempSync, rmSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, statSync, mkdtempSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -77,6 +77,11 @@ const BG_PRESETS = {
 const bgOpt = opt("bg", "dark");
 const [BG_A, BG_B] = BG_PRESETS[bgOpt] || bgOpt.split(",");
 const BG = `radial-gradient(circle at 50% 42%, ${BG_A}, ${BG_B} 82%)`;
+// --no-palette: desactiva el paso "palette" de gltf-transform optimize.
+// Ese paso está pensado para ensambles CAD de colores sólidos (las PCBs) y
+// funde texturas de imagen reales en una paleta minúscula, rompiéndolas.
+// Usar en proyectos con fotos/texturas reales (no solo apariencias de color).
+const noPalette = argv.includes("--no-palette");
 const all = argv.includes("--all");
 const folders = all
   ? readdirSync(path.join(PROJ, "pcbs"))
@@ -135,8 +140,16 @@ function startServer() {
   return new Promise((resolve) => server.listen(0, "127.0.0.1", () => resolve({ server, port: server.address().port })));
 }
 
-async function captureTurntable(puppeteer, chrome, port, glbRel, framesDir) {
-  const tmpHtml = path.join(PROJ, "_pcb_cap.html");
+// Frames por sesión de Chrome antes de reiniciarlo. Sesiones largas de
+// model-viewer (WebGL/SwiftShader) acumulan memoria hasta tumbar el proceso
+// headless a mitad de captura (visto de forma reproducible ~frame 189/360
+// con mallas pesadas). Reiniciar el navegador cada CHUNK frames evita el
+// techo de memoria sin perder continuidad del giro (la cámara retoma el
+// ángulo exacto donde se quedó).
+const CHUNK = 60;
+
+async function captureTurntableChunk(puppeteer, chrome, port, glbRel, framesDir, start, end) {
+  const tmpHtml = path.join(PROJ, `_pcb_cap_${start}.html`);
   const url = `http://127.0.0.1:${port}/${glbRel.split(path.sep).join("/")}`;
   const html = `<!doctype html><meta charset=utf-8>
 <script type=module src="https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js"></script>
@@ -152,10 +165,12 @@ async function captureTurntable(puppeteer, chrome, port, glbRel, framesDir) {
   try {
     const page = await browser.newPage();
     await page.setViewport({ width: WIDTH, height: HEIGHT, deviceScaleFactor: 1 });
-    await page.goto(`http://127.0.0.1:${port}/_pcb_cap.html`, { waitUntil: "load" });
+    await page.goto(`http://127.0.0.1:${port}/${path.basename(tmpHtml)}`, { waitUntil: "load" });
     await page.waitForFunction(() => window.__loaded === true, { timeout: 60000 });
     await new Promise((r) => setTimeout(r, 600));
-    for (let i = 0; i < FRAMES; i++) {
+    for (let i = start; i < end; i++) {
+      const framePath = path.join(framesDir, `f_${String(i).padStart(3, "0")}.png`);
+      if (existsSync(framePath)) continue; // reanudar: ya capturado en una corrida anterior
       // spin: 0→360 lineal · swing: 0 → +amp → 0 → -amp → 0 (seno = easing en extremos)
       const az = (MODE === "swing"
         ? AMP * Math.sin((2 * Math.PI * i) / FRAMES)
@@ -163,11 +178,36 @@ async function captureTurntable(puppeteer, chrome, port, glbRel, framesDir) {
       ).toFixed(3);
       await page.evaluate((az, elev) => { const m = document.getElementById("mv"); m.cameraOrbit = `${az}deg ${elev} auto`; m.jumpCameraToGoal(); }, az, ELEV);
       await new Promise((r) => setTimeout(r, 70));
-      await page.screenshot({ path: path.join(framesDir, `f_${String(i).padStart(3, "0")}.png`) });
+      await page.screenshot({ path: framePath });
     }
   } finally {
     await browser.close();
     rmSync(tmpHtml, { force: true });
+  }
+}
+
+async function captureTurntable(puppeteer, chrome, port, glbRel, framesDir) {
+  for (let start = 0; start < FRAMES; start += CHUNK) {
+    const end = Math.min(start + CHUNK, FRAMES);
+    const allDone = Array.from({ length: end - start }, (_, k) => start + k)
+      .every((i) => existsSync(path.join(framesDir, `f_${String(i).padStart(3, "0")}.png`)));
+    if (allDone) { console.log(`  · frames ${start}–${end - 1} de ${FRAMES} (ya listos, salto)`); continue; }
+    console.log(`  · frames ${start}–${end - 1} de ${FRAMES}`);
+    // El Chrome headless (SwiftShader) puede caerse a mitad de sesión sin
+    // avisar (WebSocket cerrado / cuelgue). Reintenta el chunk completo
+    // unas veces antes de rendirse — cada reintento parte de un Chrome nuevo.
+    let lastErr;
+    let ok = false;
+    for (let attempt = 1; attempt <= 3 && !ok; attempt++) {
+      try {
+        await captureTurntableChunk(puppeteer, chrome, port, glbRel, framesDir, start, end);
+        ok = true;
+      } catch (e) {
+        lastErr = e;
+        console.log(`  · chunk ${start}–${end - 1} falló (intento ${attempt}/3): ${e.message}`);
+      }
+    }
+    if (!ok) throw lastErr;
   }
 }
 
@@ -186,7 +226,8 @@ for (const folderRel of folders) {
   // 1) comprimir
   console.log("· comprimiendo → model.glb");
   const optimizeArgs = (textureCompress) => ["--yes", "@gltf-transform/cli", "optimize", path.join(absFolder, raw), path.join(absFolder, "model.glb"),
-    "--compress", "draco", "--simplify", "false", "--texture-compress", textureCompress, "--instance", "false"];
+    "--compress", "draco", "--simplify", "false", "--texture-compress", textureCompress, "--instance", "false",
+    ...(noPalette ? ["--palette", "false"] : [])];
   try {
     run("npx", optimizeArgs("webp"));
   } catch (e) {
@@ -197,7 +238,14 @@ for (const folderRel of folders) {
   }
 
   // 2) captura del movimiento
-  const framesDir = mkdtempSync(path.join(tmpdir(), "pcbturn-"));
+  // Directorio determinístico (no mkdtempSync al azar) para poder reanudar:
+  // si el proceso se corta a mitad de camino (el entorno mata árboles de
+  // procesos en background tras ~30 min, visto de forma reproducible), se
+  // puede volver a correr el mismo comando y retoma los frames que faltan
+  // en vez de perder el progreso.
+  const framesDirSlug = folderRel.replace(/[^a-zA-Z0-9]+/g, "-");
+  const framesDir = path.join(tmpdir(), `pcbturn-${framesDirSlug}`);
+  mkdirSync(framesDir, { recursive: true });
   const durationS = (FRAMES / FPS).toFixed(1);
   console.log(`· ${MODE} (${FRAMES} frames, ${durationS}s, elev ${ELEV}${MODE === "swing" ? `, ±${AMP}°` : ""}, ratio ${RATIO_W}:${RATIO_H}, bg ${opt("bg", "dark")})`);
   await captureTurntable(puppeteer, chrome, port, path.join(folderRel, "model.glb"), framesDir);

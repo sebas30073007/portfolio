@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@gltf-transform/cli": "^4.0.0",
+    "obj2gltf": "^3.2.0",
     "puppeteer-core": "^23.11.1"
   }
 }

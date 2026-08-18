@@ -133,15 +133,25 @@ const CATALOG = {
         },
         {
           title: "Structural Mapping in Mixed Reality",
-          subtype: "software",
+          subtype: "hardware",
           tag: "Mixed Reality",
           desc: "Structural mapping supported by mixed reality for inspection and environment registration.",
           tools: "Unity · AR Foundation",
           github: "https://github.com/sebas30073007/mapeo-estructural-en-realidad-mixta",
           url: "https://github.com/sebas30073007/mapeo-estructural-en-realidad-mixta",
           ctaLabel: "View repository",
-          cover: "",
-          gallery: [],
+          // Tarjeta: video turntable (spin) + poster. Modal: model.glb (Draco)
+          // como primer elemento de la galería + imágenes seleccionables.
+          // Generado con scripts/generate-pcb-assets.mjs (mismo pipeline que Teleop Mobile Manipulator).
+          spin: "projects/Structural Mapping in MR/turntable",
+          poster: "projects/Structural Mapping in MR/poster.webp",
+          cover: "projects/Structural Mapping in MR/poster.webp",
+          model: "projects/Structural Mapping in MR/model.glb",
+          // Mismo fondo claro que el visor 3D de Teleop Mobile Manipulator.
+          modelBg: "radial-gradient(circle at 50% 42%, #f4f5f7, #dcdfe4 82%)",
+          gallery: [
+            { src: "projects/Structural Mapping in MR/Ros master.png", caption: "Mobile robot with mapping sensors" },
+          ],
           renders: [],
         },
         {
@@ -176,10 +186,12 @@ const CATALOG = {
           github: "https://github.com/sebas30073007/Sistemas_Ciberfisicos_Proyecto",
           url: "https://sebas30073007.github.io/Sistemas_Ciberfisicos_Proyecto/",
           ctaLabel: "View documentation",
-          // Tarjeta: foto fija (sin turntable por ahora). Modal: model.glb
-          // (Draco, comprimido con el mismo pipeline que las PCBs, sin video)
-          // como primer elemento de la galería.
-          cover: "projects/clasifica-basura/Robot.jpg",
+          // Tarjeta: video turntable (spin) + poster. Modal: model.glb (Draco)
+          // como primer elemento de la galería + imágenes seleccionables.
+          // Generado con scripts/generate-pcb-assets.mjs (mismo pipeline que Teleop Mobile Manipulator).
+          spin: "projects/clasifica-basura/turntable",
+          poster: "projects/clasifica-basura/poster.webp",
+          cover: "projects/clasifica-basura/poster.webp",
           model: "projects/clasifica-basura/model.glb",
           // Mismo fondo claro que el visor 3D de Teleop Mobile Manipulator.
           modelBg: "radial-gradient(circle at 50% 42%, #f4f5f7, #dcdfe4 82%)",
