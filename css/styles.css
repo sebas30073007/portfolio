@@ -1616,11 +1616,16 @@ img {
 .modal__window {
   position: relative;
   z-index: 1;
-  /* Crece con la pantalla: a 760 px fijos, un diagrama detallado quedaba
-     reducido a una miniatura ilegible. */
-  width: min(1200px, 100%);
-  max-height: 92vh;
+  /* Se dimensiona por el ancho Y por el alto de la pantalla: el stage es
+     16:9, así que el ancho máximo que cabe a lo alto es
+     (alto disponible − cabecera y pie) × 16/9 + columna de miniaturas.
+     En una laptop baja la ventana se estrecha en vez de desbordarse con
+     scroll; en un monitor grande crece hasta 1400 px. */
+  width: min(1400px, 100%, calc((92dvh - 17rem) * 16 / 9 + 9rem));
+  max-height: 92dvh;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
   background: var(--surface);
   color: var(--text);
   border-radius: var(--radius-xl);
@@ -1702,9 +1707,10 @@ img {
 
 .modal__stage {
   position: relative;
-  /* Alto por pantalla, no por proporción fija: la imagen usa el espacio
-     disponible con cualquier formato (foto, render o diagrama ancho). */
-  height: clamp(260px, 64vh, 760px);
+  /* 16:9: el mismo formato que las imágenes de galería, que lo llenan sin
+     bandas vacías. El tamaño lo decide el ancho de la ventana. */
+  aspect-ratio: 16 / 9;
+  width: 100%;
   background: var(--graphite);
   border-radius: 12px;
   overflow: hidden;
@@ -1910,10 +1916,16 @@ img {
   max-height: 62px;
 }
 
-/* La columna mantiene ancho estable aunque las miniaturas varíen */
+/* La columna mantiene ancho estable aunque las miniaturas varíen, y su
+   alto es el del stage: si no caben, se desplaza con una barra discreta. */
 .modal__gallery--side .modal__thumbs {
   flex: 0 0 102px;
   align-items: center;
+  align-self: stretch;
+  /* Sin tamaño propio: la columna toma el alto del stage (16:9) en vez de
+     estirar la galería, y lo que no cabe se desplaza. */
+  contain: size;
+  padding-right: 4px;
 }
 
 /* Imagen principal con un pequeño margen interior: escala las imágenes
@@ -1932,6 +1944,8 @@ img {
 }
 
 .modal__thumbs {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -2185,6 +2199,7 @@ img {
     width: 100%;
     height: 100%;
     height: 100dvh;
+    max-height: 100dvh;
     max-height: none;
     border-radius: 0;
     padding: 1rem;
@@ -2195,8 +2210,12 @@ img {
   .modal__stage,
   .modal__gallery--side .modal__stage {
     flex: none;
-    height: min(62vw, 46vh);
     border-radius: 10px;
+  }
+
+  .modal__gallery--side .modal__thumbs {
+    contain: none;
+    padding-right: 0;
   }
 
   .modal__thumbs {
@@ -2244,8 +2263,10 @@ img {
 }
 
 .lightbox__img {
-  max-width: calc(100% - 7rem);
-  max-height: calc(100% - 2rem);
+  /* Medidas de pantalla, no %: dentro de la rejilla el % de alto no se
+     resolvía y la imagen se metía bajo la barra inferior (4.5rem). */
+  max-width: calc(100vw - 7rem);
+  max-height: calc(100dvh - 4.5rem - 2rem);
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
@@ -2257,6 +2278,8 @@ img {
 .lightbox.is-zoomed .lightbox__viewport {
   display: block;
   overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
   cursor: grab;
   touch-action: auto;
 }
@@ -2367,7 +2390,7 @@ img {
 
 @media (max-width: 640px) {
   .lightbox__img {
-    max-width: 100%;
+    max-width: 100vw;
   }
 
   /* En táctil se cambia de imagen deslizando: las flechas estorban */
@@ -2380,4 +2403,38 @@ img {
     gap: 0.6rem;
     padding: 0 0.85rem;
   }
+}
+
+/* Barras de desplazamiento discretas en el modal y el visor (WebKit/Blink;
+   Firefox usa scrollbar-width/scrollbar-color de cada contenedor). */
+.modal__window::-webkit-scrollbar,
+.modal__thumbs::-webkit-scrollbar,
+.lightbox__viewport::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.modal__window::-webkit-scrollbar-track,
+.modal__thumbs::-webkit-scrollbar-track,
+.lightbox__viewport::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal__window::-webkit-scrollbar-thumb,
+.modal__thumbs::-webkit-scrollbar-thumb,
+.lightbox__viewport::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22) padding-box;
+}
+
+.modal__window::-webkit-scrollbar-thumb:hover,
+.modal__thumbs::-webkit-scrollbar-thumb:hover,
+.lightbox__viewport::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4) padding-box;
+}
+
+.modal__window::-webkit-scrollbar-corner,
+.lightbox__viewport::-webkit-scrollbar-corner {
+  background: transparent;
 }
