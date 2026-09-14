@@ -89,7 +89,7 @@ const CATALOG = {
           desc: "Teleoperated mobile manipulator for inclusive logistics: tracked base, belt-driven arm with a custom gripper, depth camera and LiDAR onboard, and an in-house ESP32-C3 control board. ROS 2 + ZMQ link the machine to the operator station.",
           tools: "ROS 2 · ZMQ · MicroPython",
           github: "https://github.com/sebas30073007/teleop-mobile-manipulator",
-          url: "https://sebas30073007.github.io/teleop-mobile-manipulator/",
+          url: "https://remote-hands.sebs.mx/",
           ctaLabel: "Visit site",
           // Tarjeta: video turntable (spin) + poster. Modal: model.glb (Draco)
           // como primer elemento de la galería + imágenes seleccionables.
@@ -102,12 +102,13 @@ const CATALOG = {
           // usa el fondo oscuro por defecto de .modal__model).
           modelBg: "radial-gradient(circle at 50% 42%, #f4f5f7, #dcdfe4 82%)",
           gallery: [
-            { src: "projects/teleop-mobile-manipulator/main.png", caption: "Manipulator render" },
-            { src: "projects/teleop-mobile-manipulator/Full-body.jpg", caption: "Assembled platform" },
-            { src: "projects/teleop-mobile-manipulator/Gripper.jpg", caption: "Custom gripper" },
-            { src: "projects/teleop-mobile-manipulator/depth-cam.jpg", caption: "Intel i435 depth camera" },
-            { src: "projects/teleop-mobile-manipulator/lidar.jpg", caption: "RPLidar C1" },
-            { src: "projects/teleop-mobile-manipulator/PCB.jpg", caption: "Custom ESP32-C3 control board" },
+            // Diagramas de conexiones exportados de la documentación
+            // (remote-hands.sebs.mx), del más general al más detallado.
+            { src: "projects/teleop-mobile-manipulator/diagrams/sistema.webp", caption: "System overview — Meta Quest 3, NUC and robot" },
+            { src: "projects/teleop-mobile-manipulator/diagrams/arquitectura.webp", caption: "Detailed architecture — ZeroMQ ports, NUC modules, sensors and embedded boards" },
+            { src: "projects/teleop-mobile-manipulator/diagrams/nuc.webp", caption: "NUC connections — inputs and outputs" },
+            { src: "projects/teleop-mobile-manipulator/diagrams/conjunto-i2c.webp", caption: "I²C bus — H-bridge pair and CL57T controller" },
+            { src: "projects/teleop-mobile-manipulator/diagrams/controlador-cl57t.webp", caption: "Arm signal chain — from the headset to the NEMA 17 motors" },
           ],
           renders: [],
         },
