@@ -107,7 +107,6 @@ const CATALOG = {
             { src: "projects/teleop-mobile-manipulator/diagrams/sistema.webp", caption: "System overview — Meta Quest 3, NUC and robot" },
             { src: "projects/teleop-mobile-manipulator/diagrams/arquitectura.webp", caption: "Detailed architecture — ZeroMQ ports, NUC modules, sensors and embedded boards" },
             { src: "projects/teleop-mobile-manipulator/diagrams/nuc.webp", caption: "NUC connections — inputs and outputs" },
-            { src: "projects/teleop-mobile-manipulator/diagrams/conjunto-i2c.webp", caption: "I²C bus — H-bridge pair and CL57T controller" },
             { src: "projects/teleop-mobile-manipulator/diagrams/controlador-cl57t.webp", caption: "Arm signal chain — from the headset to the NEMA 17 motors" },
           ],
           renders: [],

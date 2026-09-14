@@ -1616,7 +1616,9 @@ img {
 .modal__window {
   position: relative;
   z-index: 1;
-  width: min(760px, 100%);
+  /* Crece con la pantalla: a 760 px fijos, un diagrama detallado quedaba
+     reducido a una miniatura ilegible. */
+  width: min(1200px, 100%);
   max-height: 92vh;
   overflow-y: auto;
   background: var(--surface);
@@ -1679,6 +1681,7 @@ img {
 }
 
 .modal__desc {
+  max-width: 75ch;
   color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.5;
@@ -1699,7 +1702,9 @@ img {
 
 .modal__stage {
   position: relative;
-  aspect-ratio: 16 / 9;
+  /* Alto por pantalla, no por proporción fija: la imagen usa el espacio
+     disponible con cualquier formato (foto, render o diagrama ancho). */
+  height: clamp(260px, 64vh, 760px);
   background: var(--graphite);
   border-radius: 12px;
   overflow: hidden;
@@ -1805,6 +1810,45 @@ img {
 @keyframes pulse {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
+}
+
+/* Botón Ampliar: esquina inferior derecha del stage, sobre la imagen */
+.modal__expand {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--graphite);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.modal__expand:hover {
+  background: var(--white);
+}
+
+.modal__expand:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+.modal__expand[hidden] {
+  display: none;
+}
+
+/* La imagen del stage también abre el visor */
+.modal__img:not([hidden]) {
+  cursor: zoom-in;
 }
 
 .modal__caption {
@@ -1948,9 +1992,9 @@ img {
     order: 0;
     flex: 0 0 auto;
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     margin-top: 0.75rem;
   }
   .modal__gallery--side .modal__thumb img {
@@ -2124,5 +2168,216 @@ img {
 
   .hero__inner--contact .hero__photo {
     order: 1;
+  }
+}
+
+/* -------------------------------------------------------------------
+   Modal a pantalla completa en móvil
+   Sin márgenes ni esquinas: la imagen va a todo lo ancho arriba y las
+   miniaturas en una tira que se desliza, en vez de envolverse en filas.
+   ------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .modal {
+    padding: 0;
+  }
+
+  .modal__window {
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    max-height: none;
+    border-radius: 0;
+    padding: 1rem;
+  }
+
+  /* `flex: none`: en la galería lateral apilada, `flex: 1` con base 0
+     dejaba el stage en 0 px de alto. */
+  .modal__stage,
+  .modal__gallery--side .modal__stage {
+    flex: none;
+    height: min(62vw, 46vh);
+    border-radius: 10px;
+  }
+
+  .modal__thumbs {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding-bottom: 0.25rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal__thumb {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+}
+
+/* -------------------------------------------------------------------
+   Visor a pantalla completa
+   Dos estados: «encajada» (la imagen entera cabe en la pantalla) y
+   «tamaño real» (a su resolución, recorrible arrastrando o con scroll).
+   Superficie grafito: la imagen es el único elemento claro.
+   ------------------------------------------------------------------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(8, 9, 11, 0.96);
+  animation: fade-in 0.18s ease;
+}
+
+.lightbox[hidden] {
+  display: none;
+}
+
+.lightbox__viewport {
+  position: absolute;
+  inset: 0 0 4.5rem;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  touch-action: pinch-zoom;
+  cursor: zoom-in;
+}
+
+.lightbox__img {
+  max-width: calc(100% - 7rem);
+  max-height: calc(100% - 2rem);
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  background: var(--white);
+  border-radius: 6px;
+}
+
+/* Tamaño real: la imagen conserva su resolución y el viewport se recorre */
+.lightbox.is-zoomed .lightbox__viewport {
+  display: block;
+  overflow: auto;
+  cursor: grab;
+  touch-action: auto;
+}
+
+.lightbox.is-zoomed .lightbox__viewport.is-dragging {
+  cursor: grabbing;
+}
+
+.lightbox.is-zoomed .lightbox__img {
+  max-width: none;
+  max-height: none;
+  margin: 1rem;
+  border-radius: 0;
+}
+
+.lightbox__btn {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  background: rgba(20, 22, 26, 0.85);
+  color: var(--white);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.lightbox__btn:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.lightbox__btn:focus-visible,
+.lightbox__zoom:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+.lightbox__btn[hidden] {
+  display: none;
+}
+
+.lightbox__close {
+  top: 1rem;
+  right: 1rem;
+}
+
+.lightbox__prev,
+.lightbox__next {
+  top: calc(50% - 2.25rem);
+}
+
+.lightbox__prev {
+  left: 1rem;
+}
+
+.lightbox__next {
+  right: 1rem;
+}
+
+.lightbox__bar {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 4.5rem;
+  padding: 0 1.25rem;
+  color: var(--alloy-light);
+}
+
+.lightbox__caption {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lightbox__count {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+}
+
+.lightbox__zoom {
+  flex: none;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--white);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lightbox__zoom[aria-pressed="true"] {
+  background: var(--white);
+  color: var(--graphite);
+}
+
+@media (max-width: 640px) {
+  .lightbox__img {
+    max-width: 100%;
+  }
+
+  /* En táctil se cambia de imagen deslizando: las flechas estorban */
+  .lightbox__prev,
+  .lightbox__next {
+    display: none;
+  }
+
+  .lightbox__bar {
+    gap: 0.6rem;
+    padding: 0 0.85rem;
   }
 }

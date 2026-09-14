@@ -160,6 +160,11 @@
         <div class="modal__stage">
           <!-- src lo pone js/main.js al abrir un proyecto; oculto hasta entonces -->
           <img class="modal__img" id="modalImg" alt="" hidden /><!-- impeccable-disable-line broken-image -->
+          <!-- Ampliar: abre la imagen activa en el visor a pantalla completa -->
+          <button class="modal__expand" id="modalExpand" type="button" aria-label="View full screen" hidden>
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Expand</span>
+          </button>
           <div class="modal__video" id="modalVideo" hidden></div>
           <p class="modal__empty" id="modalEmpty" hidden>Images coming soon</p>
         </div>
@@ -168,6 +173,24 @@
       <p class="modal__caption" id="modalCaption"></p>
 
       <div class="modal__renders" id="modalRenders" hidden></div>
+    </div>
+  </div>
+
+  <!-- ===== Visor a pantalla completa (imágenes de la galería) =====
+       Encaja la imagen en la pantalla; un clic o doble toque la muestra a
+       tamaño real y se recorre arrastrando. En táctil también se puede
+       pellizcar. Flechas o deslizar para cambiar de imagen; Esc para salir. -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>
+    <div class="lightbox__viewport" id="lightboxViewport">
+      <img class="lightbox__img" id="lightboxImg" alt="" /><!-- impeccable-disable-line broken-image -->
+    </div>
+    <button class="lightbox__btn lightbox__close" type="button" data-lb="close" aria-label="Close viewer">&times;</button>
+    <button class="lightbox__btn lightbox__prev" type="button" data-lb="prev" aria-label="Previous image">&#8249;</button>
+    <button class="lightbox__btn lightbox__next" type="button" data-lb="next" aria-label="Next image">&#8250;</button>
+    <div class="lightbox__bar">
+      <p class="lightbox__caption" id="lightboxCaption"></p>
+      <span class="lightbox__count" id="lightboxCount"></span>
+      <button class="lightbox__zoom" type="button" data-lb="zoom" id="lightboxZoom" aria-pressed="false">Actual size</button>
     </div>
   </div>
 
