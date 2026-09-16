@@ -1,0 +1,135 @@
+Capítulo 1: Intro
+0:000 segundosI've been working on a project that I've been dreaming about since the very beginning of my career as a maker I want to build a desktop machine in the vein
+0:088 segundosof a 3D printer or a laser cutter that can automatically fabricate circuit boards in this video I'll show you the progress that I've made over the last
+0:1616 segundosyear or so and I'll hint at where this project could go in the future it takes about a week or two to get a prototype PCB and it takes even longer when you're
+0:2424 segundosworking in industry but I've been spoiled by the speed of 3D printing and I'd like to be able to get rough prototypes for circuit boards just as
+0:3232 segundosquickly the only way to accomplish that is to make circuit boards inhouse there are a couple of existing methods but none that can produce adequate
+0:4040 segundosmulti-layer boards now let's talk about my intended scope for this project the machine should be self-contained and fit on a desktop a footprint comparable to a
+0:4848 segundos3D printer would be great it should be fully automatic after the initial setup so the user should Press Start and then walk away it should be able to make two
+0:5555 segundoslayer boards that means cutting traces and generating simple vas higher layer count would be too much of a stretch for now but I'd love to get there someday
+1:021 minuto y 2 segundosbut I will not be attempting solder mask or silk screen they aren't explicitly necessary for prototypes and traces in vas will already be challenging enough
+1:101 minuto y 10 segundossounds simple right no not at all the hardest part by far is making the vas and that also happens to be the most
+Capítulo 2: Making Vias
+1:181 minuto y 18 segundosimportant part for the uninitiated vas are the connections between the layers of a circuit board there would allow you to go from one layer to two and that is
+1:261 minuto y 26 segundosa really big deal single layer boards can only accommodate very simple circuits but two layer boards can technically accommodate any Circuit of
+1:351 minuto y 35 segundosany complexity since FAS are so essential they will be the first focus of this project and they'll be the focus of this video so how are we going to
+1:421 minuto y 42 segundosmake them circuit board manufacturers have a standard method they use for making their vas starting out with copper clad board they drill small holes everywhere they want there to be a via
+1:511 minuto y 51 segundosthey then perform electris copper deposition which is a chemical process that deposits a thin layer of copper over all surfaces including inside of
+1:591 minuto y 59 segundosthe the hole finally standard electroplating is used to build up the copper that's already inside the hole and what you're left with is a solid
+2:062 minutos y 6 segundoscopper connection between two layers this process is great for mass production but it is terrible for a workshop environment electris deposition
+2:152 minutos y 15 segundosrequires over a dozen chemical steps and it involves solutions that are corrosive and toxic and difficult to maintain for
+2:222 minutos y 22 segundosthis project we need to reinvent this standard process and for usability we want to remove all chemical baths I have
+2:292 minutos y 29 segundosabout a dozen different ideas for alternative via generation methods but the one that I chose to start with could hypothetically produce Vias that are
+2:382 minutos y 38 segundosidentical to production Vias the main problem with the standard method is the complexity of electroly deposition the purpose of that step is to create an
+2:462 minutos y 46 segundosinitial High Resistance connection between the two layers but we can accomplish the same goal by instead using something like a carbon based
+2:542 minutos y 54 segundosconductive ink now coating everything in ink and then electroplating would leave a nasty finish and w still require some chemical baths but I think I have a
+3:023 minutos y 2 segundossolution here's my proposed process first a small hole will be drilled into the copper clad board the machine would have two tool heads one above and one
+3:113 minutos y 11 segundosbelow the board and each with an open-ended tube the tool heads would then compress onto the board with their openings aligned with the hole creating
+3:193 minutos y 19 segundosa continuous path through all three components with a tool head sealed against the copper layers conductive V can be pumped through the tubes coating
+3:273 minutos y 27 segundosthe inside of that hole after some dry time electroplate solution can be pumped through the hole and with the help of an inline electrode the final via can be
+3:343 minutos y 34 segundosplated by creating Vias one at a time the board never needs to be moved or rinsed making this process much more friendly to automation so let's give it
+3:433 minutos y 43 segundosa shot I first upgraded my setup and then got to work designing an initial proof of concept the goal for the initial test was just to see if this constrained electroplating could work in
+3:523 minutos y 52 segundosany capacity the design uses gravity to push electrolyte solution from the top Reservoir through the board down into a bottom pan after reing a 1 mm hole in
+4:014 minutos y 1 segundothe board I used a little paintbrush to coat the inside of that hole with conductive ink I assembled the test setup added my copper electroplating solution and grounded the board I then
+4:094 minutos y 9 segundoselectroplated in 30second intervals by inserting a copper electrode into the electrolyte Reservoir and I was genuinely shocked by how well this test
+4:184 minutos y 18 segundoswent after only 90 seconds the Via resistance dropped to only 30 milliohms for reference production vas are usually
+4:264 minutos y 26 segundos20 to 30 milliohms so my initial test reached ruction levels of performance on the first try after only a minute and a
+4:334 minutos y 33 segundoshalf this result was very encouraging so I committed to designing a much more substantial prototype this new design was still only concerned with via
+4:424 minutos y 42 segundosgeneration the Prototype included two Custom Tool heads each with altered core XY actuation and a microfluidic pump system to control the two liquids I
+4:514 minutos y 51 segundosthink it looks pretty impressive but in hindsight this approach had a fatal flaw that I should have recognized before I designed anything but before we discover
+5:005 minutosthat flaw there is a lot of fun engineering to discuss first give me a second to thank this video's sponsor PCB way PCB way is a full featured circuit
+Capítulo 3: PCBWay
+5:085 minutos y 8 segundosboard prototyping service it might seem ironic that this video will be sponsored by a circuit board manufacturer but PCB way can do so much more than the simple
+5:155 minutos y 15 segundostwo-layer boards that I'm aspiring to they manufacture Precision circuit boards that can do everything your project will need including up to 14 layer boards flexible circuit boards and
+5:245 minutos y 24 segundosassembly starting at just $5 with 24-hour build time BCB way also does CNC Machining and 3D printing so whether you're an RF engineer or an aerospace
+5:335 minutos y 33 segundosengineer a roboticist or just a hobbyist PCB way has what you need to bring your vision into reality I'll be using their
+5:405 minutos y 40 segundosservices in this project in the future and one day I'll find an excuse to get one of their aluminum core pcbs because that's just really awesome now back to
+Capítulo 4: Tool Head
+5:495 minutos y 49 segundosthe engineering I started with a tool head after collecting my thoughts on a whiteboard I realized that the z-axis would need to use a spring to compress
+5:575 minutos y 57 segundosthe end Defector into the board without out a spring so if the IND Defector was driven directly the drive motor would easily lose step and the force used to
+6:056 minutos y 5 segundosseal the interface would be Unknown by inserting a spring the applied force can be easily controlled by the position of
+6:126 minutos y 12 segundosthe z-axis this can prevent motor over torquing and as an added benefit this means that the z-axis doesn't need to be precise so a simple rack and pinion
+6:216 minutos y 21 segundosmechanism can be used with this and many smaller details in consideration I designed the first iteration of the tool head using linear bushings to constru
+6:296 minutos y 29 segundosthe z-axis I fired up a 3D printer assembled the Prototype and connected it up to a motor driver to see if it moved like I had expected and it mostly did
+6:386 minutos y 38 segundosbut there was an issue the end Defector was way too wobbly considering the Precision movement I would need to do down the line at this point I had caught
+6:476 minutos y 47 segundosmyself doing something that I've done many times before I was making compromises to make the design smaller even though space was not constrained I
+6:556 minutos y 55 segundoslike my designs to be compact so suei and sometimes or or most times that comes at a cost the IND Defector
+7:027 minutos y 2 segundosmechanism had play because of the linear bushings I used to minimize the size what I should have used were linear guid
+7:097 minutos y 9 segundoswhich would have been bigger but also would have been pretty Rock Solid so I jumped back into Cad and designed the second iteration of the tool head this
+7:187 minutos y 18 segundostime suppressing my desire for compactness after another round of 3D printing and assembly I hooked the Prototype back up to the motor driver for testing this time though everything
+7:277 minutos y 27 segundoslooked great the linear guide did its job and the end Defector did not budge onto the next design challenges I needed a way to move the tool heads in the x
+Capítulo 5: CoreXY
+7:357 minutos y 35 segundosand y axis and I wanted to use a core XY design these systems are commonly used in 3D printers they only need two Motors
+7:427 minutos y 42 segundosand both Motors are kept stationary which is convenient for several reasons but I've always had a little problem with corexy designs they require two
+7:517 minutos y 51 segundoslarge and overlapping belt loops and since those Loops overlap they have to be stacked vertically which means that the design is asymmetric and takes up
+8:008 minutosmore space and you already know that I like my designs to be compact even when it does not matter so I tried to come up with an altered version that would use a
+8:098 minutos y 9 segundossingle belt to engage with both Motors and I did it looked like it would work perfectly core XY systems work because
+8:168 minutos y 16 segundosthe belt loops change shape but they never change their total length the loops never get stretched segments of the loop will get longer but other
+8:248 minutos y 24 segundossegments will always shorten by the same amount to compensate the new arrangement I came up with works on the exact same principles it's just smaller and it uses
+8:328 minutos y 32 segundosfewer Parts I threw the design into CAD with an extruded aluminum frame and there are two gantries here one for each tool head reparing the parts for this
+8:408 minutos y 40 segundosthing was a bit brutal I didn't have any access to power tools or even to aice so cutting the 2020 Extrusion was honestly
+8:478 minutos y 47 segundosmiserable but assembly is always a fun process so it was worth it in the end after hooking the system up to a couple of motor controllers it moved just like
+8:558 minutos y 55 segundosa standard corxy system as I was expecting moving one motor motor at a time resulted in diagonal movement while moving the motor simultaneously resulted
+9:049 minutos y 4 segundosin movement along a single axis at this point I was really wondering why everyone doesn't use this altered design
+9:109 minutos y 10 segundoswhich is clearly better in every way and then I realized a problem the Gantry bar could twist a little bit especially when
+9:189 minutos y 18 segundosmoving along the x-axis it didn't look that substantial visually but I knew it would prevent any Precision movement at first I thought the belts weren't tight
+9:279 minutos y 27 segundosenough but further tensioning didn't help after doing a little bit of research I realized that the mechanism was the problem it turns out that common
+Capítulo 6: Problems
+9:349 minutos y 34 segundosdesigns are common for a reason who would have guessed the belts in a corxy system apply various torqus to the Gantry while accelerating the tool head
+9:439 minutos y 43 segundosin a standard corexy these torqux cancel each other out so the Gantry is never made to twist but in this single belt
+9:509 minutos y 50 segundosloop corexy the torqus do not cancel hence my lack of precision a really robust frame could still make this work
+9:579 minutos y 57 segundosbut that's not what I had built this still wasn't the Fatal issue though I really only cared about the application of the ink and the electro plating so
+10:0510 minutos y 5 segundosthis is something that I could fix in the future but that didn't really matter for now so now I had a tool head and a way to move it I just needed a way to
+10:1310 minutos y 13 segundoscontrol the two liquids and that meant some micr fluidics in total I needed a pump a reservoir and a way to connect everything together originally I used
+10:2110 minutos y 21 segundosPTFE tubing to make the connections but I didn't have a way to make connectors that were both small and reliably watertight I switched to to silicone
+10:2910 minutos y 29 segundostubing because its flexibility allowed me to use Barb connectors I could 3D print simple barbs and they would be consistently watertight for the pump I
+10:3710 minutos y 37 segundosdesigned a stepper motor driven peristaltic pump they're pretty easy to make and the liquids aren't exposed to any moving Parts which is great for my
+10:4410 minutos y 44 segundosuse case where the liquids are both sticky and corrosive peristaltic pumps are very simple they contain a silicone tube that gets pinched at multiple
+10:5310 minutos y 53 segundospoints between the pump body and bearings that are connected to the motor shaft as the motor rotates these pinch points move along the silicone tube
+11:0111 minutos y 1 segundopushing on the liquid lastly the reservoir was pretty simple it's designed with an inlet on the top and the bottom and it's intended to never be full so there should always be some
+11:1011 minutos y 10 segundosamount of air at the top of the reservoir this way if the pump turns in One Direction the line will be filled with liquid if the pump turns the
+11:1711 minutos y 17 segundosopposite way the line will be filled with air emptying the system this is an important feature because the proposed via generation method requires that the
+11:2511 minutos y 25 segundosline is repeatedly broken and then reformed I could also mention that the pumps are connected to the bottom sides of the reservoirs and that they double
+11:3311 minutos y 33 segundosas electronically controlled valves with the addition of this microfluidic system I had a completed first prototype and I
+11:4011 minutos y 40 segundoswas ready to begin testing except that testing went nowhere remember that fatal flaw I mentioned well it was ready to
+Capítulo 7: Second Prototype
+11:4911 minutos y 49 segundosteach me a lesson its lesson was not to jump the gun the flaw in my Approach was that I was adding confounding variables
+11:5711 minutos y 57 segundosbefore I knew if my Foundation was was solid I tried to test but nothing was working and I eventually realized that
+12:0512 minutos y 5 segundosthe alignment of the two tool heads was almost always totally off and I had no way to check it I couldn't produce
+12:1312 minutos y 13 segundosuseful data because I didn't know if my basic assumptions were being met in hindsight I was nowhere near ready to
+12:2112 minutos y 21 segundosadd X and Y AIS movement all it did was compromise the purpose of the Prototype I was more concerned with how cool it
+12:2812 minutos y 28 segundoswould look look than what it would actually teach me so I went back to the drawing board the microfluidics and the tool head designs were still promising
+12:3712 minutos y 37 segundosso I wanted to preserve them but I completely removed all lateral movement the second prototype was much simpler
+12:4412 minutos y 44 segundosthan the first the two tool heads were mostly the same as before but I combined the two back plates into a single monolithic component combining the two
+12:5312 minutos y 53 segundosparts meant that the alignment of the tool heads was guaranteed by the design this is what I should have done from the very beginning after one more round of
+13:0213 minutos y 2 segundosassembly I was finally ready to start testing and see if this via generation method would work I wanted to start by
+13:1013 minutos y 10 segundosreplicating the success I had had with my initial proof of concept so I drilled a 1 mm hole into a fresh copper clad board and I inserted it into my assembly
+13:1913 minutos y 19 segundosit still took a little effort to get the two end effectors in the hole all aligned but it was manageable my plan was to just turn the pumps by hand so
+13:2613 minutos y 26 segundosthat I could maintain full control I extended the tool heads and slowly turned the conductive Inc pump to fill the line once I saw it pass the board I
+13:3413 minutos y 34 segundosturned the pump in the opposite direction to empty the system I opened up the mechanism and what I saw was very promising the ink had coated the inside
+13:4213 minutos y 42 segundosof the hole and I had successfully created a high resistance connection between layers the conductive ink step worked I gave the ink about 20 minutes
+13:5013 minutos y 50 segundosto dry and then I realigned the hole with the electroplating side I extended the tool heads again grounded the board and then turned the other pump to fill
+13:5813 minutos y 58 segundosthe line with Electro plating solution I electroplated in 30second intervals measuring the resistance after each time and it was bad the resistance was
+14:0614 minutos y 6 segundosdropping way too slowly and it plateaued far above the 30 milliohms I was targeting I ran several more attempts changing which electrodes were used the
+14:1414 minutos y 14 segundosdirection of the electrolyte flow the speed of the electrolyte flow but nothing worked somehow I couldn't replicate the success of that simple
+14:2214 minutos y 22 segundosproof of concept eventually I realized that the problem was not mechanical or chemical it was electrical the the electrolyte solution was much more
+14:3114 minutos y 31 segundosresistive than I had expected and it was limiting my plating current to just hundreds of microamps I needed to generate a higher voltage so that I
+14:3914 minutos y 39 segundoscould push more current through it so I used some random components I had laying around to make a high voltage boost converter and it got me from 12 volts up
+14:4614 minutos y 46 segundosto 80 volts I ran another test with higher plating current and it went much better I was able finally to achieve
+14:5314 minutos y 53 segundosresults similar to my proof of concept but that wasn't the end of the story this was a 1 mm diameter hole that would
+15:0115 minutos y 1 segundobe fitting for a through hole component but most vas are only 0.3 mm in diameter I needed this to work with smaller
+15:0915 minutos y 9 segundosdiameters or it was not a success I tried I tried and I tried again but I
+15:1615 minutos y 16 segundoscould not produce A3 mm via I found myself with conflicting parameters I could allow for a maximum of 3 minutes
+15:2515 minutos y 25 segundosof electroplating per via beyond that doing an entire PCB would just take an unreasonably long time electr plating
+15:3315 minutos y 33 segundosthat quickly requires High current but when I increase the current the copper would creep up into the end Defector not
+15:4115 minutos y 41 segundosdeposit inside of the hole where I needed it I could find no solution that satisfied my success criteria this
+15:4915 minutos y 49 segundosmethod could work if I could give it 10 or 15 minutes of plating time per via but that's just not practical the
+15:5715 minutos y 57 segundosfundamental issue here is that you can't rush chemistry in production every via on a panel is plated simultaneously so
+16:0516 minutos y 5 segundosthis issue is unique to my Approach I realized that there was no path forward and I threw in the towel so now what
+16:1516 minutos y 15 segundoswell I'm not done with this I think I've done a pretty good job demonstrating that this method won't work but I've come up with about a dozen alternative
+16:2316 minutos y 23 segundosmethods and a few of them could actually be viable I've already done some experimentation with an alternative method that I wasn't super happy with
+16:3216 minutos y 32 segundosbut the next via generation method I'm going to be trying is very interesting if I could get it to work which is a very big unknown it could hypothetically
+16:4116 minutos y 41 segundosproduce vas that are better than production Vias by one to two orders of magnitude there will be updates on this
+16:4816 minutos y 48 segundosproject in the future but I don't know when that'll be it could be a very long time if you're interested in where this project goes or whatever else I get up
+16:5616 minutos y 56 segundosto then consider subscribing I'll also put some of my cad files on patreon if you want to explore my designs in depth I hope you enjoyed I hope you learned
+17:0417 minutos y 4 segundossomething and thanks for watching bye-bye
