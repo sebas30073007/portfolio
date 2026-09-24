@@ -112,6 +112,34 @@ const CATALOG = {
           renders: [],
         },
         {
+          // La app se llama Pólux (el gemelo, en GitHub Pages); la ficha y el
+          // repo usan el nombre descriptivo, como el resto del hardware.
+          // Tarjeta: turntable del CAD en HOME (generate-pcb-assets.mjs,
+          // --mode spin --ratio 4:5 --bg light). Galería: capturas de Pólux.
+          title: "3-DOF Arm Digital Twin",
+          subtype: "hardware",
+          tag: "Robotics · Digital Twin",
+          date: "Sep 2026",
+          desc: "Pólux, a browser digital twin of a belt-driven 3-DOF arm (ESP32-C3, CL57T drivers, NEMA 17). A translucent reference leads and the arm follows it with the firmware's trapezoidal ramps. It simulates the firmware's serial protocol, drives the real robot over Web Serial, solves inverse kinematics to a grip point, and steers the gripper with a tracked hand from the webcam.",
+          tools: "Three.js · Web Serial · MediaPipe · ESP32-C3",
+          github: "https://github.com/sebas30073007/3-DOF-Arm-Digital-Twin",
+          url: "https://sebas30073007.github.io/3-DOF-Arm-Digital-Twin/",
+          ctaLabel: "Open Pólux",
+          spin: "projects/3-dof-arm-digital-twin/turntable",
+          poster: "projects/3-dof-arm-digital-twin/poster.webp",
+          cover: "projects/3-dof-arm-digital-twin/poster.webp",
+          model: "projects/3-dof-arm-digital-twin/model.glb",
+          modelBg: "radial-gradient(circle at 50% 42%, #f4f5f7, #dcdfe4 82%)",
+          gallery: [
+            { src: "projects/3-dof-arm-digital-twin/01-referencia.webp", caption: "Pólux — the translucent reference leads, the arm follows with the firmware's ramps" },
+            { src: "projects/3-dof-arm-digital-twin/02-arco.webp", caption: "Hovering a link shows its joint range; drag it to rotate" },
+            { src: "projects/3-dof-arm-digital-twin/03-punto.webp", caption: "Point mode — inverse kinematics to a grip point" },
+            { src: "projects/3-dof-arm-digital-twin/04-saludo.webp", caption: "Routines — the reference jumps ahead to each key pose" },
+            { src: "projects/3-dof-arm-digital-twin/05-camara.webp", caption: "Camera frustum and live feed placed in the scene" },
+          ],
+          renders: [],
+        },
+        {
           title: "Torke",
           subtype: "software",
           tag: "Web tool · CAD",
