@@ -63,6 +63,8 @@ const ABOUT_PHOTOS = [
               (los espacios de la carpeta van como %20 en la ruta).
      - modelBg: opcional, override del fondo del visor 3D (CSS background).
                 Sin esto usa el fondo oscuro por defecto de .modal__model.
+     - hidden: true → no se pinta en el feed (ni se busca). Para fichas que
+               todavía no deben aparecer.
      - locked: true → tarjeta bloqueada ("Coming soon"): portada atenuada,
                sin acciones (More info / enlace externo) y sin abrir el
                modal al hacer clic. Para módulos de un curso aún no listos.
@@ -315,6 +317,7 @@ const CATALOG = {
         },
         {
           title: "KiCad Intermediate",
+          hidden: true, // no se publica hasta que exista el curso
           tag: "Course · KiCad",
           desc: "Coming soon.",
           tools: "KiCad", github: null, url: null, ctaLabel: "Coming soon",
@@ -324,6 +327,7 @@ const CATALOG = {
         },
         {
           title: "KiCad Advanced",
+          hidden: true, // no se publica hasta que exista el curso
           tag: "Course · KiCad",
           desc: "Coming soon.",
           tools: "KiCad", github: null, url: null, ctaLabel: "Coming soon",

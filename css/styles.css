@@ -5,40 +5,12 @@
    Los tokens y las superficies se ajustan en :root, no en los componentes.
    =================================================================== */
 
+/* Capa 0 (tokens, superficies, base tipográfica) y capa 1 (cartela, dot,
+   foco) llegan de brand/tokens.css y brand/chrome.css — master en la skill
+   sebs-brand; aquí solo lo propio del sitio. */
 :root {
-  /* ===================================================================
-     SEBS — tokens de marca. Identidad SEBS v1.1
-     Regla no negociable: --sebs-signal es SEÑAL, nunca SUPERFICIE.
-     ~1-2% del área visible, jamás fondo de nav, hero, card o sección.
-     Ver .claude/skills/sebs-brand/references/color.md
-     =================================================================== */
-
-  /* ---- Paleta base ---- */
-  --technical-white: #ffffff;
-  --graphite: #111317;
-  --graphite-raised: #1a1d22;
-  --alloy: #6b6f76;
-  --alloy-light: #8e939b;   /* texto 2º sobre grafito: 6.02:1 (alloy normal falla) */
-  --mist: #e5e7eb;
-  --divider-dark: #2a2d33;
-
-  /* ---- Señal ---- */
-  --sebs-signal: #e30613;
-  --sebs-signal-hover: #b80510;
-  --sebs-signal-light: #ff3b47;   /* señal como texto sobre grafito: 5.28:1 */
-  --sebs-signal-tint: rgba(227, 6, 19, 0.12);
-  --sebs-signal-tint-soft: rgba(227, 6, 19, 0.06);
-
   /* ---- Estado ---- */
   --success: #16a34a;
-
-  /* ---- Superficie por defecto (light). Las clases .surface-* la redefinen. ---- */
-  --surface: var(--technical-white);
-  --surface-secondary: var(--mist);
-  --text: var(--graphite);
-  --text-secondary: var(--alloy);
-  --divider: var(--mist);
-  --signal-text: var(--sebs-signal);
 
   /* ---- Alias del sistema anterior (SMV) ----
      Mantienen vivo el CSS que aún no se migra. Se retiran cuando no queden usos. */
@@ -50,88 +22,16 @@
   --white: var(--technical-white);
   --muted: var(--alloy);
   --card: var(--graphite);
-
-  /* ---- Tipografía ----
-     Manrope para todo. IBM Plex Mono solo para datos técnicos:
-     revisiones, IDs, timestamps, nombres de señal, archivos. Nunca para prosa. */
-  --font-display: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Consolas, monospace;
-
-  /* ---- Espaciado (base 4px) ---- */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 12px;
-  --space-lg: 16px;
-  --space-xl: 24px;
-  --space-2xl: 32px;
-  --space-3xl: 48px;
-  --space-4xl: 64px;
-  --space-5xl: 96px;
-  --space-6xl: 128px;
-
-  /* ---- Radios ---- */
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-round: 9999px;
+  --font-display: var(--font-sans);
 
   /* ---- Layout ---- */
-  --max: 1280px;
+  --max: var(--container-max);
   --radius: var(--radius-xl);
   --radius-btn: var(--radius-md);
   --radius-pill: var(--radius-round);
 
   /* ---- Motion ---- */
   --transition: 0.2s ease;
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
-  --dur-micro: 150ms;
-  --dur-component: 250ms;
-  --dur-section: 400ms;
-}
-
-/* ===================================================================
-   Superficies. Toda sección, panel o card declara la suya; los hijos
-   heredan los tokens correctos vía var(--surface) / var(--text), así
-   el mismo componente sirve en claro y oscuro sin duplicar CSS.
-   El ritmo visual de SEBS se construye alternando estas superficies,
-   NO añadiendo rojo.
-   =================================================================== */
-
-.surface-light {
-  --surface: var(--technical-white);
-  --surface-secondary: var(--mist);
-  --text: var(--graphite);
-  --text-secondary: var(--alloy);
-  --divider: var(--mist);
-  --signal-text: var(--sebs-signal);
-}
-
-.surface-mist {
-  --surface: var(--mist);
-  --surface-secondary: var(--technical-white);
-  --text: var(--graphite);
-  --text-secondary: var(--alloy);   /* 4.08:1 — solo texto grande */
-  --divider: var(--technical-white);
-  --signal-text: var(--sebs-signal);
-}
-
-.surface-dark {
-  --surface: var(--graphite);
-  --surface-secondary: var(--graphite-raised);
-  --text: var(--technical-white);
-  --text-secondary: var(--alloy-light);
-  --divider: var(--divider-dark);
-  --signal-text: var(--sebs-signal-light);
-}
-
-.surface-light,
-.surface-mist,
-.surface-dark {
-  background: var(--surface);
-  color: var(--text);
 }
 
 /* ===== Reset ===== */
@@ -220,8 +120,7 @@ img {
 }
 
 .btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+  opacity: 0.88;
 }
 
 /* Botones de la top bar: más compactos para no llenar la barra, y el mismo
@@ -249,8 +148,8 @@ img {
 }
 
 .btn--red-outline:hover {
-  background: var(--red); /* sebs-allow: hover, estado transitorio */
-  color: var(--white);
+  background: var(--sebs-signal-tint-soft);
+  opacity: 1;
 }
 
 .btn--white {
@@ -315,7 +214,8 @@ img {
 
 .btn--ghost-light:hover {
   background: var(--white);
-  color: var(--red);
+  color: var(--ink);
+  opacity: 1;
 }
 
 /* ===== Header ===== */
@@ -364,85 +264,98 @@ img {
   background: none;
   border: none;
   font: inherit;
-  color: rgba(255, 255, 255, 0.85);
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 0.34rem 0.35rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: var(--space-sm) 0;
   cursor: pointer;
-  transition: color var(--transition);
+  transition: color var(--dur-micro) var(--ease);
 }
 
 .nav__link:hover {
-  color: #ffffff;
+  color: var(--text);
 }
 
-.nav__link[aria-expanded="true"] {
-  color: #ffffff;
-}
-
-/* ===== Paneles About / Contact (acordeón bajo el header) =====
-   Siempre están en el DOM; se expanden con el truco grid-template-rows
-   0fr → 1fr para animar una altura que
-   no conocemos de antemano, sin medir con JS. */
-/* Superficie dark, no roja: un panel a pantalla completa en rojo lee como
-   identidad institucional (regla 3.4). En grafito gana presencia y queda
-   alineado con el header. La superficie se declara en el HTML. */
-.reveal-panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  background: var(--surface);
-  transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.reveal-panel.is-open {
-  grid-template-rows: 1fr;
-}
-
-.reveal-panel__inner {
-  overflow: hidden;
-  min-height: 0;
-}
-
-/* Botón "Collapse": centrado en el ancho del panel, no atado a la columna
-   de texto (antes era un link "Show less" bajo el párrafo). */
-.reveal-panel__footer {
-  display: flex;
-  justify-content: center;
-  padding: 0 0 1.5rem;
-}
-
-.reveal-panel__collapse {
-  appearance: none;
-  -webkit-appearance: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.06);
-  font: inherit;
-  color: rgba(255, 255, 255, 0.85);
+.nav__link[aria-current="page"] {
+  color: var(--text);
   font-weight: 600;
-  font-size: 0.78rem;
-  letter-spacing: 0.02em;
-  padding: 0.4rem 0.95rem;
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  transition: background var(--transition), color var(--transition), transform var(--transition);
+  box-shadow: inset 0 -2px 0 var(--sebs-signal); /* sebs-allow: estado activo de nav */
 }
 
-.reveal-panel__collapse svg {
-  width: 13px;
-  height: 13px;
+/* ===== Título de página ===== */
+.page-title {
+  font-weight: 700;
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  max-width: 28ch;
+  padding-top: var(--space-2xl);
 }
 
-.reveal-panel__collapse:hover {
-  background: rgba(255, 255, 255, 0.16);
-  color: #ffffff;
+/* ===== About / Contact (secciones al pie, superficie dark) ===== */
+.about {
+  padding-block: var(--space-4xl);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .reveal-panel {
-    transition: none;
+/* Contact: tira de una fila sobre superficie light, entre About (dark) y la
+   cartela (dark). Jerarquía por tamaño: título H4, sin foto grande. */
+.contact {
+  border-top: 1px solid var(--divider);
+  padding-block: var(--space-2xl);
+}
+
+.contact__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-lg) var(--space-xl);
+}
+
+.contact__photo {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-round);
+  object-fit: cover;
+}
+
+.contact__title {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+  margin: 0;
+}
+
+.contact__lead {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.contact__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-xl);
+  font-size: 14px;
+}
+
+.contact__links a {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--divider);
+}
+
+.contact__links a:hover {
+  text-decoration-color: currentColor;
+}
+
+@media (max-width: 720px) {
+  .contact__row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .contact__links {
+    grid-column: 1 / -1;
   }
 }
 
@@ -451,33 +364,6 @@ img {
    el orden de aparición frente a la regla base .hero__inner de más abajo. */
 .hero__inner.hero__inner--contact {
   grid-template-columns: 1fr auto auto;
-}
-
-.hero__social {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-}
-
-.hero__social-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--white);
-  color: var(--ink);
-  display: grid;
-  place-items: center;
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-
-.hero__social-icon svg {
-  width: 22px;
-  height: 22px;
-}
-
-.hero__social-icon:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
 /* About: reusa el círculo de .hero__photo para el carrusel (mismo marco
@@ -508,21 +394,6 @@ img {
 
 .hero__photo .slide.is-active {
   opacity: 1;
-}
-
-/* Utilidad: oculta visualmente pero deja el texto disponible para lectores
-   de pantalla / SEO (la home ya no lleva un <h1> visible: prioriza el
-   contenido sobre un hero). */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
 }
 
 /* ===== Hero (superficie dark) =====
@@ -584,41 +455,6 @@ img {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
-}
-
-/* Entrada orquestada del hero: un solo momento al cargar (no el reflejo de
-   animar cada sección). El contenido es visible por defecto; el reveal solo
-   corre si el usuario no pidió menos movimiento. */
-@media (prefers-reduced-motion: no-preference) {
-  .hero__text > *,
-  .hero__photo {
-    animation: hero-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  }
-
-  .hero__title {
-    animation-delay: 0.05s;
-  }
-  .hero__lead {
-    animation-delay: 0.23s;
-  }
-  .hero__cta {
-    animation-delay: 0.32s;
-  }
-  .hero__photo {
-    animation-duration: 0.8s;
-    animation-delay: 0.12s;
-  }
-}
-
-@keyframes hero-rise {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .hero__photo {
@@ -896,251 +732,13 @@ img {
   margin-bottom: 1.5rem;
 }
 
-/* Torke: comercial 3D en el círculo (fondo oscuro estudio) */
-.feature__art--reel {
-  background: var(--graphite);
-}
-.feature__reel {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* Carrusel: avatar + capturas de proyecto que rotan con crossfade */
-.feature__art .slide {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-
-.feature__art .slide.is-avatar {
-  object-fit: contain;
-  padding: 11%;
-}
-
-.feature__art .slide.is-active {
-  opacity: 1;
-}
-
-/* Botones outline sobre fondo rojo: siempre visibles (contorno claro) */
-.app-card .btn--red-outline {
-  border-color: var(--white);
-  color: var(--white);
-  background: transparent;
-}
-
-.app-card .btn--red-outline:hover {
-  background: var(--white);
-  color: var(--red);
-}
-
-.app-card .btn[disabled] {
-  cursor: default;
-}
-
-.app-card .btn[disabled]:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-.brandmark {
-  /* Altura fija: las 3 placas (MECATRONICA / REMOTE HANDS / TOPOLOGÍAS)
-     miden exactamente lo mismo; el contenido se centra vertical. */
-  height: 3.4rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  background: var(--ink);
-  color: var(--white);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.9rem;
-  letter-spacing: 0.04em;
-  padding: 0 1.2rem;
-  border-radius: 10px;
-  margin-bottom: 1.25rem;
-}
-
-/* Variante con imagen de logo (Capa8 = "Topologías", fondo negro) */
-.brandmark--logo {
-  padding: 0 0.9rem;
-  background: var(--graphite); /* igual al fondo del PNG, sin borde visible */
-}
-
-.brandmark__img {
-  display: block;
-  height: 2.5rem;
-  width: auto;
-}
-
-/* Variante solo texto (Teleop Mobile Manipulator, sin logo propio) */
-.brandmark--text {
-  font-size: 1.5rem;
-  letter-spacing: 0.02em;
-}
-
-/* "O" de MECATRONICA = engrane 100% CSS.
-   Dos capas sobre un span vacío:
-   ::before = disco dentado (12 dientes vía clip-path) que gira.
-   ::after  = disco central del color del fondo (--ink) = agujero falso. */
-.gear-o {
-  width: 1.15em;
-  height: 1.15em;
-  position: relative;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0 1px;
-}
-
-/* Blanco, no rojo: el engrane va sobre el ribbon grafito, así que necesita
-   ser claro para leerse. Nota aparte: el engrane como recurso de marca es
-   un antipatrón explícito del sistema (§26) — decisión pendiente. */
-.gear-o::before {
-  content: "";
-  position: absolute;
-  inset: 4.5%;
-  border-radius: 50%;
-  background: var(--technical-white);
-  clip-path: polygon(
-    50% 0%, 58% 12%, 72% 7%, 78% 21%, 93% 22%, 88% 38%,
-    100% 50%, 88% 62%, 93% 78%, 78% 79%, 72% 93%, 58% 88%,
-    50% 100%, 42% 88%, 28% 93%, 22% 79%, 7% 78%, 12% 62%,
-    0% 50%, 12% 38%, 7% 22%, 22% 21%, 28% 7%, 42% 12%
-  );
-  transform-origin: center;
-  animation: spin-slow 18s linear infinite;
-}
-
-/* Agujero central falso: DEBE coincidir con el fondo del brandmark (--ink) */
-.gear-o::after {
-  content: "";
-  position: absolute;
-  inset: 32%;
-  border-radius: 50%;
-  background: var(--ink);
-}
-
-/* Capa8: engrane blanco */
-.gear-o--light::before {
-  background: var(--white);
-}
-
-@keyframes spin-slow {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gear-o::before {
-    animation: none;
-  }
-}
-
-.feature__desc {
-  max-width: 60ch;
-  margin-bottom: 1.75rem;
-  line-height: 1.7;
-}
-
-.app-card--support .feature__desc {
-  margin-inline: auto;
-}
-
+/* Botón = solo el logo de Torke, sin texto dentro. */
 .feature__actions {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
-}
-
-.app-card--support .feature__actions {
-  justify-content: center;
-}
-
-.app-card--lead .feature__actions {
   align-items: center;
   justify-content: center;
-  gap: 0.47rem;
-}
-
-/* Botón = solo el logo de Torke, sin texto dentro. */
-.btn--logo-only {
-  padding: 0.35rem 1rem;
-}
-
-.app-card--lead .btn__logo {
-  height: 1.7rem;
-}
-
-/* Indicación "WEB APP →" fuera del botón, a su izquierda: invita a hacer
-   clic con un ligero vaivén horizontal hacia el botón. */
-.feature__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.56rem;
-}
-
-.feature__cta-hint {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
-  animation: cta-nudge 1.6s ease-in-out infinite;
-}
-
-.feature__cta-arrow {
-  font-size: 1rem;
-}
-
-@keyframes cta-nudge {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(6px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .feature__cta-hint {
-    animation: none;
-  }
-}
-
-/* Cinta "IA powered" */
-.ribbon {
-  position: absolute;
-  top: 0;
-  right: 1.5rem;
-  background: var(--ink);
-  color: var(--white);
-  text-align: center;
-  padding: 0.5rem 0.7rem 1rem;
-  line-height: 1.1;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
-}
-
-.ribbon__ia {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.1rem;
-  display: block;
-}
-
-.ribbon__txt {
-  font-size: 0.62rem;
-  letter-spacing: 0.05em;
 }
 
 /* Barra de búsqueda + filtro (reemplaza los tabs de categoría) */
@@ -1312,8 +910,13 @@ img {
   border-radius: var(--radius-xl);
   overflow: hidden;
   background: var(--surface-secondary);
-  box-shadow: 0 1px 2px rgba(17, 19, 23, 0.06), 0 6px 16px -10px rgba(17, 19, 23, 0.18);
+  border: 1px solid var(--divider);
   cursor: pointer;
+  transition: border-color var(--dur-micro) var(--ease);
+}
+
+.pin:hover .pin__media {
+  border-color: var(--text-secondary);
 }
 
 .pin__media img,
@@ -1540,14 +1143,10 @@ img {
   outline: none;
 }
 
-.pin__meta {
-  margin: 2px 0 0;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
+.pin .cartela--inline {
+  margin-top: 2px;
+  gap: var(--space-md);
   color: var(--text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* Confirmación de "Copy link": texto, no solo color (regla de no depender del
@@ -2092,21 +1691,6 @@ img {
   }
 }
 
-/* ===== Footer ===== */
-/* Superficie dark declarada en el HTML. --text-secondary sobre grafito es
-   --alloy-light (6.02:1); el rgba(255,255,255,.65) anterior era un valor suelto. */
-.site-footer {
-  background: var(--surface);
-  color: var(--text-secondary);
-  padding-block: var(--space-2xl);
-  text-align: center;
-  font-size: 0.9rem;
-}
-
-.site-footer a {
-  color: var(--text);
-}
-
 /* ===== Responsive ===== */
 /* Tarjetas destacadas: una sola columna y el lead se vuelve vertical */
 @media (max-width: 720px) {
@@ -2173,12 +1757,6 @@ img {
 
   /* Contact: los 3 círculos pasan de columna a fila, y se reordenan para
      quedar debajo de la foto (no entre el texto y la foto). */
-  .hero__social {
-    flex-direction: row;
-    justify-content: center;
-    order: 2;
-    margin-block: 0.5rem 0;
-  }
 
   .hero__inner--contact .hero__photo {
     order: 1;

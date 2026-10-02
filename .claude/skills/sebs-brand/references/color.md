@@ -70,7 +70,9 @@ Toda sección, panel o card declara una superficie. No hay zonas sin superficie 
 - Serie o dato destacado en gráfica.
 - Métrica crítica puntual.
 - Símbolo SEBS cuando el contexto lo requiera.
-- Hover/underline de link en texto corrido.
+- Botón de paro o acción crítica en una app de control.
+
+El hover de un link **no** es un uso autorizado: un hover no es un estado del sistema, es decoración. Hover = cambio de peso, subrayado o color secundario.
 
 ### Prohibido
 

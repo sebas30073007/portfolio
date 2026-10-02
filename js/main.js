@@ -1,17 +1,10 @@
 /* ===================================================================
    Lógica del portafolio
-   - Footer: año dinámico (todas las páginas)
-   - Header: paneles About/Contact tipo acordeón (todas las páginas)
+   - Footer: cartela estática (brand/chrome.css); la fecha se edita al publicar
    - index.html (home): feed unificado de proyectos (búsqueda + filtro)
      tipo masonry, por año
    - featured-projects.html: catálogo premium (los 3 videos destacados)
    =================================================================== */
-
-// ---------- Footer year ----------
-function setYear() {
-  const el = document.getElementById("year");
-  if (el) el.textContent = new Date().getFullYear();
-}
 
 // ---------- Timeline horizontal (index) ----------
 function renderTimeline() {
@@ -184,6 +177,7 @@ function buildFeedIndex() {
     if (!cat || !cat.years) return;
     Object.keys(cat.years).forEach((year) => {
       cat.years[year].forEach((item, i) => {
+        if (item.hidden) return;
         const pid = `${catKey}-${slugify(item.title)}-${i}`;
         const record = { catKey, year, item, pid, ftype: itemFilterType(catKey, item) };
         ALL_PROJECTS[pid] = item;
@@ -285,7 +279,18 @@ function renderCard(catKey, item, pid, year) {
           >${ICON_EXT}<span class="pin__act-label">${extLabel}</span></a>`
     : "";
 
-  const meta = [year, item.tag].filter(Boolean).join(" · ");
+  // Pie de la tarjeta: cartela inline (chrome.css) — celdas con año y tipo,
+  // sin "·" decorativo. Solo campos con dato real.
+  const cells = [
+    year ? `<div class="cartela__campo"><dt class="sr-only">Year</dt><dd>${year}</dd></div>` : "",
+    // El tag viene como "Categoría · Subcategoría": cada parte es una celda.
+    ...String(item.tag || "")
+      .split("·")
+      .map((t) => t.trim())
+      .filter(Boolean)
+      .map((t) => `<div class="cartela__campo"><dt class="sr-only">Type</dt><dd>${escapeHtml(t)}</dd></div>`),
+  ].join("");
+  const meta = cells ? `<dl class="cartela cartela--inline">${cells}</dl>` : "";
 
   // Bloqueada ("Coming soon"): portada atenuada, sin acciones ni apertura de
   // modal — nada que mostrar todavía. El título queda como texto plano (no
@@ -303,7 +308,7 @@ function renderCard(catKey, item, pid, year) {
         <div class="pin__foot">
           <div class="pin__text">
             <h3 class="pin__title">${escapeHtml(item.title)}</h3>
-            <p class="pin__meta">${escapeHtml(meta)}</p>
+            ${meta}
           </div>
         </div>
       </article>`;
@@ -327,7 +332,7 @@ function renderCard(catKey, item, pid, year) {
           <h3 class="pin__title">
             <button class="pin__open" type="button" data-pid="${pid}">${escapeHtml(item.title)}</button>
           </h3>
-          <p class="pin__meta">${escapeHtml(meta)}</p>
+          ${meta}
         </div>
       </div>
     </article>`;
@@ -645,15 +650,15 @@ function openProjectModal(project, pid) {
   }
 
   // CTA al enlace del proyecto (página o repo, según el proyecto)
-  const ctaLabel = project.ctaLabel || "View repository";
+  const ctaLabel = project.ctaLabel || "Open repository";
   if (project.url) {
     cta.href = project.url;
-    cta.textContent = `${ctaLabel} →`;
+    cta.textContent = ctaLabel;
     cta.classList.remove("is-disabled");
     cta.removeAttribute("aria-disabled");
   } else {
     cta.removeAttribute("href");
-    cta.textContent = `${ctaLabel} →`;
+    cta.textContent = ctaLabel;
     cta.classList.add("is-disabled");
     cta.setAttribute("aria-disabled", "true");
   }
@@ -1082,56 +1087,6 @@ function openProjectFromHash(pid) {
 }
 
 // ---------- Paneles About / Contact (acordeón bajo el header) ----------
-// Presentes en todas las páginas (mismo bloque duplicado en cada .html).
-// Un solo panel abierto a la vez; "Show less" y click fuera también cierran.
-function initRevealPanels() {
-  const panels = {
-    about: document.getElementById("panel-about"),
-    contact: document.getElementById("panel-contact"),
-  };
-  const triggers = {
-    about: document.getElementById("navAbout"),
-    contact: document.getElementById("navContact"),
-  };
-  if (!panels.about && !panels.contact) return;
-
-  const keys = Object.keys(panels).filter((k) => panels[k] && triggers[k]);
-
-  function closeAll() {
-    keys.forEach((k) => {
-      panels[k].classList.remove("is-open");
-      triggers[k].setAttribute("aria-expanded", "false");
-    });
-  }
-
-  function toggle(key) {
-    const wasOpen = panels[key].classList.contains("is-open");
-    closeAll();
-    if (!wasOpen) {
-      panels[key].classList.add("is-open");
-      triggers[key].setAttribute("aria-expanded", "true");
-    }
-  }
-
-  keys.forEach((k) => triggers[k].addEventListener("click", () => toggle(k)));
-
-  document.querySelectorAll("[data-close-panel]").forEach((btn) => {
-    btn.addEventListener("click", closeAll);
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeAll();
-  });
-
-  // Click fuera de un panel abierto (y fuera de su disparador) lo cierra
-  document.addEventListener("click", (e) => {
-    const openKey = keys.find((k) => panels[k].classList.contains("is-open"));
-    if (!openKey) return;
-    if (panels[openKey].contains(e.target) || triggers[openKey].contains(e.target)) return;
-    closeAll();
-  });
-}
-
 // ---------- Init ----------
 document.addEventListener("DOMContentLoaded", () => {
   // Se lee ANTES de initSearchFilter: al fijar el tab inicial, esa función
@@ -1139,7 +1094,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // null, así que borraría el "project=" de la URL antes de poder leerlo.
   const fromHash = parseHash();
 
-  setYear();
   renderTimeline();
   initFeatureCarousels();
   initAboutCarousel();
@@ -1148,7 +1102,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initProjectModal();
   initPinActions();
   initTurntableSync();
-  initRevealPanels();
 
   // Link compartido a un proyecto: se abre una vez que el feed existe.
   if (fromHash.project) openProjectFromHash(fromHash.project);

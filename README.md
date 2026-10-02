@@ -21,9 +21,11 @@ portfolio/
 └── README.md
 ```
 
-About y Contact ya no son páginas propias: viven como paneles tipo acordeón
-que se despliegan desde los botones del navbar (`js/main.js` → `initRevealPanels`),
-disponibles en cualquier página.
+About y Contact son secciones al pie de `index.html` (anclas `#about` y
+`#contact`). El footer de todas las páginas es la **cartela** SEBS (capa 1,
+`brand/chrome.css`): ID, fecha de publicación y estado. Al publicar, actualizar
+la fecha de la cartela. Los tokens y el chrome de marca llegan de `brand/`,
+que se genera desde la skill `sebs-brand` con `scripts/publish.py` (no editar a mano).
 
 ## Editar contenido
 

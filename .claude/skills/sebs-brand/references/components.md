@@ -47,8 +47,8 @@ Funciona en cualquier superficie sin cambios — ese es el punto de los tokens s
 ### Terciario / texto
 
 ```css
-.btn-text { background: none; border: none; color: var(--text); font-weight: 600; }
-.btn-text:hover { color: var(--sebs-signal); }   /* aquí sí: hover puntual */
+.btn-text { background: none; border: none; color: var(--text); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.btn-text:hover { color: var(--text-secondary); }   /* el hover no es un estado: nada de rojo */
 ```
 
 ---
@@ -73,13 +73,23 @@ Estructura canónica:
 
 ```html
 <article class="card">
-  <p class="label">Robotics · XR</p>       <!-- categoría, Alloy -->
-  <h3>Remote Hands</h3>                     <!-- título -->
-  <p class="small">Teleoperación háptica…</p>
   <div class="card-media">…</div>
-  <a class="btn-text">View case study →</a>
+  <h3>Remote Hands</h3>
+  <p class="small">Teleoperación de un manipulador móvil con Quest 3 y ROS 2.</p>
+  <dl class="cartela cartela--inline">                       <!-- ver signature.md §4 -->
+    <div class="cartela__campo"><dt class="sr-only">ID</dt><dd>TELEOP-01</dd></div>
+    <div class="cartela__campo"><dt class="sr-only">Año</dt><dd>2026</dd></div>
+    <div class="cartela__campo cartela__campo--estado"><dt class="sr-only">Estado</dt><dd><i class="dot dot--active"></i>ACTIVE</dd></div>
+  </dl>
 </article>
 ```
+
+Lo que **no** lleva una card SEBS:
+
+- Eyebrow de categoría sobre el título. Si la lista ya está filtrada o agrupada por categoría, el eyebrow repite lo que la página ya dice. La categoría va en el filtro, en el encabezado del grupo o en la cartela inline, no encima de cada card.
+- Link con `→`. El título es el link, o la card entera lo es.
+- Sombra y hover-lift. El hover cambia el borde, nada más.
+- Dos cards con exactamente la misma silueta cuando su contenido es distinto. Un paper no es un PCB: la media, la proporción y los campos de la cartela inline cambian con la materia.
 
 **Nunca card con fondo rojo.** Para destacar una card: borde rojo de 2px, o cambiar su superficie a `dark`.
 

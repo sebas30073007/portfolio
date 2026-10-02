@@ -19,10 +19,11 @@ Guía práctica:
 | Entrada de sección | 300–450 ms |
 | Easing por defecto | `cubic-bezier(0.4, 0, 0.2, 1)` |
 
+- **Una sola secuencia orquestada por página.** Si algo se anima al cargar, es el hero o el demo, una vez, y nada más se anima por scroll. Fade-up en cada sección y hover-lift en cada card son el tell número uno del look de IA.
 - Sin rebotes exagerados ni overshoot.
 - Sin glitch ni estética cyberpunk.
 - Sin motion puramente decorativo — cada animación comunica un cambio de estado o una relación entre elementos.
-- Respetar `prefers-reduced-motion`, siempre.
+- Respetar `prefers-reduced-motion`, siempre (lo aplica `chrome.css`).
 
 ---
 
