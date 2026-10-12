@@ -217,30 +217,18 @@ function matchesSearch(item, query) {
   return haystack.includes(query);
 }
 
-// Copiar link sustituyó a "compartir": la hoja nativa de share solo existe en
-// móvil y en escritorio caía igual en el portapapeles, así que el icono
-// prometía más de lo que hacía. El eslabón de cadena dice exactamente qué pasa.
-const ICON_LINK =
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
-const ICON_INFO =
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>';
-const ICON_EXT =
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>';
+// La tarjeta ya no lleva acciones encima de la imagen: toda ella abre el detalle,
+// y el enlace externo y «Copiar enlace» viven ahí (ver initModalCopy).
 const ICON_LOCK =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
 
 function renderCard(catKey, item, pid, year) {
   const cover = item.cover || (item.gallery && item.gallery[0] ? item.gallery[0].src : "");
-  // Turntable 3D pre-renderizado (video liviano, sin WebGL en la tarjeta).
-  // Un click abre el modal con el modelo interactivo real.
-  // preload="auto" (antes "metadata"): con solo metadata, la descarga del
-  // video no arrancaba hasta el autoplay, así que en una carga fría (sin
-  // caché) alcanzaba a bufferear muy poco antes de reproducir — se veía
-  // girar un poco y reiniciar en bucle hasta que el buffer alcanzaba. Con
-  // "auto" el navegador empieza a bajar el video desde que carga la página,
-  // no desde que arranca a reproducirse.
+  // Turntable 3D pre-renderizado: la tarjeta muestra su póster fijo (~25 KB) y el
+  // video solo se descarga y gira al pasar el mouse (ver initTurntableHover). Antes
+  // todos se precargaban y giraban solos: varios MB al abrir la página.
   const spin = item.spin
-    ? `<video class="pin__video" autoplay loop muted playsinline preload="auto"${
+    ? `<video class="pin__video" loop muted playsinline preload="none"${
         item.poster ? ` poster="${item.poster}"` : ""
       }>
          <source src="${item.spin}.webm" type="video/webm">
@@ -258,26 +246,6 @@ function renderCard(catKey, item, pid, year) {
     (cover
       ? `<img src="${cover}" alt="" loading="lazy" decoding="async" />`
       : "");
-
-  // Dos destinos distintos, ambos etiquetados. Antes la tarjeta solo mostraba
-  // la flecha del enlace externo y el modal quedaba escondido detrás de un
-  // clic en cualquier parte: quien apuntaba a la flecha se saltaba el detalle
-  // sin saber que existía, y al revés. Ahora el par está a la vista con texto,
-  // no solo con un tooltip que hay que provocar.
-  //
-  // Enlace externo: solo item.url, nunca item.github — el CTA del modal
-  // tampoco enlaza repos (ver ENABLE_REPO_LINKS). Si la tarjeta enlazara el
-  // repo, expondría lo que el modal decide no exponer. Muchos items no tienen
-  // url: ahí queda solo "More info".
-  const ext = item.url || "";
-  // La etiqueta la pone el item (Visit site / Open paper / View KiCad files):
-  // "See project" genérico mentiría en un PDF o en un repo de KiCad.
-  const extLabel = escapeHtml(item.ctaLabel || "See project");
-  const extBtn = ext
-    ? `<a class="pin__act pin__act--pill pin__act--link" href="${ext}" target="_blank" rel="noopener"
-          aria-label="${extLabel}: ${escapeHtml(item.title)}"
-          >${ICON_EXT}<span class="pin__act-label">${extLabel}</span></a>`
-    : "";
 
   // Pie de la tarjeta: cartela inline (chrome.css) — celdas con año y tipo,
   // sin "·" decorativo. Solo campos con dato real.
@@ -318,14 +286,6 @@ function renderCard(catKey, item, pid, year) {
     <article class="pin" data-pid="${pid}">
       <div class="pin__media${media ? "" : " pin__media--empty"}">
         ${media}
-        <div class="pin__acts">
-          <button class="pin__act pin__act--pill pin__act--info" type="button" data-act="info"
-                  aria-label="More info about ${escapeHtml(item.title)}"
-                  >${ICON_INFO}<span class="pin__act-label">More info</span></button>
-          ${extBtn}
-        </div>
-        <button class="pin__act pin__act--copy" type="button" data-act="copy"
-                title="Copy link" aria-label="Copy link to ${escapeHtml(item.title)}">${ICON_LINK}</button>
       </div>
       <div class="pin__foot">
         <div class="pin__text">
@@ -382,49 +342,25 @@ function renderFeed(filter, query) {
   }
 
   container.innerHTML = `<div class="pins">${cards.join("")}</div>`;
-
-  // Respeta "reduce motion": no reproduce los turntables (queda el poster fijo)
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    container.querySelectorAll(".pin__video").forEach((v) => {
-      v.removeAttribute("autoplay");
-      v.pause();
-    });
-  }
+  initTurntableHover(container);
 }
 
-// ---------- Sincronización de turntables (tarjetas PCB) ----------
-// Todos los videos de giro comparten el mismo reloj (performance.now módulo
-// duración): si el navegador pausa alguno (p. ej. mientras el modal lo tapa),
-// al reanudarse se re-engancha en la misma fase que los demás.
-function syncTurntables() {
+// ---------- Giro de las tarjetas ----------
+// Solo con mouse (en táctil no hay «pasar por encima» y el póster basta) y sin
+// «reduce motion». El primer hover descarga el video; al salir se detiene en su
+// primer cuadro, que coincide con el póster.
+function initTurntableHover(container) {
+  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  document.querySelectorAll(".pin__video").forEach((v) => {
-    if (!v.duration || !isFinite(v.duration)) return;
-    // Sin suficiente buffer todavía (carga en frío, sin caché): no lo toques.
-    // Forzar un seek a una zona no descargada solo provoca un stall, y en el
-    // siguiente tick se repite el salto → el "gira un poco y reinicia" que
-    // se veía en la primera visita (se resolvía solo al recargar por caché).
-    if (v.readyState < 3) return;
-    const t = (performance.now() / 1000) % v.duration;
-    // Corrige solo derivas visibles (ignorando el cruce del loop) para no
-    // provocar micro-saltos en cada tick.
-    const drift = Math.abs(v.currentTime - t);
-    let targetBuffered = false;
-    for (let i = 0; i < v.buffered.length; i++) {
-      if (t >= v.buffered.start(i) && t <= v.buffered.end(i)) {
-        targetBuffered = true;
-        break;
-      }
-    }
-    if (drift > 0.2 && Math.abs(drift - v.duration) > 0.2 && targetBuffered) v.currentTime = t;
-    if (v.paused) v.play().catch(() => {});
-  });
-}
-
-function initTurntableSync() {
-  setInterval(syncTurntables, 1500);
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) syncTurntables();
+  container.querySelectorAll(".pin").forEach((pin) => {
+    const v = pin.querySelector(".pin__video");
+    if (!v) return;
+    const girar = () => v.play().catch(() => {});
+    const parar = () => { v.pause(); v.currentTime = 0; };
+    pin.addEventListener("mouseenter", girar);
+    pin.addEventListener("mouseleave", parar);
+    pin.addEventListener("focusin", girar);
+    pin.addEventListener("focusout", parar);
   });
 }
 
@@ -685,8 +621,6 @@ function closeProjectModal() {
   // Saca el proyecto de la URL, dejando solo el tab activo
   OPEN_PID = null;
   writeHash(CURRENT_FILTER, null);
-  // Re-engancha los turntables de las tarjetas en la fase común
-  syncTurntables();
   // Devuelve el foco a la tarjeta que abrió el modal
   if (modalTrigger && document.contains(modalTrigger)) modalTrigger.focus();
   modalTrigger = null;
@@ -697,25 +631,17 @@ function initProjectModal() {
   const modal = document.getElementById("projectModal");
   if (!container || !modal) return;
 
-  // Abrir: clic en cualquier parte de la tarjeta, menos en sus controles
-  // propios (enlace externo, copiar link), que tienen su propio handler.
-  // "More info" es la excepción: es justo el botón que abre este modal, así
-  // que se deja pasar aunque sea un .pin__act. El teclado entra por ahí o por
-  // el <button> del título.
+  // Abrir: clic en cualquier parte de la tarjeta. El teclado entra por el
+  // <button> del título.
   const openFromEvent = (e) => {
-    if (!e.target.closest(".pin__act--info")) {
-      if (e.target.closest("a")) return;
-      if (e.target.closest(".pin__act")) return;
-    }
+    if (e.target.closest("a")) return;
     const card = e.target.closest(".pin[data-pid]");
     if (!card) return;
     if (card.classList.contains("pin--locked")) return; // "Coming soon": nada que abrir
     const project = PROJECT_INDEX[card.dataset.pid];
     if (!project) return;
-    // Al cerrar, el foco vuelve al control que abrió: el botón "More info" si
-    // se entró por ahí, si no el título.
-    modalTrigger =
-      e.target.closest(".pin__act--info") || card.querySelector(".pin__open") || card;
+    // Al cerrar, el foco vuelve al título de la tarjeta
+    modalTrigger = card.querySelector(".pin__open") || card;
     openProjectModal(project, card.dataset.pid);
   };
 
@@ -972,35 +898,26 @@ function projectUrl(pid) {
 // ---------- Acciones de tarjeta (copiar link) ----------
 // Confirmación en texto (no solo un cambio de color): copiar no tiene ningún
 // efecto visible por sí solo y sin esto parece que no pasó nada.
-function pinToast(pin, msg) {
-  pin.querySelectorAll(".pin__toast").forEach((t) => t.remove());
-  const el = document.createElement("span");
-  el.className = "pin__toast";
-  el.setAttribute("role", "status");
-  el.textContent = msg;
-  pin.appendChild(el);
-  setTimeout(() => el.remove(), 1800);
-}
-
-async function copyPinLink(pin, pid) {
-  try {
-    await navigator.clipboard.writeText(projectUrl(pid));
-    pinToast(pin, "Link copied");
-  } catch (err) {
-    pinToast(pin, "Copy failed");
-  }
-}
-
-// El menú de "..." desapareció: su único ítem era "Copy link", así que ahora
-// esa acción es un botón directo sobre la imagen — un clic en vez de dos.
-function initPinActions() {
-  const container = document.getElementById("catContent");
-  if (!container) return;
-
-  container.addEventListener("click", (e) => {
-    const pin = e.target.closest(".pin[data-pid]");
-    const copy = e.target.closest(".pin__act--copy");
-    if (copy && pin) copyPinLink(pin, pin.dataset.pid);
+// «Copiar enlace» vive en el detalle, junto a cerrar. La confirmación es texto,
+// no solo un cambio de color.
+function initModalCopy() {
+  const btn = document.getElementById("modalCopy");
+  if (!btn) return;
+  btn.addEventListener("click", async () => {
+    if (!OPEN_PID) return;
+    const win = btn.closest(".modal__window");
+    win.querySelectorAll(".modal__toast").forEach((t) => t.remove());
+    const toast = document.createElement("span");
+    toast.className = "modal__toast";
+    toast.setAttribute("role", "status");
+    try {
+      await navigator.clipboard.writeText(projectUrl(OPEN_PID));
+      toast.textContent = "Link copied";
+    } catch (err) {
+      toast.textContent = "Copy failed";
+    }
+    win.appendChild(toast);
+    setTimeout(() => toast.remove(), 1800);
   });
 }
 
@@ -1100,8 +1017,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initPlayOnVisible();
   initSearchFilter(); // pinta el feed y llena PROJECT_INDEX
   initProjectModal();
-  initPinActions();
-  initTurntableSync();
+  initModalCopy();
 
   // Link compartido a un proyecto: se abre una vez que el feed existe.
   if (fromHash.project) openProjectFromHash(fromHash.project);

@@ -99,7 +99,7 @@
          Un nivel por debajo de About: una fila, sin hero ni foto grande. -->
     <section class="contact surface-light" id="contact">
       <div class="container contact__row">
-        <img class="contact__photo" src="assets/img/perfil_smv.png" alt="" width="56" height="56" onerror="this.remove()" />
+        <img class="contact__photo" src="assets/img/perfil_smv.webp" alt="" width="56" height="56" onerror="this.remove()" />
         <div class="contact__text">
           <h2 class="contact__title">Contact</h2>
           <p class="contact__lead">Robotics, embedded and automation work, in Mexico or remote.</p>
@@ -117,7 +117,14 @@
   <div class="modal" id="projectModal" hidden>
     <div class="modal__backdrop" data-close></div>
     <div class="modal__window surface-dark" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button class="modal__close" type="button" data-close aria-label="Close">&times;</button>
+      <div class="modal__tools">
+        <button class="modal__icon" type="button" id="modalCopy" aria-label="Copy link" title="Copy link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </button>
+        <button class="modal__icon modal__close" type="button" data-close aria-label="Close" title="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
       <h3 class="modal__title" id="modalTitle"></h3>
       <p class="modal__date" id="modalDate" hidden></p>
       <!-- Descripción + CTA al mismo nivel: el botón visible desde el inicio -->

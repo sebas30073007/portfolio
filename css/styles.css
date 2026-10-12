@@ -1,7 +1,8 @@
 /* ===================================================================
    SEBS — sebs.mx
    Portafolio de Sebastián Méndez Villegas.
-   Sistema de diseño: Identidad SEBS v1.1 (ver "Identidad SEBS.md").
+   Sistema de diseño: Identidad SEBS v1.1 + formas de SEBS UI 1.2b (propuesta, tablero en
+   E:\20_AREAS\sebs\identidad\sistema-ui): lo que se presiona es píldora, las tarjetas 20.
    Los tokens y las superficies se ajustan en :root, no en los componentes.
    =================================================================== */
 
@@ -27,7 +28,9 @@
   /* ---- Layout ---- */
   --max: var(--container-max);
   --radius: var(--radius-xl);
-  --radius-btn: var(--radius-md);
+  --radius-btn: var(--radius-round);   /* 1.2b: lo que se presiona es píldora */
+  --radius-tarjeta: 20px;               /* 1.2b: tarjetas y portadas */
+  --radius-capa: 28px;                  /* 1.2b: lo que sube encima (detalle) */
   --radius-pill: var(--radius-round);
 
   /* ---- Motion ---- */
@@ -123,12 +126,10 @@ img {
   opacity: 0.88;
 }
 
-/* Botones de la top bar: más compactos para no llenar la barra, y el mismo
-   radio "punto medio" que .search-bar__featured (ver más abajo). */
+/* Botones de la top bar: más compactos para no llenar la barra */
 .nav__actions .btn {
   padding: 0.34rem 0.9rem;
   font-size: 0.82rem;
-  border-radius: 14px;
 }
 
 /* Botón primario: uno por vista. Es el mayor consumo de rojo que autoriza
@@ -253,7 +254,7 @@ img {
 .nav__actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.25rem;
 }
 
 /* Disparador de los paneles About/Contact: texto plano, no pill (los
@@ -267,7 +268,8 @@ img {
   color: var(--text-secondary);
   font-weight: 500;
   font-size: 0.875rem;
-  padding: var(--space-sm) 0;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-round);
   cursor: pointer;
   transition: color var(--dur-micro) var(--ease);
 }
@@ -276,10 +278,11 @@ img {
   color: var(--text);
 }
 
+/* Activo: píldora con relleno, igual que la barra inferior de las apps (1.2b) */
 .nav__link[aria-current="page"] {
   color: var(--text);
   font-weight: 600;
-  box-shadow: inset 0 -2px 0 var(--sebs-signal); /* sebs-allow: estado activo de nav */
+  background: var(--surface-secondary);
 }
 
 /* ===== Título de página ===== */
@@ -770,9 +773,7 @@ img {
   justify-self: end;
   flex-shrink: 0;
   white-space: nowrap;
-  /* Punto medio entre el radio cuadrado de .btn y el pill total de la
-     barra de búsqueda (ver .search-bar__group más abajo). */
-  border-radius: 14px;
+  border-radius: var(--radius-round);
 }
 
 .search-bar__group {
@@ -784,9 +785,8 @@ img {
   max-width: 640px;
   background: var(--surface);
   border: 1px solid var(--divider);
-  /* Antes era un pill completo (999px); se suaviza un poco hacia el radio
-     de los botones de al lado, sin llegar a ser tan cuadrada. */
-  border-radius: 20px;
+  /* Se escribe, pero es la barra principal de la página: píldora como su botón vecino */
+  border-radius: var(--radius-round);
   padding: 0.55rem 0.6rem 0.55rem 1.1rem;
   box-shadow: 0 8px 20px -14px rgba(13, 13, 13, 0.35);
 }
@@ -825,17 +825,15 @@ img {
 }
 
 /* ===== Tabs de categoría =====
-   Sustituyen al panel de filtros con checkboxes: selección única, con la
-   barra de subrayado como único indicador de estado. El subrayado va en
-   Graphite, no en rojo — es navegación, no una acción (regla 3.4). */
+   Selección única. Se presionan, así que son píldoras (1.2b); la elegida va
+   rellena en Mist, sin rojo: es navegación, no una acción. */
 .tabs {
   display: flex;
   align-items: center;
-  gap: var(--space-xl);
+  gap: var(--space-xs);
   overflow-x: auto;
   scrollbar-width: none;
   padding-block: var(--space-lg) 0;
-  border-bottom: 1px solid var(--divider);
 }
 
 .tabs::-webkit-scrollbar {
@@ -852,11 +850,9 @@ img {
   color: var(--text-secondary);
   white-space: nowrap;
   cursor: pointer;
-  padding: 0 0 var(--space-md);
-  /* -1px: el subrayado del tab activo monta sobre el borde del contenedor
-     en vez de dibujar una segunda línea debajo. */
-  margin-bottom: -1px;
-  border-bottom: 2px solid transparent;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-round);
 }
 
 .tab:hover {
@@ -866,13 +862,12 @@ img {
 .tab[aria-selected="true"] {
   color: var(--text);
   font-weight: 700;
-  border-bottom-color: var(--text);
+  background: var(--surface-secondary);
 }
 
 .tab:focus-visible {
   outline: 2px solid var(--sebs-signal);
-  outline-offset: 3px;
-  border-radius: var(--radius-xs);
+  outline-offset: 2px;
 }
 
 /* ===== Feed masonry (pins) =====
@@ -907,7 +902,7 @@ img {
    que produce el escalonado del masonry. */
 .pin__media {
   position: relative;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-tarjeta);
   overflow: hidden;
   background: var(--surface-secondary);
   border: 1px solid var(--divider);
@@ -974,132 +969,6 @@ img {
   color: var(--text-secondary);
 }
 
-/* ---- Acciones sobre la imagen ----
-   Sin transición a propósito: aparecen y desaparecen en seco, sin animación
-   de movimiento ni de opacidad. La tarjeta tampoco se desplaza en hover. */
-.pin__act {
-  position: absolute;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  /* Contorno, no solo sombra: sobre una portada blanca (la primera página de
-     un paper) la sombra suave desaparecía y el botón se perdía dentro de la
-     imagen. El hairline lo despega de cualquier fondo claro. */
-  border: 1px solid rgba(17, 19, 23, 0.14);
-  border-radius: var(--radius-round);
-  background: var(--technical-white);
-  color: var(--graphite);
-  box-shadow: 0 1px 3px rgba(17, 19, 23, 0.22);
-  cursor: pointer;
-  opacity: 0;
-  text-decoration: none;
-}
-
-.pin__act svg {
-  flex: none;
-  width: 17px;
-  height: 17px;
-}
-
-/* Barra superior: "More info" a la izquierda, el destino externo a la derecha.
-   Los dos son relevantes y ninguno debe ganar por omisión, así que van al
-   mismo peso visual y en extremos opuestos. */
-.pin__acts {
-  position: absolute;
-  z-index: 2;
-  top: var(--space-sm);
-  left: var(--space-sm);
-  right: var(--space-sm);
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-xs);
-  /* La barra ocupa todo el ancho: sin esto taparía el clic al modal en la
-     franja superior de la imagen. Solo los botones reciben el puntero. */
-  pointer-events: none;
-}
-
-.pin__acts > * {
-  pointer-events: auto;
-}
-
-/* Variante con etiqueta: los botones de destino llevan texto porque un tooltip
-   solo aparece si ya apuntaste, y para eso hay que sospechar que el botón
-   hace algo distinto de lo que ya hace la tarjeta. */
-.pin__act--pill {
-  position: static;
-  width: auto;
-  max-width: 100%;
-  height: var(--space-2xl);
-  padding: 0 var(--space-sm);
-  gap: var(--space-xs);
-  font-family: var(--font-sans);
-  font-size: 0.72rem;
-  font-weight: 600;
-  line-height: 1;
-  color: var(--graphite);
-}
-
-.pin__act--pill svg {
-  width: 14px;
-  height: 14px;
-}
-
-.pin__act-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Orden de lectura dentro de la píldora: el icono antecede al texto en "More
-   info", pero en el enlace externo la flecha cierra la frase. */
-.pin__act--link {
-  flex-direction: row-reverse;
-}
-
-.pin__act--copy {
-  left: var(--space-sm);
-  bottom: var(--space-sm);
-}
-
-.pin__media:hover .pin__act,
-.pin:focus-within .pin__act,
-.pin__act:focus-visible {
-  opacity: 1;
-}
-
-.pin__act:hover {
-  background: var(--mist);
-}
-
-.pin__act:focus-visible {
-  outline: 2px solid var(--sebs-signal);
-  outline-offset: 2px;
-}
-
-/* En táctil no existe hover: las acciones se quedan visibles o serían
-   inalcanzables. */
-@media (hover: none) {
-  .pin__act { opacity: 1; }
-}
-
-/* Debajo de ~800px la tarjeta baja de 224px y las dos píldoras con texto ya
-   no caben lado a lado (la más larga, "View KiCad files", pide 214px con
-   "More info"). Se retiran las etiquetas y quedan los iconos; el aria-label
-   sigue completo, así que el lector de pantalla no pierde nada. El corte no
-   coincide con el de columnas a propósito: manda el ancho de tarjeta. */
-@media (max-width: 799px) {
-  .pin__act--pill {
-    width: 32px;
-    height: 32px;
-    padding: 0;
-  }
-  .pin__act-label { display: none; }
-}
-
 /* ---- Pie: título ---- */
 .pin__foot {
   display: flex;
@@ -1143,26 +1012,25 @@ img {
   outline: none;
 }
 
+/* Toda la tarjeta abre el detalle: el área del botón del título cubre la tarjeta
+   (una sola acción, accesible por teclado y sin botones encima de la imagen). */
+.pin:not(.pin--locked) .pin__open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Teléfono, dos columnas angostas: título más grande y solo año + tipo */
+@media (max-width: 699px) {
+  .pin__title { font-size: 0.95rem; line-height: 1.3; }
+  .pin .cartela--inline .cartela__campo:nth-child(n+3) { display: none; }
+}
+
 .pin .cartela--inline {
   margin-top: 2px;
   gap: var(--space-md);
   color: var(--text-secondary);
-}
-
-/* Confirmación de "Copy link": texto, no solo color (regla de no depender del
-   color como única señal). */
-.pin__toast {
-  position: absolute;
-  z-index: 21;
-  left: var(--space-sm);
-  bottom: 52px;
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  background: var(--graphite);
-  color: var(--technical-white);
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  pointer-events: none;
 }
 
 /* Estado vacío (Papers, Competitions, PCB's) */
@@ -1227,28 +1095,56 @@ img {
   scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
   background: var(--surface);
   color: var(--text);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-capa);
   padding: 1.4rem;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
   animation: pop-in 0.22s ease;
 }
 
-.modal__close {
+/* Copiar enlace y cerrar: botones redondos arriba a la derecha */
+.modal__tools {
   position: absolute;
-  top: 0.75rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  color: var(--white);
-  font-size: 2rem;
-  line-height: 1;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity var(--transition);
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 2;
+  display: flex;
+  gap: var(--space-sm);
 }
 
-.modal__close:hover {
-  opacity: 1;
+.modal__icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-round);
+  background: var(--surface-secondary);
+  color: var(--text);
+  cursor: pointer;
+  transition: background var(--dur-micro) var(--ease);
+}
+
+.modal__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.modal__icon:hover {
+  background: var(--divider);
+}
+
+.modal__toast {
+  position: absolute;
+  top: 3.9rem;
+  right: 0.9rem;
+  z-index: 3;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-round);
+  background: var(--technical-white);
+  color: var(--graphite);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  pointer-events: none;
 }
 
 .modal__title {
@@ -1256,7 +1152,7 @@ img {
   font-weight: 700;
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
-  padding-right: 2rem;
+  padding-right: 6.5rem;
 }
 
 /* Detalle de mes ("Mon YYYY"), discreto — la tarjeta ya muestra el año solo */

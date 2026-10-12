@@ -72,3 +72,10 @@ Base del diseño replicada. Pendiente para siguientes iteraciones:
 > Nota: se corrigieron typos del PDF ("Proyects"→"Projects",
 > "arquitectures"→"architectures", etc.) por tratarse de un portafolio público.
 > Torke es de código cerrado (sin repo público).
+
+## Medios (peso de la página)
+
+- Imágenes: se publican en `.webp` (portadas a 1600 px, esquemáticos y capas de PCB a 2400 px). Los PNG/JPG originales se conservan al lado, pero ninguna página los pide. Para una imagen nueva pesada, generar su `.webp` y referenciar ese.
+- Giros 3D de las tarjetas (`spin` + `poster` en `data.js`): la tarjeta muestra el póster; el video no se precarga y solo gira al pasar el mouse (en táctil se queda el póster). El 3D interactivo vive en el detalle.
+- Videos de Featured: versiones recomprimidas en `assets/vid/web/` (con póster); los originales de `assets/vid/` ya no se usan.
+- La tarjeta no lleva botones encima: toda ella abre el detalle, y ahí están el enlace externo y «Copy link».
