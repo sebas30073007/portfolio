@@ -244,8 +244,10 @@ const CATALOG = {
         desc: "Three control strategies for navigation and trajectory tracking are presented and compared using the omnidirectional mobile robot RoboMaster S1, equipped with a Vicon motion capture system and controlled via Python: (1) classic potential field control, (2) neural network + proportional–integral control with a feed-forward neural network predicting wheel velocities, and (3) hybrid potential + NN control, where a second neural network trained on the residual error supplies an online corrective signal. Main contributions: empirical validation of a neural model for velocity prediction in omnidirectional platforms, a neural compensator integrated with analytical control laws, and a comparative experimental analysis of potential-based, neural and hybrid control approaches.",
         descLabel: "Abstract",
         tools: "Control · Neural Networks", github: null,
-        url: "papers/Balancing%20Accuracy%20and%20Adaptability%20Hybrid%20Analytical%20Neural%20Control%20in%20Omnidirectional%20Robots/IEEE_CongresoICEV25_Hybrid_Analytical_Neural_Control_in_Omnidirectional_Robots.pdf",
-        ctaLabel: "Open paper",
+        // Publicado por IEEE (DOI 10.1109/ENC68268.2025.11311904): se enlaza a
+        // Xplore en vez de alojar el PDF.
+        url: "https://ieeexplore.ieee.org/document/11311904",
+        ctaLabel: "View on IEEE Xplore",
         cover: "papers/Balancing%20Accuracy%20and%20Adaptability%20Hybrid%20Analytical%20Neural%20Control%20in%20Omnidirectional%20Robots/first%20page.png",
         // El modal muestra solo el abstract (sin galería); la portada A4
         // se conserva como miniatura de la tarjeta.
